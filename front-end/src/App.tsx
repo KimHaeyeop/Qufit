@@ -1,14 +1,7 @@
-import { TestIcon } from "./assets/svg";
-import Counter from "./zustandTest/ZustandTest";
+import "./index.css";
 
 function App() {
-  return (
-    <div>
-      <TestIcon width={"4rem"} />
-      Hello! Qufit
-      <Counter />
-    </div>
-  );
+  return <div className="text-red-500">Hello! Qufit</div>;
 }
 
 export default App;
