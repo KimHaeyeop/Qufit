@@ -1,5 +1,12 @@
+import { TestIcon } from "./assets/svg";
+
 function App() {
-  return <div>Hello! Qufit</div>;
+  return (
+    <div>
+      <TestIcon width={"4rem"} />
+      Hello! Qufit
+    </div>
+  );
 }
 
 export default App;
