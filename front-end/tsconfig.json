@@ -20,5 +20,12 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "**/*.ts", "**/*.tsx", "custom.d.ts"]
+  "include": [
+    "src",
+    "**/*.ts",
+    "**/*.tsx",
+    "custom.d.ts",
+    "tsconfig.node.json",
+    "postcss.config.js"
+  ]
 }
