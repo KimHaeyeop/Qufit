@@ -1,9 +1,10 @@
 export const PATH = {
+    ROOT: '/',
     SIGN_UP: '/signup',
-    INTRO: '/intro',
+    INTRODUCTION: '/introduction',
     MAIN: '/main',
     CHATTING: '/chatting',
     MY_PAGE: '/mypage',
-    GROUP_VIDEO: '/video/group',
-    PERSONAL_VIDEO: '/video/personal',
+    GROUP_VIDEO: (roomId: String) => `/video/group/${roomId}`,
+    PERSONAL_VIDEO: (roomId: String) => `/video/personal/${roomId}`,
 };
