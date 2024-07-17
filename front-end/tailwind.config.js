@@ -5,6 +5,7 @@ export default {
         colors: {
             white: '#fff',
             black: '#4F0E65',
+            pink: '#FD4C8C',
             lightPurple: {
                 1: '#DBBEEA',
                 2: '#EDB6F4',
@@ -14,10 +15,16 @@ export default {
         },
         extend: {
             backgroundImage: {
+                mainPageBg: "url('@assets/png/mainPageBg.png')",
                 whitePink:
                     'linear-gradient(to bottom left,rgba(255, 231, 239, 1) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%)',
                 hotPink:
                     'linear-gradient(to bottom left,rgba(249,151,236,1) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(249,151,236,1) 100%)',
+            },
+
+            aspectRatio: {
+                layout: '1.8 / 1',
+                layout2: '9.4 / 1',
             },
 
             fontFamily: {
