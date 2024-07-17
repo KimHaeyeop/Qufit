@@ -2,10 +2,10 @@
 export default {
     content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
     theme: {
-        color: {
+        colors: {
             white: '#fff',
             black: '#4F0E65',
-            border: {
+            lightPurple: {
                 1: '#DBBEEA',
                 2: '#EDB6F4',
                 3: '#E7BEF1',
