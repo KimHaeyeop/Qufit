@@ -6,7 +6,7 @@ function App() {
             <div className="flex ">
                 {/* card */}
                 <div className="effect-pureWhite relative w-[22.5rem] h-[15.625rem] rounded-[1.25rem] mb-10 mr-10 border-4 border-[#DBBEEA]">
-                    <p className="absolute">와와오아ㅘㅇ</p>
+                    <p className="absolute">와와오아ㅘㅇABC</p>
                     <div className="w-full h-full bg-whitePink rounded-[1rem] opacity-30"></div>
                 </div>
                 {/* hover:card */}
