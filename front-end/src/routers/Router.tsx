@@ -1,4 +1,4 @@
-import Layout from '@components/Layout';
+import Layout from '@components/common/Layout';
 import ChattingPage from '@pages/ChattingPage';
 import GroupVideoPage from '@pages/GroupVideoPage';
 import IntroductionPage from '@pages/IntroductionPage';
