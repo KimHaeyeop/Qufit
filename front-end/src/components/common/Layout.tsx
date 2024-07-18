@@ -8,7 +8,7 @@ const Layout = ({ hasHeader }: { hasHeader: boolean }) => {
             {hasHeader && (
                 <>
                     <Header />
-                    <div className="w-10/12 aspect-layout effect-layout border-b-4 border-x-2 border-lightPurple-4 rounded-b-[3.75vw] relative">
+                    <div className="w-9/12 aspect-layout effect-layout border-b-4 border-x-2 border-lightPurple-4 rounded-b-[3.75vw] relative">
                         <Outlet />
                         <div className="w-full h-full rounded-b-[3.75vw] bg-whitePink opacity-20 z-0" />
                     </div>
