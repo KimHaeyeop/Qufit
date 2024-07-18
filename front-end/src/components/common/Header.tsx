@@ -4,19 +4,19 @@ import { Logo, ChatButtonIcon, MyPageIcon, NotiIcon } from '@assets/svg';
 
 const Header = () => {
     return (
-        <div className="w-10/12 aspect-layout2 relative rounded-t-[3.75vw] border-y-2 border-x-4 effect-layout-2 border-lightPurple-3">
-            <div className="absolute z-10 flex items-center justify-between w-full h-full px-20">
+        <div className="w-9/12 aspect-layout2 relative rounded-t-[3.75vw] border-y-2 border-x-4 effect-layout-2 border-lightPurple-3">
+            <div className="absolute z-10 flex items-center justify-between w-full h-full px-[5vw]">
                 <NavLink to={PATH.MAIN}>
                     <Logo className="w-[9vw]" />
                 </NavLink>
 
                 <div className="flex">
                     <NavLink to={PATH.CHATTING}>
-                        <ChatButtonIcon className="w-[5vw] mr-12" />
+                        <ChatButtonIcon className="w-[5vw] mr-[2vw]" />
                     </NavLink>
 
                     <NavLink to={PATH.MY_PAGE}>
-                        <MyPageIcon className="w-[5vw] mr-12" />
+                        <MyPageIcon className="w-[5vw] mr-[2vw]" />
                     </NavLink>
                     <div className="relative flex">
                         <NotiIcon className="w-[3vw]" />
