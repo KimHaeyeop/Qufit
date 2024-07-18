@@ -1,5 +1,7 @@
+import LiveKitTest from '@components/video/LiveKitTest';
+
 const GroupVideoPage = () => {
-    return <div>단체 비디오 페이지</div>;
+    return <LiveKitTest />;
 };
 
 export default GroupVideoPage;
