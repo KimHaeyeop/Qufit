@@ -11,7 +11,7 @@ const SvgChatButtonIcon = (props: SVGProps<SVGSVGElement>) => (
             y={2}
             stroke="url(#ChatButtonIcon_svg__c)"
             strokeOpacity={0.5}
-            strokeWidth={4}
+            strokeWidth={7}
             rx={18}
         />
 
