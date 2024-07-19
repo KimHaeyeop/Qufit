@@ -50,11 +50,19 @@
     }
 
     .effect-hotPink {
-        box-shadow: 4px 4px 15px rgba(161, 15, 161, 0.15), inset 3px -3px 20px rgba(255, 255, 255, 0.7),
-            inset -3px 3px 20px rgba(255, 255, 255, 0.7), inset 0px 4px 100px rgba(252, 86, 232, 1),
-            inset -1px -1px 5px rgba(255, 255, 255, 0.3);
+        box-shadow: inset 0.1875rem -0.1875rem 1.25rem rgba(255, 255, 255, 0.7),
+            inset -0.1875rem 0.1875rem 1.25rem rgba(255, 255, 255, 0.7),
+            inset 0rem 0.25rem 6.25rem rgba(252, 86, 232, 1),
+            inset -0.0625rem -0.0625rem 0.3125rem rgba(255, 255, 255, 0.3);
 
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(0.5rem);
+    }
+
+    .effect-indyBlue {
+        box-shadow: -38px 38px 150px rgba(70, 57, 228, 0.15), inset 0px 7px 38px rgba(255, 255, 255, 0.5),
+            inset 0px 3px 150px rgba(167, 162, 229, 0.2), inset -4px -4px 15px rgba(255, 255, 255, 0.3);
+
+        backdrop-filter: blur(23px);
     }
 
     .effect-layout {
@@ -65,7 +73,7 @@
             inset 0rem 0.25rem 12.5rem rgba(251, 121, 222, 0.2),
             inset -0.3125rem -0.3125rem 1.25rem rgba(255, 255, 255, 0.3);
 
-        backdrop-filter: blur(1.875rem);
+        backdrop-filter: blur(1rem);
     }
 
     .effect-layout-2 {
@@ -75,6 +83,6 @@
             inset 0rem 0.25rem 12.5rem rgba(251, 121, 222, 0.2),
             inset -0.3125rem -0.3125rem 1.25rem rgba(255, 255, 255, 0.2);
 
-        backdrop-filter: blur(1.875rem);
+        backdrop-filter: blur(1rem);
     }
 }
