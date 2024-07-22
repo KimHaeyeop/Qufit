@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import FriendInfo from '@components/chat/FriendInfo';
+import ChatInfo from '@components/chat/ChatInfo';
 import { FriendsInfoDummy } from '@dummy/Dummy';
-import { EmptyChatIcon, DoorExitIcon, CupidIcon } from '@assets/svg/chat';
+import { EmptyChatIcon, CupidIcon } from '@assets/svg/chat';
 
 const ChattingPage = () => {
     const [focusButton, setFocusButton] = useState('friend');
@@ -45,15 +46,28 @@ const ChattingPage = () => {
                         ))}
                     </div>
                 ) : (
-                    <></>
+                    <div className="overflow-y-auto scrollbar-hide">
+                        {FriendsInfoDummy.map((chat) => (
+                            <ChatInfo
+                                key={chat.id}
+                                id={chat.id}
+                                nickname={chat.nickname}
+                                profileImage={chat.profileImage}
+                                lastMessage={chat.chatRoom[0].lastMessage}
+                                unreadCount={chat.chatRoom[0].unreadCount}
+                            />
+                        ))}
+                    </div>
                 )}
             </div>
             {/* 채팅창 */}
             <div className="flex flex-col items-center justify-center w-full h-full">
                 {isChatState.length === 0 ? (
-                    <div className="flex flex-col items-center pb-10">
-                        <EmptyChatIcon className="w-56 pt-10 pr-10" />
-                        <p className="text-2xl text-white opacity-80 animate-pulse">채팅할 상대를 선택해주세요.</p>
+                    <div className="relative flex flex-col items-center pb-10">
+                        <EmptyChatIcon className="w-56 pt-10 pr-10 " />
+                        <p className="absolute text-2xl text-center text-white bottom-8 w-80 opacity-80 animate-pulse">
+                            채팅할 상대를 선택해주세요.
+                        </p>
                     </div>
                 ) : (
                     <></>
