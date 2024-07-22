@@ -14,8 +14,7 @@ interface FriendInfoProps {
     id: string;
     nickname: string;
     profileImage: string;
-    message: string;
-    lastmessage: string;
+    chatRoom: [{ lastMessage: string; unreadCount: number }];
 }
 
 export const UserInfoDummy: UserInfoProps = {
@@ -48,6 +47,5 @@ export const FriendsInfoDummy: FriendInfoProps[] = Array.from({ length: 10 }, ()
         'https://mblogthumb-phinf.pstatic.net/MjAyMTAzMTJfMTE0/MDAxNjE1NTI1Nzg3NTM2.YdDPheyL4Aqnxq7AX8qqNWND-d3zYd91ENVMQ6S50cYg.4r5rWKmBSN5A_BVt8cfkwFQ-swmwMpa27L23z8n-8Ywg.JPEG.sj330035/%ED%94%84%EC%82%AC.jpeg?type=w800',
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbPqBoOjJD5Cixdp_NcHQQnJr-fsymACO7fg&s',
     ][Math.floor(Math.random() * 12)],
-    message: fakerKO.lorem.sentence(),
-    lastmessage: fakerKO.lorem.sentence(),
+    chatRoom: [{ lastMessage: fakerKO.lorem.sentence(), unreadCount: Math.floor(Math.random() * 20) }],
 }));
