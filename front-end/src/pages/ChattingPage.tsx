@@ -2,15 +2,14 @@ import { useState } from 'react';
 import FriendInfo from '@components/chat/FriendInfo';
 import ChatInfo from '@components/chat/ChatInfo';
 import { FriendsInfoDummy } from '@dummy/Dummy';
+import useTabStateStore from '@stores/chat/tabStateStore';
 import { EmptyChatIcon, CupidIcon } from '@assets/svg/chat';
 
 const ChattingPage = () => {
-    const [focusButton, setFocusButton] = useState('friend');
-    const [isChatState, setIsChatState] = useState([]);
+    const buttonFocus = useTabStateStore((state) => state.buttonFocus);
+    const setButtonFocus = useTabStateStore((state) => state.setButtonFocus);
 
-    const handleButtonClick = (button: string) => {
-        setFocusButton(button);
-    };
+    const [isChatState, setIsChatState] = useState([]);
 
     return (
         <div className="absolute z-10 flex w-full h-full">
@@ -18,23 +17,23 @@ const ChattingPage = () => {
             <div className="flex flex-col w-full h-full px-20 py-16">
                 <div className="flex justify-between px-20 mb-10">
                     <button
-                        onClick={() => handleButtonClick('friend')}
+                        onClick={() => setButtonFocus('friend')}
                         className={`px-7 py-2.5 rounded-xl text-white text-2xl ${
-                            focusButton === 'friend' ? 'font-medium bg-white bg-opacity-30' : ''
+                            buttonFocus === 'friend' ? 'font-medium bg-white bg-opacity-30' : ''
                         }`}
                     >
                         친구
                     </button>
                     <button
-                        onClick={() => handleButtonClick('chat')}
+                        onClick={() => setButtonFocus('chat')}
                         className={`px-7 py-2.5 rounded-xl text-white text-2xl ${
-                            focusButton === 'chat' ? 'font-medium bg-white bg-opacity-30' : ''
+                            buttonFocus === 'chat' ? 'font-medium bg-white bg-opacity-30' : ''
                         }`}
                     >
                         채팅 목록
                     </button>
                 </div>
-                {focusButton === 'friend' ? (
+                {buttonFocus === 'friend' ? (
                     <div className="overflow-y-auto scrollbar-hide">
                         {FriendsInfoDummy.map((friend) => (
                             <FriendInfo
