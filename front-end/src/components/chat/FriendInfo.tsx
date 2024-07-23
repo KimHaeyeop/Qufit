@@ -1,4 +1,5 @@
 import { StartChatIcon, DeleteFriendIcon } from '@assets/svg/chat';
+import useChatStateStore from '@stores/chat/chatStateStore';
 
 interface FriendInfoProps {
     id: string;
@@ -7,6 +8,18 @@ interface FriendInfoProps {
 }
 
 const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
+    const setChatState = useChatStateStore((state) => state.setChatState);
+
+    const handleStartChatButton = () => {
+        setChatState([
+            {
+                id: id,
+                nickname: nickname,
+                profileImage: profileImage,
+            },
+        ]);
+    };
+
     return (
         <div className="flex flex-col">
             <div className="w-full h-0.5 bg-hotPink" />
@@ -18,7 +31,7 @@ const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
                         <DeleteFriendIcon className="w-6" />
                     </button>
                 </div>
-                <button>
+                <button onClick={handleStartChatButton}>
                     <StartChatIcon className="w-8" />
                 </button>
             </div>

@@ -1,15 +1,16 @@
-import { useState } from 'react';
 import FriendInfo from '@components/chat/FriendInfo';
 import ChatInfo from '@components/chat/ChatInfo';
+import ChatRoom from '@components/chat/ChatRoom';
 import { FriendsInfoDummy } from '@dummy/Dummy';
 import useTabStateStore from '@stores/chat/tabStateStore';
-import { EmptyChatIcon, CupidIcon } from '@assets/svg/chat';
+import useChatStateStore from '@stores/chat/chatStateStore';
+import { EmptyChatIcon } from '@assets/svg/chat';
 
 const ChattingPage = () => {
     const buttonFocus = useTabStateStore((state) => state.buttonFocus);
     const setButtonFocus = useTabStateStore((state) => state.setButtonFocus);
 
-    const [isChatState, setIsChatState] = useState([]);
+    const chatState = useChatStateStore((state) => state.chatState);
 
     return (
         <div className="absolute z-10 flex w-full h-full">
@@ -61,7 +62,7 @@ const ChattingPage = () => {
             </div>
             {/* 채팅창 */}
             <div className="flex flex-col items-center justify-center w-full h-full">
-                {isChatState.length === 0 ? (
+                {chatState.length === 0 ? (
                     <div className="relative flex flex-col items-center pb-10">
                         <EmptyChatIcon className="w-56 pt-10 pr-10 " />
                         <p className="absolute text-2xl text-center text-white bottom-8 w-80 opacity-80 animate-pulse">
@@ -69,7 +70,11 @@ const ChattingPage = () => {
                         </p>
                     </div>
                 ) : (
-                    <></>
+                    <ChatRoom
+                        id={chatState[0].id}
+                        nickname={chatState[0].nickname}
+                        profileImage={chatState[0].profileImage}
+                    />
                 )}
             </div>
         </div>

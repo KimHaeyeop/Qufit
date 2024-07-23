@@ -13,10 +13,13 @@ const ChatInfo = ({ id, nickname, profileImage, lastMessage, unreadCount }: Chat
         <div className="flex flex-col">
             <div className="w-full h-0.5 bg-hotPink" />
             <div className="flex items-center justify-between pl-1">
-                <div className="flex items-center py-4 ">
+                <div className="flex items-center py-5 ">
                     <img src={profileImage} alt="user profile image" className="rounded-full w-14 h-14" />
                     <div className="flex flex-col mx-3.5 ">
-                        <p className="text-2xl text-white truncate max-w-72">{nickname}</p>
+                        <div className="flex items-center">
+                            <p className="mr-4 text-2xl text-white truncate max-w-72">{nickname}</p>
+                            <p className="font-light text-white opacity-80">14 : 32</p>
+                        </div>
                         <p className="mt-2 text-xl font-light text-white truncate max-w-96">{lastMessage}</p>
                     </div>
                 </div>
