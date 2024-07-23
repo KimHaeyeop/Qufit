@@ -88,7 +88,17 @@ function LiveKitTest() {
     };
 
     async function joinRoom() {
-        const room = new Room();
+        const room = new Room({
+            videoCaptureDefaults: {
+                deviceId: '',
+                facingMode: 'user',
+                resolution: {
+                    width: 355,
+                    height: 260,
+                    frameRate: 30,
+                },
+            },
+        });
         setRoom(room);
 
         room.on(
@@ -137,7 +147,7 @@ function LiveKitTest() {
             </button>
 
             <button onClick={leaveRoom}>Leave Room</button>
-            <div className="flex flex-col h-full justify-between">
+            <div className="flex flex-col justify-between h-full">
                 <div className="flex gap-4">
                     {localTrack && (
                         <VideoComponent
