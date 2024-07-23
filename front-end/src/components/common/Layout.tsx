@@ -1,10 +1,14 @@
 import Header from '@components/common/Header';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 const Layout = ({ hasHeader }: { hasHeader: boolean }) => {
+    const location = useLocation();
+    const isLocation = location.pathname;
+
+    const background = isLocation === '/main' ? 'bg-mainPageBg' : 'bg-chatPageBg';
+
     return (
-        // 나중에 페이지 url 별로 다른 bg 렌더링되도록 수정
-        <div className="flex flex-col items-center justify-center w-screen h-screen bg-cover px-14 bg-mainPageBg">
+        <div className={`flex flex-col items-center justify-center w-screen h-screen bg-cover px-14 ${background}`}>
             {hasHeader && (
                 <>
                     <Header />
