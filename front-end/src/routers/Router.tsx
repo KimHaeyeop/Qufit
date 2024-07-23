@@ -1,4 +1,5 @@
 import Layout from '@components/common/Layout';
+import VideoPageLayout from '@components/common/VideoPageLayout';
 import ChattingPage from '@pages/ChattingPage';
 import GroupVideoPage from '@pages/GroupVideoPage';
 import IntroductionPage from '@pages/IntroductionPage';
@@ -15,7 +16,7 @@ const Router = () => {
         //header가 있는 페이지
         {
             path: PATH.ROOT,
-            element: <Layout hasHeader={true} />,
+            element: <Layout />,
             errorElement: <NotFoundPage />,
             children: [
                 {
@@ -44,7 +45,7 @@ const Router = () => {
         //header가 없는 부분
         {
             path: PATH.ROOT,
-            element: <Layout hasHeader={false} />,
+            element: <VideoPageLayout />,
             errorElement: <NotFoundPage />,
             children: [
                 {
