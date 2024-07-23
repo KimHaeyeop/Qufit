@@ -8,6 +8,7 @@ export default {
             white: '#fff',
             black: '#340544',
             pink: '#FD4C8C',
+            purple: '#CA63E3',
             lightPurple: {
                 1: '#DBBEEA',
                 2: '#EDB6F4',

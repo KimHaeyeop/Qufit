@@ -32,25 +32,38 @@ function VideoComponent({ track, isManager, participantIdentity, local = false }
         };
     }, [track]);
 
-    const handleMicIconClick = () => {
+    const changeMicrophoneEnabled = () => {
         setIsMicEnable(!room?.localParticipant.isMicrophoneEnabled);
         room?.localParticipant.setMicrophoneEnabled(!room?.localParticipant.isMicrophoneEnabled);
     };
     return (
-        <div onClick={test}>
-            <div className="relative rounded-xl">
-                {isManager && <CrownIcon width={'50px'} className="absolute left-2 top-2" />}
+        // <div onClick={test}>
+        <div>
+            <div className="relative rounded-xl w-full">
+                <div className="absolute h-64  w-full rounded-xl p-4 flex flex-col justify-between z-50 ">
+                    {isManager && <CrownIcon width={'50px'} className="left-2 top-2" />}
 
-                <video ref={videoElement} className="h-64 p-0 rounded-xl" />
-                <div
-                    onClick={handleMicIconClick}
-                    className="absolute  bottom-4 left-full -translate-x-[calc(100%+1rem)]"
-                >
-                    {isMicEnable ? <MicOnIcon width={'30px'} /> : <MicOffIcon width={'30px'} />}
+                    <div className="flex justify-between items-center ">
+                        <p className="text-white font-bold text-sm">{participantIdentity + (local ? ' (You)' : '')}</p>
+
+                        <div>{isMicEnable ? <MicOnIcon width={'30px'} /> : <MicOffIcon width={'30px'} />}</div>
+
+                        <div className="absolute w-full left-0 px-4 pb-3 transition-all duration-1000 group">
+                            <button
+                                className="w-full h-14 bg-white rounded-xl invisible group-hover:visible "
+                                onClick={changeMicrophoneEnabled}
+                            >
+                                <div className="flex justify-center items-center gap-1">
+                                    {isMicEnable ? <MicOffIcon width={'30px'} /> : <MicOnIcon width={'30px'} />}
+                                    <p className={`text-lg  ${isMicEnable && ' text-purple'}`}>
+                                        {isMicEnable ? '마이크 끄기' : '마이크 켜기'}
+                                    </p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <p className="absolute bottom-4 left-4 text-white font-bold text-sm">
-                    {participantIdentity + (local ? ' (You)' : '')}
-                </p>
+                <video ref={videoElement} className="h-64 p-0 rounded-xl "></video>
             </div>
         </div>
     );
