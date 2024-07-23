@@ -23,6 +23,8 @@ export default {
             backgroundImage: {
                 mainPageBg: "url('@assets/png/mainPageBg.png')",
                 chatPageBg: "url('@assets/png/chatPageBg.png')",
+                bluePurple:
+                    'linear-gradient(to bottom left,rgba(145, 202, 247, 1) 0%, rgba(218, 153, 226, 1) 88%,rgba(252, 132, 222, 1) 100%)',
                 whitePink:
                     'linear-gradient(to bottom left,rgba(255, 231, 239, 1) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%)',
                 hotPink:
