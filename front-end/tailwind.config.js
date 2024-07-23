@@ -4,6 +4,10 @@ import { transform } from 'typescript';
 export default {
     content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
     theme: {
+        screens: {
+            lg: { min: '1024px', max: '1439px' },
+            xl: '1920px',
+        },
         colors: {
             white: '#fff',
             black: '#340544',
