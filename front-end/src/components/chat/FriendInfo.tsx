@@ -1,5 +1,6 @@
 import { StartChatIcon, DeleteFriendIcon } from '@assets/svg/chat';
 import useChatStateStore from '@stores/chat/chatStateStore';
+import useCloseStateStore from '@stores/chat/closeStateStore';
 
 interface FriendInfoProps {
     id: string;
@@ -9,6 +10,7 @@ interface FriendInfoProps {
 
 const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
     const setChatState = useChatStateStore((state) => state.setChatState);
+    const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
     const handleStartChatButton = () => {
         setChatState([
@@ -18,6 +20,7 @@ const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
                 profileImage: profileImage,
             },
         ]);
+        setIsClosed(false);
     };
 
     return (

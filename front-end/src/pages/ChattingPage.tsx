@@ -4,7 +4,6 @@ import ChatRoom from '@components/chat/ChatRoom';
 import { FriendsInfoDummy } from '@dummy/Dummy';
 import useTabStateStore from '@stores/chat/tabStateStore';
 import useChatStateStore from '@stores/chat/chatStateStore';
-import { EmptyChatIcon } from '@assets/svg/chat';
 
 const ChattingPage = () => {
     const buttonFocus = useTabStateStore((state) => state.buttonFocus);
@@ -61,21 +60,14 @@ const ChattingPage = () => {
                 )}
             </div>
             {/* 채팅창 */}
-            <div className="flex flex-col items-center justify-center w-full h-full">
-                {chatState.length === 0 ? (
-                    <div className="relative flex flex-col items-center pb-10">
-                        <EmptyChatIcon className="w-56 pt-10 pr-10 " />
-                        <p className="absolute text-2xl text-center text-white bottom-8 w-80 opacity-80 animate-pulse">
-                            채팅할 상대를 선택해주세요.
-                        </p>
-                    </div>
-                ) : (
+            <div className="relative flex flex-col items-center justify-center w-full h-full">
+                <div className="w-full h-full py-16 pr-20">
                     <ChatRoom
                         id={chatState[0].id}
                         nickname={chatState[0].nickname}
                         profileImage={chatState[0].profileImage}
                     />
-                )}
+                </div>
             </div>
         </div>
     );
