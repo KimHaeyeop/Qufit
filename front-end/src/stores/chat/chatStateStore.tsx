@@ -12,7 +12,13 @@ interface ChatStateProps {
 }
 
 const useChatStateStore = create<ChatStateProps>((set) => ({
-    chatState: [],
+    chatState: [
+        {
+            id: '',
+            nickname: '',
+            profileImage: '',
+        },
+    ],
     setChatState: (list: UserInfoProps[]) =>
         set(() => ({
             chatState: list,
