@@ -11,6 +11,13 @@
     }
 }
 
+#root,
+html,
+body {
+    min-height: 100%;
+    height: 100%;
+}
+
 @layer components {
     .effect-none {
         box-shadow: none;
