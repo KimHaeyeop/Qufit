@@ -7,7 +7,7 @@ interface VideoComponentProps {
     width?: string;
     height?: string;
     track: LocalVideoTrack | RemoteVideoTrack;
-    participantIdentity: string;
+    participateName: string;
     participants?: Participant[];
     local?: boolean;
     isManager: boolean;
@@ -16,7 +16,7 @@ interface VideoComponentProps {
 function VideoComponent({
     track,
     isManager,
-    participantIdentity,
+    participateName,
     local = false,
     width = '355px',
     height = '260px',
@@ -54,7 +54,7 @@ function VideoComponent({
         >
             {isManager && <CrownIcon width={'50px'} />}
             <div className="flex items-center justify-between ">
-                <p className="text-lg font-bold text-white ">{participantIdentity + (local ? ' (You)' : '')}</p>
+                <p className="text-lg font-bold text-white ">{participateName + (local ? ' (You)' : '')}</p>
 
                 <div>{isMicEnable ? <MicOnIcon width={'30px'} /> : <MicOffIcon width={'30px'} />}</div>
 

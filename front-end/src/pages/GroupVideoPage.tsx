@@ -35,45 +35,46 @@ function GroupVideoPage() {
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [managerName, setManagerName] = useState('');
 
-    const [localParaticipant, setLocalParticipant] = useState<Participant>();
-    const [participantsVideoInfo, setParticipantsVideoInfo] = useState<IParticipantVideoInfo>({});
-    const [participantsAudioInfo, setParticipantsAudioInfo] = useState<IParticipantAudioInfo>({});
+    const [localParticipant, setLocalParticipant] = useState<Participant>();
+    const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
+    // const [participantsVideoInfo, setParticipantsVideoInfo] = useState<IParticipantVideoInfo>({});
+    // const [participantsAudioInfo, setParticipantsAudioInfo] = useState<IParticipantAudioInfo>({});
 
     const room = useRoomStore((state) => state.room);
     const setRoom = useRoomStore((state) => state.setRoom);
 
-    const [localTrack, setLocalTrack] = useState<LocalVideoTrack | undefined>(undefined);
-    const [remoteTracks, setRemoteTracks] = useState<TrackInfo[]>([]);
+    // const [localTrack, setLocalTrack] = useState<LocalVideoTrack | undefined>(undefined);
+    // const [remoteTracks, setRemoteTracks] = useState<TrackInfo[]>([]);
 
     const roomName = 'test Room';
     const participantName = String(Math.random() * 100);
 
-    const handleTrackUnsubscribed = (track: RemoteTrack, publication: RemoteTrackPublication) => {
-        setRemoteTracks((prev) =>
-            prev.filter((track) => {
-                return track.trackPublication.trackSid !== publication.trackSid;
-            }),
-        );
-        console.log(remoteTracks);
-    };
+    // const handleTrackUnsubscribed = (track: RemoteTrack, publication: RemoteTrackPublication) => {
+    //     setRemoteTracks((prev) =>
+    //         prev.filter((track) => {
+    //             return track.trackPublication.trackSid !== publication.trackSid;
+    //         }),
+    //     );
+    //     console.log(remoteTracks);
+    // };
 
-    const handleTrackSubscribed = (
-        track: RemoteTrack,
-        publication: RemoteTrackPublication,
-        participant: RemoteParticipant,
-    ) => {
-        track.kind === 'video' &&
-            setParticipantsVideoInfo((prev) => ({
-                ...prev,
-                [participant.sid]: { videoTrack: track, trackPublication: publication },
-            }));
+    // const handleTrackSubscribed = (
+    //     track: RemoteTrack,
+    //     publication: RemoteTrackPublication,
+    //     participant: RemoteParticipant,
+    // ) => {
+    //     track.kind === 'video' &&
+    //         setParticipantsVideoInfo((prev) => ({
+    //             ...prev,
+    //             [participant.sid]: { videoTrack: track, trackPublication: publication },
+    //         }));
 
-        track.kind === 'audio' &&
-            setParticipantsAudioInfo((prev) => ({
-                ...prev,
-                [participant.sid]: { audioTrack: track, trackPublication: publication },
-            }));
-    };
+    //     track.kind === 'audio' &&
+    //         setParticipantsAudioInfo((prev) => ({
+    //             ...prev,
+    //             [participant.sid]: { audioTrack: track, trackPublication: publication },
+    //         }));
+    // };
 
     async function joinRoom() {
         const room = new Room({
@@ -89,24 +90,28 @@ function GroupVideoPage() {
         });
         setRoom(room);
 
-        room.on(
-            RoomEvent.TrackSubscribed,
-            (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-                publication.setEnabled(true);
-                console.log(publication);
-            },
-        );
+        // room.on(
+        //     RoomEvent.TrackSubscribed,
+        //     (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
+        //         publication.setEnabled(true);
+        //     },
+        // );
 
-        room.on(
-            RoomEvent.TrackSubscribed,
-            (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
-                handleTrackSubscribed(track, publication, participant);
-            },
-        );
-
-        room.on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack, publication: RemoteTrackPublication) => {
-            handleTrackUnsubscribed(track, publication);
+        room.on(RoomEvent.ParticipantConnected, (participant) => {
+            setParticipants((prev) => [...prev, participant]);
+            setRemoteParticipants((prev) => [...prev, participant]);
         });
+
+        // room.on(
+        //     RoomEvent.TrackSubscribed,
+        //     (track: RemoteTrack, publication: RemoteTrackPublication, participant: RemoteParticipant) => {
+        //         handleTrackSubscribed(track, publication, participant);
+        //     },
+        // );
+
+        // room.on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack, publication: RemoteTrackPublication) => {
+        //     handleTrackUnsubscribed(track, publication);
+        // });
 
         try {
             const token = await getToken(roomName, participantName);
@@ -117,7 +122,6 @@ function GroupVideoPage() {
             const curParticipants = [];
             curParticipants.push(room.localParticipant);
             Array.from(room.remoteParticipants.values()).forEach((participant) => curParticipants.push(participant));
-            console.log(curParticipants);
             setParticipants(curParticipants);
 
             curParticipants.sort((partA, partB) => {
@@ -126,12 +130,11 @@ function GroupVideoPage() {
             });
 
             setManagerName(curParticipants[0].name!);
-
-            console.log(room.localParticipant.joinedAt);
-            console.log(Array.from(room.remoteParticipants.values()));
-
-            setLocalTrack(room.localParticipant.videoTrackPublications.values().next().value.videoTrack);
             setLocalParticipant(room.localParticipant);
+            setRemoteParticipants(Array.from(room.remoteParticipants.values()));
+
+            // setLocalTrack(room.localParticipant.videoTrackPublications.values().next().value.videoTrack);
+            // setLocalParticipant(room.localParticipant);
         } catch (error) {
             console.log('There was an error connecting to the room:', (error as Error).message);
             await leaveRoom();
@@ -141,75 +144,60 @@ function GroupVideoPage() {
     async function leaveRoom() {
         await room?.disconnect();
         setRoom(undefined);
-        setLocalTrack(undefined);
-        setRemoteTracks([]);
+        // setLocalTrack(undefined);
+        // setRemoteTracks([]);
     }
     return (
         <>
             <button onClick={leaveRoom}>Leave Room</button>
-            {/* <div className="flex flex-col justify-between h-full">
-                <div className="flex gap-4"> */}
-            {/* {localTrack && (
+            <div className="flex flex-col justify-between h-full">
+                <div className="flex gap-4">
+                    {localParticipant && (
                         <VideoComponent
-                            track={localTrack}
-                            isManager={localParaticipant?.sid}
-                            participantIdentity={participantName}
+                            track={localParticipant.videoTrackPublications.values().next().value.track}
+                            isManager={localParticipant.name === managerName}
+                            participateName={localParticipant.name!}
                             local={true}
                         />
                     )}
-                    {participants.map(
+                    {remoteParticipants.map(
                         (participant, idx) =>
-                            participant.participant.sid !== localParaticipant?.sid &&
                             idx % 2 === 1 && (
                                 <VideoComponent
-                                    // participants={participants}
-                                    key={participant.participant.sid}
-                                    track={
-                                        participantsVideoInfo[participant.participant.sid]
-                                            .videoTrack as RemoteVideoTrack
-                                    }
-                                    isManager={getManagerSid() === participant.participant.sid}
-                                    participantIdentity={participant.participant.name || ''}
+                                    key={participant.name}
+                                    track={participant.videoTrackPublications.values().next().value.track}
+                                    isManager={participant.name === managerName}
+                                    participateName={participant.name!}
                                 />
                             ),
                     )}
-                </div> */}
-            <button onClick={joinRoom} type="submit">
-                입장하기
-            </button>
+                </div>
+                <button onClick={joinRoom} type="submit">
+                    입장하기
+                </button>
 
-            {/* <div className="flex gap-4">
-                    {participants.map(
+                <div className="flex gap-4">
+                    {remoteParticipants.map(
                         (participant, idx) =>
-                            participant.participant.sid !== localParaticipant?.sid &&
                             idx % 2 === 0 && (
                                 <VideoComponent
-                                    key={participant.participant.sid}
-                                    track={
-                                        participantsVideoInfo[participant.participant.sid]
-                                            .videoTrack as RemoteVideoTrack
-                                    }
-                                    isManager={getManagerSid() === participant.participant.sid}
-                                    participantIdentity={participant.participant.name || ''}
+                                    key={participant.name}
+                                    track={participant.videoTrackPublications.values().next().value.track}
+                                    isManager={participant.name === managerName}
+                                    participateName={participant.name!}
                                 />
                             ),
                     )}
                 </div>
                 <div>
-                    {participants.map(
-                        (participant) =>
-                            participant.participant.sid !== localParaticipant?.sid && (
-                                <AudioComponent
-                                    key={participant.participant.audioTrackPublications.size}
-                                    track={
-                                        (participantsAudioInfo[participant.participant.sid].audioTrack as AudioTrack) ||
-                                        ''
-                                    }
-                                />
-                            ),
-                    )}
+                    {participants.map((participant) => (
+                        <AudioComponent
+                            key={participant.name}
+                            track={participant.audioTrackPublications.values().next().value.track}
+                        />
+                    ))}
                 </div>
-            </div> */}
+            </div>
         </>
     );
 }
