@@ -7,7 +7,7 @@ interface VideoComponentProps {
     width?: string;
     height?: string;
     track: LocalVideoTrack | RemoteVideoTrack;
-    participantIdentity: string;
+    participateName: string;
     participants?: Participant[];
     local?: boolean;
     isManager: boolean;
@@ -16,10 +16,10 @@ interface VideoComponentProps {
 function VideoComponent({
     track,
     isManager,
-    participantIdentity,
+    participateName,
     local = false,
-    width = '355px',
-    height = '260px',
+    width = '22.1875rem',
+    height = '16.25rem',
 }: VideoComponentProps) {
     const videoElement = useRef<HTMLVideoElement | null>(null);
     const [isMicEnable, setIsMicEnable] = useState(true);
@@ -52,11 +52,11 @@ function VideoComponent({
             style={{ width, height }}
             onClick={changeCameraEnabled}
         >
-            {isManager && <CrownIcon width={'50px'} />}
+            {isManager && <CrownIcon width={'3.125rem'} />}
             <div className="flex items-center justify-between ">
-                <p className="text-lg font-bold text-white ">{participantIdentity + (local ? ' (You)' : '')}</p>
+                <p className="text-lg font-bold text-white ">{participateName + (local ? ' (You)' : '')}</p>
 
-                <div>{isMicEnable ? <MicOnIcon width={'30px'} /> : <MicOffIcon width={'30px'} />}</div>
+                <div>{isMicEnable ? <MicOnIcon width={'1.875rem'} /> : <MicOffIcon width={'1.875rem'} />}</div>
 
                 <div className="absolute left-0 w-full px-4 pb-3 transition-all duration-1000 group">
                     <button
@@ -64,7 +64,7 @@ function VideoComponent({
                         onClick={(event) => changeMicrophoneEnabled(event)}
                     >
                         <div className="flex items-center justify-center gap-1">
-                            {isMicEnable ? <MicOffIcon width={'20px'} /> : <MicOnIcon width={'20px'} />}
+                            {isMicEnable ? <MicOffIcon width={'1.25rem'} /> : <MicOnIcon width={'1.25rem'} />}
                             <p className={`text-base  ${isMicEnable && ' text-purple'}`}>
                                 {isMicEnable ? '마이크 끄기' : '마이크 켜기'}
                             </p>
