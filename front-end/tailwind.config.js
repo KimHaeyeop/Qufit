@@ -36,6 +36,7 @@ export default {
             aspectRatio: {
                 layout: '1.8 / 1',
                 header: '14 / 1',
+                video: '355/260',
             },
 
             fontFamily: {
