@@ -13,7 +13,7 @@ const ChatInfo = ({ id, nickname, profileImage, lastMessage, unreadCount }: Chat
         <div className="flex flex-col">
             <div className="w-full h-0.5 bg-hotPink" />
             <div className="flex items-center justify-between pl-1">
-                <div className="flex items-center py-5 lg:py-3">
+                <button className="flex items-center py-5 w-96 lg:py-3">
                     <img
                         src={profileImage}
                         alt="user profile image"
@@ -30,7 +30,7 @@ const ChatInfo = ({ id, nickname, profileImage, lastMessage, unreadCount }: Chat
                             {lastMessage}dddddddddddddddddddddd
                         </p>
                     </div>
-                </div>
+                </button>
                 <div className="flex">
                     {unreadCount > 0 && (
                         <div className="flex items-center justify-center w-8 h-8 mr-5 font-bold text-center text-white bg-white rounded-full bg-opacity-40 lg:w-7 lg:h-7 lg:text-sm lg:mr-3 md:w-10 md:h-10 md:mr-8 xs:w-7 xs:h-7 xs:text-sm xs:mr-4">
