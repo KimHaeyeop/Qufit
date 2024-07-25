@@ -32,12 +32,12 @@ const useRoomStore = create<State & Action>((set) => ({
     setManagerName: (managerName) => set({ managerName: managerName }),
 }));
 
-export const useRoom = () => useRoomStore((state) => state.room);
-export const useRoomParticipants = () => useRoomStore((state) => state.participants);
-export const useRoomMyName = () => useRoomStore((state) => state.myName);
-export const useRoomManagerName = () => useRoomStore((state) => state.managerName);
+export const useRoomStateStore = () => useRoomStore((state) => state.room);
+export const useRoomParticipantsStore = () => useRoomStore((state) => state.participants);
+export const useRoomMyNameStore = () => useRoomStore((state) => state.myName);
+export const useRoomManagerNameStore = () => useRoomStore((state) => state.managerName);
 
-export const useSetRoom = () => useRoomStore((state) => state.setRoom);
-export const useRoomAddParticipant = () => useRoomStore((state) => state.addParticipant);
-export const useRoomSetMyName = () => useRoomStore((state) => state.setMyName);
-export const useRoomSetManagerName = () => useRoomStore((state) => state.setManagerName);
+export const useSetRoomStateStore = () => useRoomStore((state) => state.setRoom);
+export const useRoomAddParticipantStore = () => useRoomStore((state) => state.addParticipant);
+export const useRoomSetMyNameStore = () => useRoomStore((state) => state.setMyName);
+export const useRoomSetManagerNameStore = () => useRoomStore((state) => state.setManagerName);
