@@ -15,7 +15,7 @@ const ChattingPage = () => {
         <div className="absolute z-10 flex w-full h-full">
             {/* 친구탭 */}
             <div className="flex flex-col w-full h-full px-20 py-16 lg:px-16 lg:py-12 md:py-10 xs:py-8 xs:px-12">
-                <div className="z-10 flex justify-between px-20 mb-10 lg:mb-8 lg:px-18 md:px-32 xs:px-4">
+                <div className="z-10 flex justify-around mb-10 lg:mb-8">
                     <button
                         onClick={() => setButtonFocus('friend')}
                         className={`w-24 h-12 rounded-xl text-white text-2xl ${
