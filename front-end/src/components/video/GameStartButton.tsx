@@ -24,7 +24,7 @@ const GameStartButton = () => {
                         loop={false}
                         init={0}
                         end={69}
-                        className="w-[15rem]"
+                        className="w-[20rem]"
                     />
                 ) : (
                     <LottieComponent
@@ -34,7 +34,7 @@ const GameStartButton = () => {
                         isStopped={false}
                         loop={true}
                         init={70}
-                        className="w-[15rem]"
+                        className="w-[20rem]"
                     />
                 )}
             </div>
