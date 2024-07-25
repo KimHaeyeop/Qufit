@@ -3,6 +3,7 @@ import { useRoomStore } from '@stores/video/roomStore';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'livekit-client';
 import { useEffect, useRef, useState } from 'react';
 import { MouseEvent } from 'react';
+
 interface VideoComponentProps {
     width?: string;
     height?: string;
