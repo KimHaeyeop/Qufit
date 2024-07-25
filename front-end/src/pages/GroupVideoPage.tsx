@@ -5,14 +5,14 @@ import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
 import EmptyVideo from '@components/video/EmptyVideo';
 import {
-    useRoom,
-    useRoomAddParticipant,
-    useRoomManagerName,
-    useRoomMyName,
-    useRoomParticipants,
-    useRoomSetManagerName,
-    useRoomSetMyName,
-    useSetRoom,
+    useRoomStateStore,
+    useRoomAddParticipantStore,
+    useRoomManagerNameStore,
+    useRoomMyNameStore,
+    useRoomParticipantsStore,
+    useRoomSetManagerNameStore,
+    useRoomSetMyNameStore,
+    useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
 import { getToken } from '@components/video/getToken';
@@ -22,17 +22,17 @@ function GroupVideoPage() {
     const [localParticipant, setLocalParticipant] = useState<Participant>();
     const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
 
-    const room = useRoom();
-    const setRoom = useSetRoom();
+    const room = useRoomStateStore();
+    const setRoom = useSetRoomStateStore();
 
-    const myName = useRoomMyName();
-    const setMyName = useRoomSetMyName();
+    const myName = useRoomMyNameStore();
+    const setMyName = useRoomSetMyNameStore();
 
-    const managerName = useRoomManagerName();
-    const setManagerName = useRoomSetManagerName();
+    const managerName = useRoomManagerNameStore();
+    const setManagerName = useRoomSetManagerNameStore();
 
-    const participants = useRoomParticipants();
-    const addParticipant = useRoomAddParticipant();
+    const participants = useRoomParticipantsStore();
+    const addParticipant = useRoomAddParticipantStore();
 
     const roomName = 'test Room';
 
