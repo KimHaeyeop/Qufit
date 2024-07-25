@@ -1,5 +1,5 @@
 import { Participant, Room, RoomEvent, Track, TrackPublication, VideoTrack } from 'livekit-client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { getToken } from '@components/video/getToken';
 import { useRoomStore } from '@stores/video/roomStore';
@@ -7,7 +7,9 @@ import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
 import { EmptyChatIcon } from '@assets/svg/chat';
 import EmptyVideo from '@components/video/EmptyVideo';
-
+import Lottie from 'lottie-web';
+import LottieComponent from '@components/video/LottieComponent';
+import animateData from '@assets/lottie/heart button.json';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 function GroupVideoPage() {
@@ -15,7 +17,16 @@ function GroupVideoPage() {
     const [participants, setParticipants] = useState<Participant[]>([]);
     const [localParticipant, setLocalParticipant] = useState<Participant>();
     const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
+    const [isPaused, setIsPaused] = useState(false);
+    const [isStopped, setIsStopped] = useState(false);
 
+    const [init, setInit] = useState(0);
+
+    const [end, setEnd] = useState(69);
+
+    const [hover, setHover] = useState(70);
+
+    const [isStart, setIsStart] = useState(false);
     console.log(participants);
 
     const [name, setName] = useState('');
@@ -67,6 +78,11 @@ function GroupVideoPage() {
             await leaveRoom();
         }
     }
+    const gameStart = () => {
+        if (name && managerName && managerName === name) {
+            setIsStart(true);
+        }
+    };
 
     async function leaveRoom() {
         await room?.disconnect();
@@ -101,6 +117,28 @@ function GroupVideoPage() {
                 <div>
                     <input placeholder="이름을 입력해주세요" onChange={(e) => setName(e.target.value)} />
 
+                    <div className="flex gap-8 group" onClick={gameStart}>
+                        {!isStart ? (
+                            <LottieComponent
+                                animationData={animateData}
+                                speed={0.5}
+                                isPaused={isPaused}
+                                isStopped={isStopped}
+                                loop={false}
+                                init={0}
+                                end={69}
+                            />
+                        ) : (
+                            <LottieComponent
+                                animationData={animateData}
+                                speed={0.3}
+                                isPaused={isPaused}
+                                isStopped={isStopped}
+                                loop={true}
+                                init={70}
+                            />
+                        )}
+                    </div>
                     <button onClick={joinRoom} type="submit">
                         입장하기
                     </button>
