@@ -13,7 +13,7 @@ const ChatInfo = ({ id, nickname, profileImage, lastMessage, unreadCount }: Chat
         <div className="flex flex-col">
             <div className="w-full h-0.5 bg-hotPink" />
             <div className="flex items-center justify-between pl-1">
-                <div className="flex items-center py-5 lg:py-3">
+                <button className="flex items-center w-full py-5 lg:py-3">
                     <img
                         src={profileImage}
                         alt="user profile image"
