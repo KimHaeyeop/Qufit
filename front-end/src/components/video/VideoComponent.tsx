@@ -1,12 +1,10 @@
 import { CameraOffIcon, CrownIcon, MicOffIcon, MicOnIcon } from '@assets/svg/video';
-import { useRoomStore } from '@stores/video/roomStore';
+import { useRoom } from '@stores/video/roomStore';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'livekit-client';
 import { useEffect, useRef, useState } from 'react';
 import { MouseEvent } from 'react';
 
 interface VideoComponentProps {
-    width?: string;
-    height?: string;
     track: LocalVideoTrack | RemoteVideoTrack;
     participateName: string;
     participants?: Participant[];
@@ -14,18 +12,11 @@ interface VideoComponentProps {
     isManager: boolean;
 }
 
-function VideoComponent({
-    track,
-    isManager,
-    participateName,
-    local = false,
-    width = '22.1875rem',
-    height = '16.25rem',
-}: VideoComponentProps) {
+function VideoComponent({ track, isManager, participateName, local = false }: VideoComponentProps) {
     const videoElement = useRef<HTMLVideoElement | null>(null);
     const [isMicEnable, setIsMicEnable] = useState(true);
     const [isCameraEnable, setIsCameraEnable] = useState(true);
-    const room = useRoomStore((state) => state.room);
+    const room = useRoom();
 
     useEffect(() => {
         if (videoElement.current) {

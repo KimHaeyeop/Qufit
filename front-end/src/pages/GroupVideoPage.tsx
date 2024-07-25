@@ -1,37 +1,38 @@
-import { Participant, Room, RoomEvent, Track, TrackPublication, VideoTrack } from 'livekit-client';
-import { useEffect, useRef, useState } from 'react';
+import { Participant, Room, RoomEvent, VideoTrack } from 'livekit-client';
+import { useState } from 'react';
 
-import { getToken } from '@components/video/getToken';
-import { useRoomStore } from '@stores/video/roomStore';
 import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
-import { EmptyChatIcon } from '@assets/svg/chat';
 import EmptyVideo from '@components/video/EmptyVideo';
-import Lottie from 'lottie-web';
-import LottieComponent from '@components/video/LottieComponent';
-import animateData from '@assets/lottie/heart button.json';
+import {
+    useRoom,
+    useRoomAddParticipant,
+    useRoomManagerName,
+    useRoomMyName,
+    useRoomParticipants,
+    useRoomSetManagerName,
+    useRoomSetMyName,
+    useSetRoom,
+} from '@stores/video/roomStore';
+import GameStartButton from '@components/video/GameStartButton';
+import { getToken } from '@components/video/getToken';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 function GroupVideoPage() {
-    const [managerName, setManagerName] = useState('');
-    const [participants, setParticipants] = useState<Participant[]>([]);
     const [localParticipant, setLocalParticipant] = useState<Participant>();
     const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
-    const [isPaused, setIsPaused] = useState(false);
-    const [isStopped, setIsStopped] = useState(false);
 
-    const [init, setInit] = useState(0);
+    const room = useRoom();
+    const setRoom = useSetRoom();
 
-    const [end, setEnd] = useState(69);
+    const myName = useRoomMyName();
+    const setMyName = useRoomSetMyName();
 
-    const [hover, setHover] = useState(70);
+    const managerName = useRoomManagerName();
+    const setManagerName = useRoomSetManagerName();
 
-    const [isStart, setIsStart] = useState(false);
-    console.log(participants);
-
-    const [name, setName] = useState('');
-    const room = useRoomStore((state) => state.room);
-    const setRoom = useRoomStore((state) => state.setRoom);
+    const participants = useRoomParticipants();
+    const addParticipant = useRoomAddParticipant();
 
     const roomName = 'test Room';
 
@@ -50,13 +51,12 @@ function GroupVideoPage() {
         setRoom(room);
 
         room.on(RoomEvent.ParticipantConnected, (participant) => {
-            console.log(participants);
-            setParticipants((prev) => [...prev, participant]);
+            addParticipant(participant);
             setRemoteParticipants((prev) => [...prev, participant]);
         });
 
         try {
-            const token = await getToken(roomName, name);
+            const token = await getToken(roomName, myName);
             await room.connect(LIVEKIT_URL, token);
             await room.localParticipant.enableCameraAndMicrophone();
 
@@ -70,7 +70,7 @@ function GroupVideoPage() {
             });
 
             setManagerName(curParticipants[0].name!);
-            setParticipants(curParticipants);
+            addParticipant(room.localParticipant);
             setLocalParticipant(room.localParticipant);
             setRemoteParticipants(Array.from(room.remoteParticipants.values()));
         } catch (error) {
@@ -78,20 +78,12 @@ function GroupVideoPage() {
             await leaveRoom();
         }
     }
-    const gameStart = () => {
-        if (name && managerName && managerName === name) {
-            setIsStart(true);
-        }
-    };
 
     async function leaveRoom() {
         await room?.disconnect();
         setRoom(undefined);
     }
 
-    // for (let i = 0; i < participants.length - 1; i++) {
-    //     console.log(Array.from(participants[i].videoTrackPublications.values())[0].track);
-    // }
     return (
         <>
             <div className="flex flex-col items-center justify-between w-full h-screen">
@@ -115,33 +107,13 @@ function GroupVideoPage() {
                         )}
                 </div>
                 <div>
-                    <input placeholder="이름을 입력해주세요" onChange={(e) => setName(e.target.value)} />
+                    <input placeholder="이름을 입력해주세요" onChange={(e) => setMyName(e.target.value)} />
 
-                    <div className="flex gap-8 group" onClick={gameStart}>
-                        {!isStart ? (
-                            <LottieComponent
-                                animationData={animateData}
-                                speed={0.5}
-                                isPaused={isPaused}
-                                isStopped={isStopped}
-                                loop={false}
-                                init={0}
-                                end={69}
-                            />
-                        ) : (
-                            <LottieComponent
-                                animationData={animateData}
-                                speed={0.3}
-                                isPaused={isPaused}
-                                isStopped={isStopped}
-                                loop={true}
-                                init={70}
-                            />
-                        )}
-                    </div>
                     <button onClick={joinRoom} type="submit">
                         입장하기
                     </button>
+
+                    <GameStartButton />
                 </div>
                 <div className="flex w-full gap-4">
                     {Array(4)
