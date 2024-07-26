@@ -11,5 +11,5 @@ export const PATH = {
     PERSONAL_VIDEO: (roomId: String) => `/video/personal/${roomId}`,
 
     //카카오 소셜로그인 관련
-    KAKAO_REDIRECT:KAKAO_REDIRECT_URI;
+    KAKAO_REDIRECT: KAKAO_REDIRECT_URI,
 };
