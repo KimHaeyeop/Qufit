@@ -61,7 +61,7 @@ const Router = () => {
         },
 
         {
-            path: PATH.KAKAO_REDIRECT,
+            path: 'auth/kakao',
             element: <KakaoRedirectPage />,
         },
     ];
