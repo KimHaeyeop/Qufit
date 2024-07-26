@@ -1,11 +1,10 @@
 import { CameraOffIcon, CrownIcon, MicOffIcon, MicOnIcon } from '@assets/svg/video';
-import { useRoomStore } from '@stores/video/roomStore';
+import { useRoomStateStore } from '@stores/video/roomStore';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'livekit-client';
 import { useEffect, useRef, useState } from 'react';
 import { MouseEvent } from 'react';
+
 interface VideoComponentProps {
-    width?: string;
-    height?: string;
     track: LocalVideoTrack | RemoteVideoTrack;
     participateName: string;
     participants?: Participant[];
@@ -13,18 +12,11 @@ interface VideoComponentProps {
     isManager: boolean;
 }
 
-function VideoComponent({
-    track,
-    isManager,
-    participateName,
-    local = false,
-    width = '22.1875rem',
-    height = '16.25rem',
-}: VideoComponentProps) {
+function VideoComponent({ track, isManager, participateName, local = false }: VideoComponentProps) {
     const videoElement = useRef<HTMLVideoElement | null>(null);
     const [isMicEnable, setIsMicEnable] = useState(true);
     const [isCameraEnable, setIsCameraEnable] = useState(true);
-    const room = useRoomStore((state) => state.room);
+    const room = useRoomStateStore();
 
     useEffect(() => {
         if (videoElement.current) {
@@ -48,12 +40,12 @@ function VideoComponent({
 
     return (
         <div
-            className="relative z-50 flex flex-col justify-between h-full p-4 rounded-xl"
-            style={{ width, height }}
+            className="relative z-50 flex flex-col justify-between w-1/4 p-4 rounded-xl aspect-video max-[]"
+            // style={{ width, height }}
             onClick={changeCameraEnabled}
         >
-            {isManager && <CrownIcon width={'3.125rem'} />}
-            <div className="flex items-center justify-between ">
+            <div>{isManager && <CrownIcon width={'3.125rem'} />}</div>
+            <div className="flex items-center justify-between w-full">
                 <p className="text-lg font-bold text-white ">{participateName + (local ? ' (You)' : '')}</p>
 
                 <div>{isMicEnable ? <MicOnIcon width={'1.875rem'} /> : <MicOffIcon width={'1.875rem'} />}</div>
@@ -72,19 +64,24 @@ function VideoComponent({
                     </button>
                 </div>
             </div>
-            <div className="absolute top-0 left-0 -z-10">
+            <div className="absolute top-0 left-0 w-full -z-10">
                 {isCameraEnable ? (
-                    <video ref={videoElement} className="rounded-xl" style={{ width, height }} />
+                    <video
+                        ref={videoElement}
+                        className="w-full rounded-xl "
+                        // style={{ width, height }}
+                    />
                 ) : (
                     <>
                         <div
-                            className="relative flex items-center justify-center bg-white opacity-40 rounded-xl"
-                            style={{ width, height }}
-                        ></div>
-                        <CameraOffIcon
-                            width={'10rem'}
-                            className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                        />
+                            className="relative flex items-center justify-center w-full bg-white aspect-video opacity-40 rounded-xl"
+                            // style={{ width, height }}
+                        >
+                            <CameraOffIcon
+                                width={'10rem'}
+                                className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                            />
+                        </div>
                     </>
                 )}
             </div>

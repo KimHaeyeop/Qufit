@@ -1,24 +1,40 @@
-import { Participant, Room, RoomEvent, Track, TrackPublication } from 'livekit-client';
+import { Participant, Room, RoomEvent, VideoTrack } from 'livekit-client';
 import { useState } from 'react';
 
-import { getToken } from '@components/video/getToken';
-import { useRoomStore } from '@stores/video/roomStore';
 import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
-
+import EmptyVideo from '@components/video/EmptyVideo';
+import {
+    useRoomStateStore,
+    useRoomAddParticipantStore,
+    useRoomManagerNameStore,
+    useRoomMyNameStore,
+    useRoomParticipantsStore,
+    useRoomSetManagerNameStore,
+    useRoomSetMyNameStore,
+    useSetRoomStateStore,
+} from '@stores/video/roomStore';
+import GameStartButton from '@components/video/GameStartButton';
+import { getToken } from '@components/video/getToken';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 function GroupVideoPage() {
-    const [managerName, setManagerName] = useState('');
-    const [participants, setParticipants] = useState<Participant[]>([]);
     const [localParticipant, setLocalParticipant] = useState<Participant>();
     const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
 
-    const room = useRoomStore((state) => state.room);
-    const setRoom = useRoomStore((state) => state.setRoom);
+    const room = useRoomStateStore();
+    const setRoom = useSetRoomStateStore();
+
+    const myName = useRoomMyNameStore();
+    const setMyName = useRoomSetMyNameStore();
+
+    const managerName = useRoomManagerNameStore();
+    const setManagerName = useRoomSetManagerNameStore();
+
+    const participants = useRoomParticipantsStore();
+    const addParticipant = useRoomAddParticipantStore();
 
     const roomName = 'test Room';
-    const participantName = String(Math.random() * 100);
 
     async function joinRoom() {
         const room = new Room({
@@ -35,12 +51,12 @@ function GroupVideoPage() {
         setRoom(room);
 
         room.on(RoomEvent.ParticipantConnected, (participant) => {
-            setParticipants((prev) => [...prev, participant]);
+            addParticipant(participant);
             setRemoteParticipants((prev) => [...prev, participant]);
         });
 
         try {
-            const token = await getToken(roomName, participantName);
+            const token = await getToken(roomName, myName);
             await room.connect(LIVEKIT_URL, token);
             await room.localParticipant.enableCameraAndMicrophone();
 
@@ -54,7 +70,7 @@ function GroupVideoPage() {
             });
 
             setManagerName(curParticipants[0].name!);
-            setParticipants(curParticipants);
+            addParticipant(room.localParticipant);
             setLocalParticipant(room.localParticipant);
             setRemoteParticipants(Array.from(room.remoteParticipants.values()));
         } catch (error) {
@@ -67,49 +83,58 @@ function GroupVideoPage() {
         await room?.disconnect();
         setRoom(undefined);
     }
+
     return (
         <>
-            <button onClick={leaveRoom}>Leave Room</button>
-            <div className="flex flex-col justify-between h-full">
-                <div className="flex gap-4">
-                    {localParticipant && (
-                        <VideoComponent
-                            track={localParticipant.videoTrackPublications.values().next().value.track}
-                            isManager={localParticipant.name === managerName}
-                            participateName={localParticipant.name!}
-                            local={true}
-                        />
-                    )}
-                    {remoteParticipants.map(
-                        (participant, idx) =>
-                            idx % 2 === 1 && (
+            <div className="flex flex-col items-center justify-between w-full h-screen">
+                <div className="flex w-full gap-4">
+                    {Array(4)
+                        .fill(0)
+                        .map((_, idx) =>
+                            idx < participants.length ? (
                                 <VideoComponent
-                                    key={participant.name}
-                                    track={participant.videoTrackPublications.values().next().value.track}
-                                    isManager={participant.name === managerName}
-                                    participateName={participant.name!}
+                                    key={participants[idx].name}
+                                    track={
+                                        Array.from(participants[idx].videoTrackPublications.values())[0]
+                                            .track as VideoTrack
+                                    }
+                                    isManager={participants[idx].name === managerName}
+                                    participateName={participants[idx].name!}
                                 />
+                            ) : (
+                                <EmptyVideo />
                             ),
-                    )}
-                </div>
-                <button onClick={joinRoom} type="submit">
-                    입장하기
-                </button>
-
-                <div className="flex gap-4">
-                    {remoteParticipants.map(
-                        (participant, idx) =>
-                            idx % 2 === 0 && (
-                                <VideoComponent
-                                    key={participant.name}
-                                    track={participant.videoTrackPublications.values().next().value.track}
-                                    isManager={participant.name === managerName}
-                                    participateName={participant.name!}
-                                />
-                            ),
-                    )}
+                        )}
                 </div>
                 <div>
+                    <input placeholder="이름을 입력해주세요" onChange={(e) => setMyName(e.target.value)} />
+
+                    <button onClick={joinRoom} type="submit">
+                        입장하기
+                    </button>
+
+                    <GameStartButton />
+                </div>
+                <div className="flex w-full gap-4">
+                    {Array(4)
+                        .fill(0)
+                        .map((_, idx) =>
+                            idx + 4 < participants.length ? (
+                                <VideoComponent
+                                    key={participants[idx + 4].name}
+                                    track={
+                                        Array.from(participants[idx + 4].videoTrackPublications.values())[0]
+                                            .track as VideoTrack
+                                    }
+                                    isManager={participants[idx + 4].name === managerName}
+                                    participateName={participants[idx + 4].name!}
+                                />
+                            ) : (
+                                <EmptyVideo />
+                            ),
+                        )}
+                </div>
+                <div className="hidden">
                     {participants.map((participant) => (
                         <AudioComponent
                             key={participant.name}
