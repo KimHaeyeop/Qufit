@@ -3,3 +3,9 @@ export const REST_API_KEY = import.meta.env.VITE_CLIIENT_ID;
 export const REDIRECT_URI = import.meta.env.VITE_REDIRECT_URI;
 export const ACCESS_TOKEN_URL = import.meta.env.VITE_ACCESS_TOKEN_PATH;
 export const FRONT_URL = import.meta.env.VITE_FRONT_URL;
+
+export const END_POINT = {
+    LOGIN: '/auth/login',
+    SIGN_UP: '/auth/signup',
+    CHECK_NICKNAME: '/check-nickname',
+};
