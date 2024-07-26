@@ -4,6 +4,13 @@ import { transform } from 'typescript';
 export default {
     content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
     theme: {
+        screens: {
+            xs: { max: '767px' },
+            sm: { min: '768px', max: '1023px' },
+            md: { min: '1024px', max: '1279px' },
+            lg: { min: '1280px', max: '1439px' },
+            xl: '1920px',
+        },
         colors: {
             white: '#fff',
             black: '#340544',
