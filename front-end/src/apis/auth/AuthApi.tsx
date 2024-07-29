@@ -14,21 +14,10 @@ export const getKakaoAccessToken = async (authCode: string) => {
 
     const response = await axios.post(ACCESS_TOKEN_URL, params, header);
     //TODO: 예외처리해야함
-    const accessToken = response.data.access_token;
 
     return response;
 };
 
 export const login = async (accessToken: string) => {
-    try {
-        const response = await instance.get(END_POINT.LOGIN, { params: { accessToken: accessToken } });
-        if (response.status === HttpStatus.OK) return response.data;
-    } catch (error) {
-        if (isAxiosError(error)) {
-            console.log(error);
-            // if (error.response.status === HttpStatus.UNAUTHORIZED) {
-            //     console.log(1111);
-            // }
-        }
-    }
+    return await instance.get(END_POINT.LOGIN, { params: { accessToken: accessToken } });
 };
