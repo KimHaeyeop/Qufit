@@ -7,6 +7,7 @@ import { useState } from 'react';
 const SignupPage = () => {
     const [gender, setGender] = useState('');
     const [hobby, setHobby] = useState('');
+    const [mbti, setMbti] = useState<string[]>([]);
     return (
         <div>
             <p>{gender}</p>
@@ -21,10 +22,12 @@ const SignupPage = () => {
                 <Radio value={'성향'}>성향</Radio>
             </RadioGroup>
 
-            {/* <CheckboxGroup>
-                <Checkbox>남자</Checkbox>
-                <Checkbox>여자</Checkbox>
-            </CheckboxGroup> */}
+            <p>{mbti}</p>
+            <CheckboxGroup className="flex flex-col" values={mbti} onChange={setMbti}>
+                <Checkbox value={'ENFP'}>ENFP</Checkbox>
+                <Checkbox value={'ESTJ'}>ESTJ</Checkbox>
+                <Checkbox value={'INFP'}>INFP</Checkbox>
+            </CheckboxGroup>
         </div>
     );
 };
