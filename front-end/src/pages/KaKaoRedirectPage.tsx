@@ -1,4 +1,4 @@
-import { getKakaoAccessToken } from '@apis/auth/AuthApi';
+import { getKakaoAccessToken, login } from '@apis/auth/AuthApi';
 import { useSearchParams } from 'react-router-dom';
 
 const KakaoRedirectPage = () => {
@@ -6,9 +6,7 @@ const KakaoRedirectPage = () => {
 
     const authCode = searchParams.get('code');
 
-    console.log(authCode);
-    const accessToken = getKakaoAccessToken(authCode!);
-    console.log(accessToken);
+    getKakaoAccessToken(authCode!).then((response) => login(response.data.access_token));
     return <div>카카오 리다이렉트 페이지</div>;
 };
 
