@@ -1,24 +1,28 @@
-import { useRadioSetValueStore, useRadioValueStore } from '@stores/common/radioStore';
-import { ReactNode } from 'react';
+import React, { useContext } from 'react';
+import { RadioContext } from '@components/common/radio/RadioStoreContext';
 
 interface RadioProps {
-    children: ReactNode;
+    children: React.ReactNode;
     value: string;
     className?: string;
 }
+
 const Radio = ({ children, value, className }: RadioProps) => {
-    const checkedValue = useRadioValueStore();
-    const setCheckedValue = useRadioSetValueStore();
+    const context = useContext(RadioContext);
+
+    if (!context) {
+        throw new Error('Radio must be used within a RadioStoreProvider');
+    }
+
+    const { value: selectedValue, onChange } = context;
+
+    const handleChange = () => {
+        onChange(value);
+    };
+
     return (
-        <label>
-            <input
-                type="radio"
-                value={value}
-                checked={value === checkedValue}
-                // onChange={(e) => group.onChange && group.onChange(e.target.value)}
-                onChange={(e) => setCheckedValue(e.target.value)}
-                className={className}
-            />
+        <label className={className}>
+            <input type="radio" value={value} checked={value === selectedValue} onChange={handleChange} />
             {children}
         </label>
     );
