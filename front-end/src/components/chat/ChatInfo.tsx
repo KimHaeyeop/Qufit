@@ -1,19 +1,47 @@
 import { DoorExitIcon } from '@assets/svg/chat';
+import useChatStateStore from '@stores/chat/chatStateStore';
+import useCloseStateStore from '@stores/chat/closeStateStore';
 
 interface ChatInfoProps {
-    id: string;
+    id: number;
     nickname: string;
     profileImage: string;
     lastMessage: string;
     unreadCount: number;
+    lastMessageId: string;
+    lastMessageTime: string;
+    lastReadMessageId: string;
 }
 
-const ChatInfo = ({ id, nickname, profileImage, lastMessage, unreadCount }: ChatInfoProps) => {
+const ChatInfo = ({
+    id,
+    nickname,
+    profileImage,
+    lastMessage,
+    unreadCount,
+    lastMessageId,
+    lastMessageTime,
+    lastReadMessageId,
+}: ChatInfoProps) => {
+    const setChatState = useChatStateStore((state) => state.setChatState);
+    const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
+
+    const handleOnClickButton = () => {
+        setChatState([
+            {
+                id: id,
+                nickname: nickname,
+                profileImage: profileImage,
+            },
+        ]);
+        setIsClosed(false);
+    };
+
     return (
         <div className="flex flex-col">
             <div className="w-full h-0.5 bg-hotPink" />
             <div className="flex items-center justify-between pl-1">
-                <button className="flex items-center w-full py-5 lg:py-3">
+                <button onClick={handleOnClickButton} className="flex items-center w-full py-5 lg:py-3">
                     <img
                         src={profileImage}
                         alt="user profile image"
@@ -22,12 +50,12 @@ const ChatInfo = ({ id, nickname, profileImage, lastMessage, unreadCount }: Chat
                     <div className="flex flex-col mx-3.5 lg:mx-2.5 xs:mx-1.5">
                         <div className="flex items-center">
                             <p className="mr-4 text-2xl text-white truncate max-w-72 lg:text-lg lg:mr-3 lg:max-w-60 xs:text-lg xs:max-w-32 xs:mr-1">
-                                {nickname}sssssssssssssssss
+                                {nickname}
                             </p>
                             <p className="font-light text-white opacity-80 lg:text-sm xs:text-sm">14 : 32</p>
                         </div>
                         <p className="mt-2 text-xl font-light text-white truncate max-w-96 lg:text-lg lg:mt-1 lg:max-w-72 xs:text-sm xs:mt-1 xs:max-w-36">
-                            {lastMessage}dddddddddddddddddddddd
+                            {lastMessage}
                         </p>
                     </div>
                 </button>
