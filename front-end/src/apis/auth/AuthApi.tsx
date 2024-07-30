@@ -19,5 +19,5 @@ export const getKakaoAccessToken = async (authCode: string) => {
 };
 
 export const login = async (accessToken: string) => {
-    return await instance.get(END_POINT.LOGIN, { params: { accessToken: accessToken } });
+    return await instance.get(END_POINT.LOGIN, { headers: { accessToken: accessToken } });
 };
