@@ -6,9 +6,10 @@ interface CheckboxGroupProps {
     className?: string;
     values: string[];
     onChange: (values: string[]) => void;
+    name?: string;
 }
 
-const CheckboxGroup = ({ children, className, values, onChange }: CheckboxGroupProps) => {
+const CheckboxGroup = ({ children, className, values, onChange, name }: CheckboxGroupProps) => {
     const isChecked = (value: string) => values.includes(value);
 
     const toggleValue = ({ checked, value }: { checked: boolean; value: string }) => {
@@ -20,7 +21,7 @@ const CheckboxGroup = ({ children, className, values, onChange }: CheckboxGroupP
     };
 
     return (
-        <fieldset className={className}>
+        <fieldset className={className} name={name}>
             <CheckboxProvider value={{ isChecked, toggleValue }}>{children}</CheckboxProvider>
         </fieldset>
     );

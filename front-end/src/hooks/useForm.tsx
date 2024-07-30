@@ -2,16 +2,17 @@ import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 export type Valids = { [key: string]: boolean };
 export type Messages = { [key: string]: string };
-interface FormProps<Type> {
-    initialValues: Type;
-    onSubmit: (values: Type) => void;
-    validate: (values: Type) => { valids: Valids; messages: Messages };
+
+interface FormProps<T> {
+    initialValues: T;
+    onSubmit: (values: T) => void;
+    validate: (values: T) => { valids: Valids; messages: Messages };
 }
 
 const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
     const [values, setValues] = useState(initialValues);
-    const [messages, setMessages] = useState<Messages>();
-    const [valids, setValids] = useState<Valids>();
+    const [messages, setMessages] = useState<Messages>({});
+    const [valids, setValids] = useState<Valids>({});
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
@@ -19,33 +20,20 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
     }, []);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        const { name, type, value, checked } = event.target;
+        const newValue = type === 'checkbox' ? checked : value;
 
-        //fieldset에 감싼 요소인지 판단 (checkbox Group, radio Group이 여기에 해당)
-        const fieldset = event.target.closest('fieldset');
-        const name = fieldset ? fieldset.getAttribute('name')! : event.target.name;
-        setValues({ ...values, [name]: value });
+        setValues({ ...values, [name]: newValue });
 
-        //유효성 검사가 있다면 검사
         if (validate) {
-            const result = validate({ ...values, [name]: value });
+            const result = validate({ ...values, [name]: newValue });
             setMessages(result.messages);
             setValids(result.valids);
         }
     };
+
     const handleCheckboxGroupChange = (name: string, selectedValues: string[]) => {
         const newValues = { ...values, [name]: selectedValues };
-
-        setValues(newValues);
-
-        const result = validate(newValues);
-        setMessages(result.messages);
-        setValids(result.valids);
-    };
-
-    const handleRadioGroupChange = (name: string, selectedValue: string) => {
-        const newValues = { ...values, [name]: selectedValue };
-
         setValues(newValues);
 
         const result = validate(newValues);
@@ -54,8 +42,8 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
     };
 
     const handleSubmit = async (event: FormEvent) => {
-        setSubmitting(true);
         event.preventDefault();
+        setSubmitting(true);
 
         await new Promise((r) => setTimeout(r, 1000));
     };
@@ -65,7 +53,8 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
             onSubmit(values);
         }
         setSubmitting(false);
-    }, [submitting]);
+    }, [valids]);
+
     return {
         values,
         submitting,
@@ -73,7 +62,6 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
         valids,
         handleChange,
         handleCheckboxGroupChange,
-        handleRadioGroupChange,
         handleSubmit,
     };
 };
