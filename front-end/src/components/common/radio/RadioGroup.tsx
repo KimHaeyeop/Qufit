@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ChangeEvent, ReactNode } from 'react';
 import { RadioProvider } from '@components/common/radio/RadioStoreContext';
 
 interface RadioGroupProps {
@@ -6,12 +6,13 @@ interface RadioGroupProps {
     children: ReactNode;
     className?: string;
     value: string;
-    onChange: (value: string) => void;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    name: string;
 }
 
-const RadioGroup = ({ label, children, className, value, onChange }: RadioGroupProps) => {
+const RadioGroup = ({ label, children, className, value, onChange, name }: RadioGroupProps) => {
     return (
-        <fieldset className={className}>
+        <fieldset name={name} className={className}>
             {label && <legend>{label}</legend>}
             <RadioProvider value={{ value, onChange }}>{children}</RadioProvider>
         </fieldset>
