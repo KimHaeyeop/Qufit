@@ -5,6 +5,7 @@ interface UserInfoProps {
     id: number;
     nickname: string;
     profileImage: string;
+    otherMemberId: number;
 }
 
 interface ChatStateProps {
@@ -20,6 +21,7 @@ const useChatStateStore = create(
                     id: 0,
                     nickname: '',
                     profileImage: '',
+                    otherMemberId: 0,
                 },
             ],
             setChatState: (list: UserInfoProps[]) =>

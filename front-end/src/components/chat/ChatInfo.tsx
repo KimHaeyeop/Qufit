@@ -6,6 +6,7 @@ interface ChatInfoProps {
     id: number;
     nickname: string;
     profileImage: string;
+    otherMemberId: number;
     lastMessage: string;
     unreadCount: number;
     lastMessageId: string;
@@ -17,6 +18,7 @@ const ChatInfo = ({
     id,
     nickname,
     profileImage,
+    otherMemberId,
     lastMessage,
     unreadCount,
     lastMessageId,
@@ -32,6 +34,7 @@ const ChatInfo = ({
                 id: id,
                 nickname: nickname,
                 profileImage: profileImage,
+                otherMemberId: otherMemberId,
             },
         ]);
         setIsClosed(false);
