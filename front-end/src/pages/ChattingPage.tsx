@@ -4,12 +4,39 @@ import ChatRoom from '@components/chat/ChatRoom';
 import { FriendsInfoDummy } from '@dummy/Dummy';
 import useTabStateStore from '@stores/chat/tabStateStore';
 import useChatStateStore from '@stores/chat/chatStateStore';
+import { instance } from '@apis/axios';
+import { useEffect, useState } from 'react';
+
+interface ChatListProps {
+    chatRoomId: number;
+    otherMemberNickname: string;
+    profileImage: string;
+    lastMessage: string;
+    unreadCount: number;
+    lastMessageId: string;
+    lastMessageTime: string;
+    lastReadMessageId: string;
+}
 
 const ChattingPage = () => {
+    const [chatList, setChatList] = useState<ChatListProps[]>([]);
+
     const buttonFocus = useTabStateStore((state) => state.buttonFocus);
     const setButtonFocus = useTabStateStore((state) => state.setButtonFocus);
 
     const chatState = useChatStateStore((state) => state.chatState);
+
+    useEffect(() => {
+        instance
+            .get(`/qufit/chat/rooms/4`)
+            .then((res) => {
+                setChatList(res.data);
+                console.log('채팅 리스트 응답 성공:', res);
+            })
+            .catch((err: string) => {
+                console.log('채팅 리스트 응답 실패:', err);
+            });
+    }, []);
 
     return (
         <div className="absolute z-10 flex w-full h-full">
@@ -35,10 +62,10 @@ const ChattingPage = () => {
                 </div>
                 {buttonFocus === 'friend' ? (
                     <div className="z-10 overflow-y-auto scrollbar-hide">
-                        {FriendsInfoDummy.map((friend) => (
+                        {FriendsInfoDummy.map((friend, index) => (
                             <FriendInfo
-                                key={friend.id}
-                                id={friend.id}
+                                key={index}
+                                id={index}
                                 nickname={friend.nickname}
                                 profileImage={friend.profileImage}
                             />
@@ -46,14 +73,17 @@ const ChattingPage = () => {
                     </div>
                 ) : (
                     <div className="z-10 overflow-y-auto scrollbar-hide">
-                        {FriendsInfoDummy.map((chat) => (
+                        {chatList.map((chat) => (
                             <ChatInfo
-                                key={chat.id}
-                                id={chat.id}
-                                nickname={chat.nickname}
+                                key={chat.chatRoomId}
+                                id={chat.chatRoomId}
+                                nickname={chat.otherMemberNickname}
                                 profileImage={chat.profileImage}
-                                lastMessage={chat.chatRoom[0].lastMessage}
-                                unreadCount={chat.chatRoom[0].unreadCount}
+                                lastMessage={chat.lastMessage}
+                                unreadCount={chat.unreadCount}
+                                lastMessageId={chat.lastMessageId}
+                                lastMessageTime={chat.lastMessageTime}
+                                lastReadMessageId={chat.lastReadMessageId}
                             />
                         ))}
                     </div>
