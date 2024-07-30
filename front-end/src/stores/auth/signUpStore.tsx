@@ -2,11 +2,11 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface State {
-    accessToken: string;
+    accessToken: string | undefined;
 }
 
 interface Action {
-    setAccessToken: (accessToken: string) => void;
+    setAccessToken: (accessToken: string | undefined) => void;
 }
 
 const useSignUpStore = create(
