@@ -78,6 +78,7 @@ const ChattingPage = () => {
                                 key={chat.chatRoomId}
                                 id={chat.chatRoomId}
                                 nickname={chat.otherMemberNickname}
+                                otherMemberId={chat.otherMemberId}
                                 profileImage={chat.profileImage}
                                 lastMessage={chat.lastMessage}
                                 unreadCount={chat.unreadCount}
@@ -96,6 +97,7 @@ const ChattingPage = () => {
                         id={chatState[0].id}
                         nickname={chatState[0].nickname}
                         profileImage={chatState[0].profileImage}
+                        otherMemberId={chatState[0].otherMemberId}
                     />
                 </div>
             </div>

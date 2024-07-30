@@ -8,9 +8,10 @@ interface ChatRoomProps {
     id: number;
     nickname: string;
     profileImage: string;
+    otherMemberId: number;
 }
 
-const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
+const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) => {
     const isClosed = useCloseStateStore((state) => state.isClosed);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
@@ -61,17 +62,17 @@ const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
                 heartbeatOutgoing: 4000,
                 onConnect: () => {
                     client.current?.publish({
-                        destination: `/pub/chat.enterRoom/1`,
-                        body: JSON.stringify({ pageSize: 20 }),
+                        destination: `/pub/chat.enterRoom/${id}`,
+                        body: JSON.stringify({ pageSize: 20, memberId: 4 }),
                     });
-                    client.current?.subscribe(`/user/4/sub/chatroom.1`, (message) => {
+                    client.current?.subscribe(`/user/4/sub/chatroom.${id}`, (message) => {
                         if (message.body) {
                             const response = JSON.parse(message.body);
                             const messages = response.messages;
                             setChatList(messages);
                         }
                     });
-                    client.current?.subscribe(`/sub/chatroom.1`, callback);
+                    client.current?.subscribe(`/sub/chatroom.${id}`, callback);
                 },
             });
 
@@ -101,10 +102,10 @@ const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
         }
 
         client.current?.publish({
-            destination: `/pub/chat.sendMessage/1`,
+            destination: `/pub/chat.sendMessage/${id}`,
             body: JSON.stringify({
                 senderId: 4,
-                chatRoomId: 1,
+                chatRoomId: id,
                 content: chat,
             }),
         });
@@ -134,6 +135,7 @@ const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
                     id: 0,
                     nickname: '',
                     profileImage: '',
+                    otherMemberId: 0,
                 },
             ]);
         }, 200);
