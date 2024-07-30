@@ -1,8 +1,8 @@
-import React, { createContext } from 'react';
+import React, { ChangeEvent, createContext } from 'react';
 
 interface RadioContextProps {
     value: string;
-    onChange: (value: string) => void;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const RadioContext = createContext<RadioContextProps | null>(null);

@@ -19,8 +19,11 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
     }, []);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const name = event.target.name;
         const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+
+        //fieldset에 감싼 요소인지 판단 (checkbox Group, radio Group이 여기에 해당)
+        const fieldset = event.target.closest('fieldset');
+        const name = fieldset ? fieldset.getAttribute('name')! : event.target.name;
         setValues({ ...values, [name]: value });
 
         //유효성 검사가 있다면 검사
@@ -30,10 +33,31 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
             setValids(result.valids);
         }
     };
+    const handleCheckboxGroupChange = (name: string, selectedValues: string[]) => {
+        const newValues = { ...values, [name]: selectedValues };
 
-    const handleSubmit = (event: FormEvent) => {
+        setValues(newValues);
+
+        const result = validate(newValues);
+        setMessages(result.messages);
+        setValids(result.valids);
+    };
+
+    const handleRadioGroupChange = (name: string, selectedValue: string) => {
+        const newValues = { ...values, [name]: selectedValue };
+
+        setValues(newValues);
+
+        const result = validate(newValues);
+        setMessages(result.messages);
+        setValids(result.valids);
+    };
+
+    const handleSubmit = async (event: FormEvent) => {
         setSubmitting(true);
         event.preventDefault();
+
+        await new Promise((r) => setTimeout(r, 1000));
     };
 
     useEffect(() => {
@@ -42,7 +66,16 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
         }
         setSubmitting(false);
     }, [submitting]);
-    return { values, submitting, messages, valids, handleChange, handleSubmit };
+    return {
+        values,
+        submitting,
+        messages,
+        valids,
+        handleChange,
+        handleCheckboxGroupChange,
+        handleRadioGroupChange,
+        handleSubmit,
+    };
 };
 
 export default useForm;

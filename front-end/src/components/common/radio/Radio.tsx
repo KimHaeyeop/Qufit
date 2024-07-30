@@ -16,13 +16,9 @@ const Radio = ({ children, value, className }: RadioProps) => {
 
     const { value: selectedValue, onChange } = context;
 
-    const handleChange = () => {
-        onChange(value);
-    };
-
     return (
         <label className={className}>
-            <input type="radio" value={value} checked={value === selectedValue} onChange={handleChange} />
+            <input type="radio" value={value} checked={value === selectedValue} onChange={onChange} />
             {children}
         </label>
     );
