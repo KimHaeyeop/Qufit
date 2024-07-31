@@ -5,16 +5,16 @@ export interface MemberData {
     gender: string;
     bio: string;
     memberMBTITag?: string;
-    memberHobbyTag: string[];
-    memberPersonalityTag: string[];
+    memberHobbyTags: string[];
+    memberPersonalityTags: string[];
 }
 
 export interface TypeData {
     typeAgeMax: number;
     typeAgeMin: number;
-    typeMBTITag: string[];
-    typeHobbyTag: string[];
-    typePersonalityTag: string[];
+    typeMBTITags: string[];
+    typeHobbyTags: string[];
+    typePersonalityTags: string[];
 }
 
 export type MemberInfoDTO = MemberData & TypeData;
