@@ -6,32 +6,30 @@ import Radio from '@components/common/radio/Radio';
 import useForm from '@hooks/useForm';
 import Input from '@components/common/input/Input';
 import TextArea from '@components/common/input/TextArea';
+import { MemberData, MemberInfoDTO, TypeData } from '@apis/types/request';
 
 interface InfoProps {
-    onNext?: (data: any) => void;
+    onNext: (data: MemberData | TypeData | MemberInfoDTO) => void;
 }
 const MemberInfo = ({ onNext }: InfoProps) => {
     const { values, submitting, messages, valids, handleChange, handleCheckboxGroupChange, handleSubmit } = useForm({
         initialValues: {
             nickname: '',
-            birthYear: '',
+            birthYear: 0,
             bio: '',
-
             gender: '',
-            locationId: '',
+            locationId: 0,
             memberMBTITag: '',
             memberHobbyTag: [],
             memberPersonalityTag: [],
         },
-        onSubmit: () => {
-            console.log(1);
-        },
+        onSubmit: onNext,
     });
     return (
         <>
-            <button onClick={onNext}>다음</button>
+            <button onClick={handleSubmit}>다음</button>
             <Input name="nickname" label="닉네임" value={values.nickname} onChange={handleChange} />
-            <Input name="birthYear" label="태어난 연도" value={values.birthYear} onChange={handleChange} />
+            <Input name="birthYear" label="태어난 연도" value={values.birthYear.toString()} onChange={handleChange} />
             <TextArea name="bio" label="자기소개" value={values.bio} onChange={handleChange} />
             <RadioGroup
                 label="성별"
@@ -52,11 +50,11 @@ const MemberInfo = ({ onNext }: InfoProps) => {
                 className="flex flex-wrap gap-16"
                 name="locationId"
                 onChange={handleChange}
-                value={values.locationId}
+                value={values.locationId.toString()}
             >
                 {LOCATION.map((location) => (
                     <Radio key={location.code} value={location.code} className="w-20 h-20 ">
-                        <p>{location.name}</p>
+                        {location.name}
                     </Radio>
                 ))}
             </RadioGroup>
@@ -68,7 +66,9 @@ const MemberInfo = ({ onNext }: InfoProps) => {
                 values={values.memberHobbyTag}
             >
                 {HOBBY.map((hobby) => (
-                    <Checkbox value={hobby}>{hobby}</Checkbox>
+                    <Checkbox key={hobby} value={hobby}>
+                        {hobby}
+                    </Checkbox>
                 ))}
             </CheckboxGroup>
 
@@ -79,7 +79,9 @@ const MemberInfo = ({ onNext }: InfoProps) => {
                 values={values.memberPersonalityTag}
             >
                 {PERSONALITY.map((personality) => (
-                    <Checkbox value={personality}>{personality}</Checkbox>
+                    <Checkbox key={personality} value={personality}>
+                        {personality}
+                    </Checkbox>
                 ))}
             </CheckboxGroup>
 

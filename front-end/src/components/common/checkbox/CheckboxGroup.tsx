@@ -23,7 +23,7 @@ const CheckboxGroup = ({ label, children, className, values, onChange, name }: C
 
     return (
         <fieldset className={className} name={name}>
-            {label && label}
+            <legend>{label}</legend>
             <CheckboxProvider value={{ isChecked, toggleValue }}>{children}</CheckboxProvider>
         </fieldset>
     );

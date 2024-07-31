@@ -32,7 +32,6 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
             setMessages(result.messages);
             setValids(result.valids);
         }
-        console.log(values);
     };
 
     const handleCheckboxGroupChange = (name: string, selectedValues: string[]) => {
@@ -48,9 +47,13 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        setSubmitting(true);
 
+        const curSubmitting = !submitting;
+        setSubmitting(true);
         await new Promise((r) => setTimeout(r, 1000));
+        if (curSubmitting) {
+            onSubmit(values);
+        }
     };
 
     useEffect(() => {
