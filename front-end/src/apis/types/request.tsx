@@ -1,15 +1,20 @@
-export interface MemberInfoDTO {
+export interface MemberData {
     nickname: string;
     locationId: number;
     birthYear: number;
     gender: string;
     bio: string;
-    memberMBTITagId: number;
-    memberHobbyTagIds: number[];
-    memberPersonalityTagIds: number[];
+    memberMBTITag?: string;
+    memberHobbyTag: string[];
+    memberPersonalityTag: string[];
+}
+
+export interface TypeData {
     typeAgeMax: number;
     typeAgeMin: number;
-    typeMBTITagIds: number[];
-    typeHobbyTagIds: number[];
-    typePersonalityTagIds: number[];
+    typeMBTITag: string[];
+    typeHobbyTag: string[];
+    typePersonalityTag: string[];
 }
+
+export type MemberInfoDTO = MemberData & TypeData;

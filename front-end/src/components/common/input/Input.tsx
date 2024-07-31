@@ -10,7 +10,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 const Input = ({ label, name, value, onChange, ...rest }: InputProps) => {
     return (
         <label>
-            <p>{label && label}</p>
+            {label && <span>{label}</span>}
             <input name={name} value={value} onChange={onChange} {...rest} />
         </label>
     );

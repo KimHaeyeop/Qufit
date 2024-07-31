@@ -1,3 +1,5 @@
+import { MemberData, TypeData } from '@apis/types/request';
+import { MemberInfoDTO } from '@apis/types/request';
 import { HOBBY, MBTI, PERSONALITY } from '@components/auth/SignupConstants';
 import Checkbox from '@components/common/checkbox/Checkbox';
 import CheckboxGroup from '@components/common/checkbox/CheckboxGroup';
@@ -5,33 +7,36 @@ import Input from '@components/common/input/Input';
 import useForm from '@hooks/useForm';
 
 interface InfoProps {
-    onNext?: () => void;
+    onNext: (data: MemberInfoDTO) => void;
+    registData: MemberInfoDTO;
 }
 
-const TypeInfo = ({ onNext }: InfoProps) => {
+const TypeInfo = ({ onNext, registData }: InfoProps) => {
     const { values, submitting, messages, valids, handleChange, handleCheckboxGroupChange, handleSubmit } = useForm({
         initialValues: {
-            typeAgeMax: '',
-            typeAgeMin: '',
-            typeMBTITag: [],
-            typeHobbyTag: [],
-            typePersonalityTag: [],
+            ...registData,
+            typeAgeMax: 0,
+            typeAgeMin: 0,
+            typeMBTITag: [''],
+            typeHobbyTag: [''],
+            typePersonalityTag: [''],
         },
-        onSubmit: () => {
-            console.log(1);
-        },
+        onSubmit: onNext,
     });
     return (
-        <p>
-            <Input name="typeAgeMax" label="최대 나이" value={values.typeAgeMax} onChange={handleChange} />
-            <Input name="typeAgeMin" label="최소 나이" value={values.typeAgeMin} onChange={handleChange} />
+        <>
+            <button onClick={handleSubmit}>회원가입 제출</button>
+            <Input name="typeAgeMax" label="최대 나이" value={values.typeAgeMax.toString()} onChange={handleChange} />
+            <Input name="typeAgeMin" label="최소 나이" value={values.typeAgeMin.toString()} onChange={handleChange} />
             <CheckboxGroup
                 className="flex flex-wrap"
                 onChange={(values) => handleCheckboxGroupChange('typeMBTITag', values)}
                 values={values.typeMBTITag}
             >
                 {MBTI.map((mbti) => (
-                    <Checkbox value={mbti}>{mbti}</Checkbox>
+                    <Checkbox key={mbti} value={mbti}>
+                        {mbti}
+                    </Checkbox>
                 ))}
             </CheckboxGroup>
 
@@ -42,7 +47,9 @@ const TypeInfo = ({ onNext }: InfoProps) => {
                 values={values.typeHobbyTag}
             >
                 {HOBBY.map((hobby) => (
-                    <Checkbox value={hobby}>{hobby}</Checkbox>
+                    <Checkbox key={hobby} value={hobby}>
+                        {hobby}
+                    </Checkbox>
                 ))}
             </CheckboxGroup>
 
@@ -53,10 +60,12 @@ const TypeInfo = ({ onNext }: InfoProps) => {
                 values={values.typePersonalityTag}
             >
                 {PERSONALITY.map((personality) => (
-                    <Checkbox value={personality}>{personality}</Checkbox>
+                    <Checkbox key={personality} value={personality}>
+                        {personality}
+                    </Checkbox>
                 ))}
             </CheckboxGroup>
-        </p>
+        </>
     );
 };
 
