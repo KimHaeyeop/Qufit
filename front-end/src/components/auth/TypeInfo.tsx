@@ -1,8 +1,7 @@
-import { MemberData, TypeData } from '@apis/types/request';
 import { MemberInfoDTO } from '@apis/types/request';
+import MultipleTag from '@components/auth/MultipleTag';
+import MultipleTagGroup from '@components/auth/MultipleTagGroup';
 import { HOBBY, MBTI, PERSONALITY } from '@components/auth/SignupConstants';
-import Checkbox from '@components/common/checkbox/Checkbox';
-import CheckboxGroup from '@components/common/checkbox/CheckboxGroup';
 import Input from '@components/common/input/Input';
 import useForm from '@hooks/useForm';
 
@@ -12,14 +11,15 @@ interface InfoProps {
 }
 
 const TypeInfo = ({ onNext, registData }: InfoProps) => {
+    console.log(registData);
     const { values, submitting, messages, valids, handleChange, handleCheckboxGroupChange, handleSubmit } = useForm({
         initialValues: {
             ...registData,
             typeAgeMax: 0,
             typeAgeMin: 0,
-            typeMBTITag: [''],
-            typeHobbyTag: [''],
-            typePersonalityTag: [''],
+            typeMBTITags: [''],
+            typeHobbyTags: [''],
+            typePersonalityTags: [''],
         },
         onSubmit: onNext,
     });
@@ -28,43 +28,40 @@ const TypeInfo = ({ onNext, registData }: InfoProps) => {
             <button onClick={handleSubmit}>회원가입 제출</button>
             <Input name="typeAgeMax" label="최대 나이" value={values.typeAgeMax.toString()} onChange={handleChange} />
             <Input name="typeAgeMin" label="최소 나이" value={values.typeAgeMin.toString()} onChange={handleChange} />
-            <CheckboxGroup
-                className="flex flex-wrap"
-                onChange={(values) => handleCheckboxGroupChange('typeMBTITag', values)}
-                values={values.typeMBTITag}
+            <MultipleTagGroup
+                onChange={(values) => handleCheckboxGroupChange('typeMBTITags', values)}
+                values={values.typeMBTITags}
             >
                 {MBTI.map((mbti) => (
-                    <Checkbox key={mbti} value={mbti}>
+                    <MultipleTag key={mbti} value={mbti}>
                         {mbti}
-                    </Checkbox>
+                    </MultipleTag>
                 ))}
-            </CheckboxGroup>
+            </MultipleTagGroup>
 
-            <CheckboxGroup
+            <MultipleTagGroup
                 label="취미"
-                className="flex flex-wrap"
-                onChange={(values) => handleCheckboxGroupChange('typeHobbyTag', values)}
-                values={values.typeHobbyTag}
+                onChange={(values) => handleCheckboxGroupChange('typeHobbyTags', values)}
+                values={values.typeHobbyTags}
             >
                 {HOBBY.map((hobby) => (
-                    <Checkbox key={hobby} value={hobby}>
+                    <MultipleTag key={hobby} value={hobby}>
                         {hobby}
-                    </Checkbox>
+                    </MultipleTag>
                 ))}
-            </CheckboxGroup>
+            </MultipleTagGroup>
 
-            <CheckboxGroup
+            <MultipleTagGroup
                 label="성격"
-                className="flex flex-wrap"
-                onChange={(values) => handleCheckboxGroupChange('typePersonalityTag', values)}
-                values={values.typePersonalityTag}
+                onChange={(values) => handleCheckboxGroupChange('typePersonalityTags', values)}
+                values={values.typePersonalityTags}
             >
                 {PERSONALITY.map((personality) => (
-                    <Checkbox key={personality} value={personality}>
+                    <MultipleTag key={personality} value={personality}>
                         {personality}
-                    </Checkbox>
+                    </MultipleTag>
                 ))}
-            </CheckboxGroup>
+            </MultipleTagGroup>
         </>
     );
 };
