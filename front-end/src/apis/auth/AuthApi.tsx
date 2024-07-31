@@ -1,6 +1,7 @@
 import { ACCESS_TOKEN_URL, END_POINT, FRONT_URL, HttpStatus, REDIRECT_URI, REST_API_KEY } from '@apis/ApiConstants';
 import { instance } from '@apis/axios';
-import axios, { isAxiosError } from 'axios';
+import { MemberInfoDTO } from '@apis/types/request';
+import axios from 'axios';
 
 export const getKakaoAccessToken = async (authCode: string) => {
     const header = { headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' } };
@@ -20,4 +21,8 @@ export const getKakaoAccessToken = async (authCode: string) => {
 
 export const login = async (accessToken: string) => {
     return await instance.get(END_POINT.LOGIN, { params: { accessToken: accessToken } });
+};
+
+export const signup = async (data: MemberInfoDTO, token: string) => {
+    return await instance.post(END_POINT.SIGN_UP, data, { headers: { accessToken: token } });
 };
