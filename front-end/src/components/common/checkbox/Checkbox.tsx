@@ -1,7 +1,7 @@
 import { CheckboxContext } from '@components/common/checkbox/CheckboxContext';
 import { ReactNode, useContext } from 'react';
 
-interface CheckboxProps {
+export interface CheckboxProps {
     children: ReactNode;
     className?: string;
     disabled?: boolean;
