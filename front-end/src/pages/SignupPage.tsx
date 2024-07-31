@@ -1,34 +1,26 @@
-import Checkbox from '@components/common/checkbox/Checkbox';
-import CheckboxGroup from '@components/common/checkbox/CheckboxGroup';
-import Radio from '@components/common/radio/Radio';
-import RadioGroup from '@components/common/radio/RadioGroup';
+// - 내 정보 입력: 닉네임,성별, 자기 소개, 성격태그, mbti, 거주 지역, 태어난 년도, 취미 태그(다중 선택)
+// - 이상형 입력:  성격 태그, mbti, 지역
+
+import MemberInfo from '@components/auth/MemberInfo';
+import TypeInfo from '@components/auth/TypeInfo';
 import { useState } from 'react';
 
 const SignupPage = () => {
-    const [gender, setGender] = useState('');
-    const [hobby, setHobby] = useState('');
-    const [mbti, setMbti] = useState<string[]>([]);
+    const [registerData, setRegisterData] = useState();
+    const [step, setStep] = useState<'MemberInfo' | 'TypeInfo'>('MemberInfo');
+
     return (
-        <div>
-            <p>{gender}</p>
-            <RadioGroup className="flex flex-col" value={gender} onChange={setGender}>
-                <Radio value={'남자'}>남자</Radio>
-                <Radio value={'여자'}>여자</Radio>
-            </RadioGroup>
-
-            <p>{hobby}</p>
-            <RadioGroup className="flex flex-col" value={hobby} onChange={setHobby}>
-                <Radio value={'취미'}>취미</Radio>
-                <Radio value={'성향'}>성향</Radio>
-            </RadioGroup>
-
-            <p>{mbti}</p>
-            <CheckboxGroup className="flex flex-col" values={mbti} onChange={setMbti}>
-                <Checkbox value={'ENFP'}>ENFP</Checkbox>
-                <Checkbox value={'ESTJ'}>ESTJ</Checkbox>
-                <Checkbox value={'INFP'}>INFP</Checkbox>
-            </CheckboxGroup>
-        </div>
+        <main>
+            {step === 'MemberInfo' && (
+                <MemberInfo
+                    onNext={(data) => {
+                        setRegisterData(data);
+                        setStep('TypeInfo');
+                    }}
+                />
+            )}
+            {step === 'TypeInfo' && <TypeInfo onNext={() => setStep('TypeInfo')} />}
+        </main>
     );
 };
 
