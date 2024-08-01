@@ -1,7 +1,7 @@
 export interface MemberData {
     nickname: string;
-    locationId: number;
-    birthYear: number;
+    locationId: number | null;
+    birthYear: number | null;
     gender: string;
     bio: string;
     memberMBTITag?: string;
@@ -10,8 +10,8 @@ export interface MemberData {
 }
 
 export interface TypeData {
-    typeAgeMax: number;
-    typeAgeMin: number;
+    typeAgeMax: number | null;
+    typeAgeMin: number | null;
     typeMBTITags: string[];
     typeHobbyTags: string[];
     typePersonalityTags: string[];
