@@ -23,7 +23,7 @@ export const deleteVideoDetail = async (videoRoomId: number) => {
 };
 
 export const postVideoJoin = async (videoRoomId: number, memberId: number) => {
-    return await instance.put(END_POINT.VIDEO_JOIN(videoRoomId), { params: { memberId: memberId } });
+    return await instance.post(END_POINT.VIDEO_JOIN(videoRoomId), { params: { memberId: memberId } });
 };
 
 export const deleteVideoLeave = async (videoRoomId: number, memberId: number) => {

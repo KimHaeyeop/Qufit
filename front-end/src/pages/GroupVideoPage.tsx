@@ -15,7 +15,7 @@ import {
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
-import { getToken } from '@components/video/getToken';
+import { useCreateVideoRoomMutation, useJoinVideoRoomMutation } from '@queries/useVideoQuery';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 function GroupVideoPage() {
@@ -34,7 +34,8 @@ function GroupVideoPage() {
     const participants = useRoomParticipantsStore();
     const addParticipant = useRoomAddParticipantStore();
 
-    const roomName = 'test Room';
+    const createVideoRoom = useCreateVideoRoomMutation();
+    const joinVideoRoom = useJoinVideoRoomMutation();
 
     async function joinRoom() {
         const room = new Room({
@@ -56,7 +57,7 @@ function GroupVideoPage() {
         });
 
         try {
-            const token = await getToken(roomName, myName);
+            const token = '';
             await room.connect(LIVEKIT_URL, token);
             await room.localParticipant.enableCameraAndMicrophone();
 
@@ -109,9 +110,28 @@ function GroupVideoPage() {
                 <div>
                     <input placeholder="이름을 입력해주세요" onChange={(e) => setMyName(e.target.value)} />
 
-                    <button onClick={joinRoom} type="submit">
-                        입장하기
-                    </button>
+                    {/* <button onClick={}>방만들기</button> */}
+                    <div className="flex flex-col gap-4">
+                        <button
+                            onClick={() =>
+                                createVideoRoom.mutate({
+                                    videoRoomName: 'test11',
+                                    maxParticipants: 4,
+                                    videoRoomHobbies: [],
+                                    videoRoomPersonalities: [],
+                                    memberId: 22,
+                                })
+                            }
+                        >
+                            생성하기
+                        </button>
+                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 1, memberId: 21 })}>
+                            21번으로 입장하기
+                        </button>
+                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 1, memberId: 22 })}>
+                            22번으로 입장하기
+                        </button>
+                    </div>
 
                     <GameStartButton />
                 </div>
