@@ -57,7 +57,7 @@ const ChatInfo = ({
                             </p>
                             <p className="font-light text-white opacity-80 lg:text-sm xs:text-sm">14 : 32</p>
                         </div>
-                        <p className="mt-2 text-xl font-light text-white truncate max-w-96 lg:text-lg lg:mt-1 lg:max-w-72 xs:text-sm xs:mt-1 xs:max-w-36">
+                        <p className="mt-2 text-xl font-light text-left text-white truncate max-w-96 lg:text-lg lg:mt-1 lg:max-w-72 xs:text-sm xs:mt-1 xs:max-w-36">
                             {lastMessage}
                         </p>
                     </div>
