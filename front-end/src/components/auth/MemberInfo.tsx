@@ -35,7 +35,7 @@ const MemberInfo = ({ onNext, registData }: InfoProps) => {
                         <Input
                             name="birthYear"
                             label="태어난 연도"
-                            value={values.birthYear.toString()}
+                            value={values.birthYear?.toString() || ''}
                             onChange={handleChange}
                         />
                         {values.birthYear && <Message valid={valids.birthYear}>{messages.birthYear}</Message>}
@@ -64,7 +64,7 @@ const MemberInfo = ({ onNext, registData }: InfoProps) => {
                             label="지역"
                             name="locationId"
                             onChange={handleChange}
-                            value={values.locationId.toString()}
+                            value={values.locationId?.toString() || ''}
                         >
                             {LOCATION.map((location) => (
                                 <SingleTag key={location.code} value={location.code}>
