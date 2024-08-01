@@ -18,6 +18,7 @@ const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
                 id: id,
                 nickname: nickname,
                 profileImage: profileImage,
+                otherMemberId: otherMemberId,
             },
         ]);
         setIsClosed(false);

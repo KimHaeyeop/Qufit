@@ -11,6 +11,7 @@ interface ChatListProps {
     chatRoomId: number;
     otherMemberNickname: string;
     profileImage: string;
+    otherMemberId: number;
     lastMessage: string;
     unreadCount: number;
     lastMessageId: string;
@@ -28,7 +29,7 @@ const ChattingPage = () => {
 
     useEffect(() => {
         instance
-            .get(`/qufit/chat/rooms/4`)
+            .get(`/qufit/chat/rooms/21`)
             .then((res) => {
                 setChatList(res.data);
                 console.log('채팅 리스트 응답 성공:', res);
