@@ -16,13 +16,13 @@ const SignupPage = () => {
         gender: '',
         bio: '',
         memberMBTITag: '',
-        memberHobbyTags: [''],
-        memberPersonalityTags: [''],
+        memberHobbyTags: [],
+        memberPersonalityTags: [],
         typeAgeMax: 0,
         typeAgeMin: 0,
-        typeMBTITags: [''],
-        typeHobbyTags: [''],
-        typePersonalityTags: [''],
+        typeMBTITags: [],
+        typeHobbyTags: [],
+        typePersonalityTags: [],
     });
     const [step, setStep] = useState<'MemberInfo' | 'TypeInfo'>('MemberInfo');
     const accessToken = useAccessTokenStore();
@@ -31,6 +31,7 @@ const SignupPage = () => {
         <main>
             {step === 'MemberInfo' && (
                 <MemberInfo
+                    registData={registerData}
                     onNext={(data) => {
                         setRegisterData(data as MemberInfoDTO);
                         setStep('TypeInfo');
