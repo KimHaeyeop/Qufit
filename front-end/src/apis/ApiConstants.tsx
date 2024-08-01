@@ -14,6 +14,8 @@ export const END_POINT = {
 
     VIDEO: 'qufit/video',
     VIDEO_DETAIL: (videoId: number) => `qufit/video/${videoId}`,
+    VIDEO_JOIN: (videoId: number) => `qufit/video/${videoId}/join`,
+    VIDEO_LEAVE: (videoId: number) => `qufit/video/${videoId}/leave`,
 };
 
 export const HTTP_STATUS = {
