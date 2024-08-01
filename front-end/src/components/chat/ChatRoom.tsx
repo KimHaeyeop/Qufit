@@ -11,7 +11,16 @@ interface ChatRoomProps {
     otherMemberId: number;
 }
 
+interface ChatListProps {
+    id: string;
+    senderId: number;
+    content: string;
+    timestamp: Date;
+}
+
 const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) => {
+    const senderId = 21;
+
     const isClosed = useCloseStateStore((state) => state.isClosed);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
@@ -19,11 +28,19 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
     const setChatState = useChatStateStore((state) => state.setChatState);
 
     const client = useRef<StompJs.Client | null>(null);
+
+    const messagesEndRef = useRef<HTMLElement>(null);
+
     const [chat, setChat] = useState(''); // 입력된 chat을 받을 변수
-    const [chatList, setChatList] = useState([]); // 채팅 기록
+    const [chatList, setChatList] = useState<ChatListProps[]>([]); // 채팅 기록
+    const [newMessage, setNewMessage] = useState(null);
+    const [firstMessageId, setFirstMessageId] = useState('');
+    const [nowFirstMessageId, setNowFirstMessageId] = useState('');
+
+    const [isChat, setIsChat] = useState(false);
 
     const msgBox = chatList.map((item, idx) => {
-        if (item.senderId === 4) {
+        if (item.senderId === senderId) {
             return (
                 <div key={idx} className="font-bold bg-lightPurple-1">
                     <span>{item.content}</span>
@@ -42,18 +59,27 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
         if (message.body) {
             console.log('수신된 메시지:', message.body);
             let msg = JSON.parse(message.body);
-            setChatList((chats) => [...chats, msg]);
-            console.log('채팅 리스트:', chatList);
+            setNewMessage(msg);
         } else {
             console.log('빈 메시지 수신');
         }
     };
+
+    useEffect(() => {
+        if (newMessage) {
+            setChatList((chats) => [...chats, newMessage]);
+            setIsChat(!isChat);
+        }
+    }, [newMessage]);
 
     const connect = () => {
         // 소켓 연결
         try {
             client.current = new StompJs.Client({
                 brokerURL: 'ws://i11a209.p.ssafy.io:8080/stomp/chat',
+                connectHeaders: {
+                    Authorization: `Bearer ${import.meta.env.VITE_TEST_TOKEN}`,
+                },
                 debug: function (str) {
                     console.log('소켓 디버그:', str);
                 },
@@ -63,20 +89,23 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
                 onConnect: () => {
                     client.current?.publish({
                         destination: `/pub/chat.enterRoom/${id}`,
-                        body: JSON.stringify({ pageSize: 20, memberId: 4 }),
+                        body: JSON.stringify({ pageSize: 20 }),
                     });
-                    client.current?.subscribe(`/user/4/sub/chatroom.${id}`, (message) => {
+                    client.current?.subscribe(`/user/${senderId}/sub/chatroom.${id}`, (message) => {
                         if (message.body) {
                             const response = JSON.parse(message.body);
                             const messages = response.messages;
+                            const firstId = response.firstMessageId;
                             setChatList(messages);
+                            setFirstMessageId(firstId);
+                            setNowFirstMessageId(messages[0].id);
+                            console.log('채팅내역 리스트:', response);
+                            console.log('채팅내역 첫번째 메시지:', firstId);
                         }
                     });
                     client.current?.subscribe(`/sub/chatroom.${id}`, callback);
                 },
             });
-
-            console.log('클라:', client.current);
 
             if (client.current) {
                 client.current.activate();
@@ -104,7 +133,7 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
         client.current?.publish({
             destination: `/pub/chat.sendMessage/${id}`,
             body: JSON.stringify({
-                senderId: 4,
+                senderId: senderId,
                 chatRoomId: id,
                 content: chat,
             }),
@@ -116,13 +145,22 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
     useEffect(() => {
         if (id !== 0) {
             connect();
-            console.log('연결뀨!');
+            console.log('연결뀨!', client.current?.active);
         }
 
-        return () => (disConnect(), console.log('연결끊기!'));
+        return () => (disConnect(), console.log('연결끊기!', client.current?.active));
     }, [id]);
 
-    const onChangeChat = (e) => {
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    };
+
+    useEffect(() => {
+        console.log('맨 아래로 스크롤');
+        scrollToBottom();
+    }, [isChat]);
+
+    const onChangeChat = (e: React.ChangeEvent<HTMLInputElement>) => {
         setChat(e.target.value);
     };
 
@@ -188,7 +226,9 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
                                     </p>
                                     <div className="w-full h-1 bg-white opacity-30 xs:w-32" />
                                 </div>
+
                                 {msgBox}
+                                <div ref={messagesEndRef} />
                             </div>
                             <div className="flex items-center mt-auto">
                                 <input
