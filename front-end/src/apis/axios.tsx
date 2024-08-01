@@ -1,7 +1,7 @@
 import { HTTP_STATUS, KAKAO_LOGIN_URL } from '@apis/ApiConstants';
-import { useSetAccessTokenStore } from '@stores/auth/signUpStore';
 import axios from 'axios';
 const qufitAcessToken = import.meta.env.VITE_QUFIT_ACCESS_TOKEN;
+
 //로그인을 하고 해야하는 API
 export const instance = axios.create({
     baseURL: import.meta.env.VITE_BASE_URL,
