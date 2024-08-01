@@ -66,7 +66,7 @@ const ChattingPage = () => {
                         {FriendsInfoDummy.map((friend, index) => (
                             <FriendInfo
                                 key={index}
-                                id={index}
+                                otherMemberId={friend.otherMemberId}
                                 nickname={friend.nickname}
                                 profileImage={friend.profileImage}
                             />
