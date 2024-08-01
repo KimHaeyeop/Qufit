@@ -14,7 +14,7 @@ const GameStartButton = () => {
     };
     return (
         <div className="relative flex flex-col items-center">
-            <div className="flex gap-8 group" onClick={gameStart}>
+            <div className="flex gap-8 bg-black group" onClick={gameStart}>
                 {!isStart ? (
                     <LottieComponent
                         animationData={animateData}
@@ -23,8 +23,8 @@ const GameStartButton = () => {
                         isStopped={false}
                         loop={false}
                         init={0}
-                        end={69}
-                        className="w-[20rem]"
+                        end={86}
+                        className="w-[20rem] animate-pulse"
                     />
                 ) : (
                     <LottieComponent
@@ -33,7 +33,7 @@ const GameStartButton = () => {
                         isPaused={false}
                         isStopped={false}
                         loop={true}
-                        init={70}
+                        init={86}
                         className="w-[20rem]"
                     />
                 )}
