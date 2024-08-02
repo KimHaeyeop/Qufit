@@ -4,6 +4,8 @@ import {
     deleteVideoLeave,
     getVideo,
     getVideoDetail,
+    getVideoFilter,
+    getVideoRecommendation,
     postVideo,
     postVideoJoin,
     putVideoDetail,
@@ -73,8 +75,7 @@ export const useRemoveVideoRoomMutation = () =>
 //비디오 방 참여
 export const useJoinVideoRoomMutation = () =>
     useMutation({
-        mutationFn: ({ videoRoomId, memberId }: { videoRoomId: number; memberId: number }) =>
-            postVideoJoin(videoRoomId, memberId),
+        mutationFn: (videoRoomId: number) => postVideoJoin(videoRoomId),
         onSuccess: () => {
             console.log('성공');
         },
@@ -89,8 +90,7 @@ export const useJoinVideoRoomMutation = () =>
 //비디오 방 퇴장
 export const useLeaveVideoRoomMutation = () =>
     useMutation({
-        mutationFn: ({ videoRoomId, memberId }: { videoRoomId: number; memberId: number }) =>
-            deleteVideoLeave(videoRoomId, memberId),
+        mutationFn: (videoRoomId: number) => deleteVideoLeave(videoRoomId),
         onSuccess: () => {
             console.log('성공');
         },
@@ -100,4 +100,18 @@ export const useLeaveVideoRoomMutation = () =>
         onSettled: () => {
             console.log('onSettled');
         },
+    });
+
+//필터된 비디오 방 목록 조회
+export const useFilteredVideoRoomQuery = (page: number, size: number, tagIds: number[]) =>
+    useQuery({
+        queryKey: ['filteredVideoRoom', page, size, tagIds],
+        queryFn: () => getVideoFilter(page, size, tagIds),
+    });
+
+//추천받은 방 목록 조회
+export const useRecommendedVideoRoomQuery = (page: number, size: number) =>
+    useQuery({
+        queryKey: ['recommendedVideoRoom', page, size],
+        queryFn: () => getVideoRecommendation(page, size),
     });
