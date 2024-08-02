@@ -16,7 +16,6 @@ import {
 } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
 import { useCreateVideoRoomMutation, useJoinVideoRoomMutation } from '@queries/useVideoQuery';
-import Timer from '@components/video/GroupVideoTimer';
 import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
@@ -129,12 +128,8 @@ function GroupVideoPage() {
                         >
                             생성하기
                         </button>
-                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 50, memberId: 21 })}>
-                            21번으로 입장하기
-                        </button>
-                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 50, memberId: 22 })}>
-                            22번으로 입장하기
-                        </button>
+                        <button onClick={() => joinVideoRoom.mutate(52)}>21번으로 입장하기</button>
+                        <button onClick={() => joinVideoRoom.mutate(52)}>22번으로 입장하기</button>
                     </div>
 
                     <VideoTimer
