@@ -56,8 +56,8 @@ export const FriendsInfoDummy: FriendInfoProps[] = [
         profileImage: 'https://i.pinimg.com/236x/df/3c/4d/df3c4dcf15935d0111426bb28b12d9b1.jpg',
     },
     {
-        otherMemberId: 22,
-        nickname: '박싸피',
+        otherMemberId: 21,
+        nickname: '김싸피',
         profileImage: 'https://i.pinimg.com/200x/36/20/6e/36206ec041c802876469d0959ccd97ae.jpg',
     },
 ];
