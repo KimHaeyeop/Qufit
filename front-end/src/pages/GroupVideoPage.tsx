@@ -16,6 +16,10 @@ import {
 } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
 import { useCreateVideoRoomMutation, useJoinVideoRoomMutation } from '@queries/useVideoQuery';
+import Timer from '@components/video/GroupVideoTimer';
+import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
+import { PATH } from '@routers/PathConstants';
+import VideoTimer from '@components/video/GroupVideoTimer';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 function GroupVideoPage() {
@@ -125,14 +129,20 @@ function GroupVideoPage() {
                         >
                             생성하기
                         </button>
-                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 1, memberId: 21 })}>
+                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 50, memberId: 21 })}>
                             21번으로 입장하기
                         </button>
-                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 1, memberId: 22 })}>
+                        <button onClick={() => joinVideoRoom.mutate({ videoRoomId: 50, memberId: 22 })}>
                             22번으로 입장하기
                         </button>
                     </div>
 
+                    <VideoTimer
+                        endSec={GROUP_VIDEO_END_SEC}
+                        afterFunc={() => {
+                            location.href = PATH.ROOT;
+                        }}
+                    />
                     <GameStartButton />
                 </div>
                 <div className="flex w-full gap-4">

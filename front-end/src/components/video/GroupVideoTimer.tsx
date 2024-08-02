@@ -1,24 +1,10 @@
 import SvgTimerIcon from '@assets/svg/video/TimerIcon';
+import useTimer, { TimerProps } from '@hooks/useTimer';
 
-import { useEffect, useState } from 'react';
-
-interface TimerProps {
-    endSec: number;
-}
-
-const Timer = ({ endSec }: TimerProps) => {
-    const [restSec, setRestSec] = useState(endSec);
+const VideoTimer = ({ endSec, afterFunc }: TimerProps) => {
+    const restSec = useTimer(endSec, afterFunc);
     const minutes = String(Math.floor(restSec / 60)).padStart(2, '0');
     const second = String(Math.floor(restSec % 60)).padStart(2, '0');
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setRestSec((prev: number) => prev - 1);
-        }, 1000);
-
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
 
     return (
         <section className="flex items-center gap-4 py-4">
@@ -31,4 +17,4 @@ const Timer = ({ endSec }: TimerProps) => {
     );
 };
 
-export default Timer;
+export default VideoTimer;
