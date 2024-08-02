@@ -20,7 +20,7 @@ const FriendInfo = ({ otherMemberId, nickname, profileImage }: FriendInfoProps) 
             .then((res) => {
                 setChatState([
                     {
-                        id: 0,
+                        id: 6,
                         nickname: nickname,
                         profileImage: profileImage,
                         otherMemberId: otherMemberId,
