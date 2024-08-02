@@ -15,11 +15,11 @@ interface ChatListProps {
     id: string;
     senderId: number;
     content: string;
-    timestamp: Date;
+    timestamp: string;
 }
 
 const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) => {
-    const senderId = 21;
+    const senderId = 22;
 
     const isClosed = useCloseStateStore((state) => state.isClosed);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
@@ -165,6 +165,16 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
     };
 
     const handleCloseButton = () => {
+        const lastMessage = chatList[chatList.length - 1];
+
+        client.current?.publish({
+            destination: `/pub/chat.leaveRoom/${id}`,
+            body: JSON.stringify({
+                id: lastMessage.id,
+                timestamp: lastMessage.timestamp,
+            }),
+        });
+
         setIsClosed(true);
 
         setTimeout(() => {
