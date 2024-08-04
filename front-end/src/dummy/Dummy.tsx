@@ -11,6 +11,7 @@ interface RoomInfoProps {
 }
 
 interface FriendInfoProps {
+    id: number;
     otherMemberId: number;
     nickname: string;
     profileImage: string;
@@ -51,11 +52,13 @@ export const RoomsInfoDummy: RoomInfoProps[] = Array.from({ length: 10 }, () => 
 
 export const FriendsInfoDummy: FriendInfoProps[] = [
     {
+        id: 9,
         otherMemberId: 223,
         nickname: 'admin',
         profileImage: 'https://i.pinimg.com/236x/df/3c/4d/df3c4dcf15935d0111426bb28b12d9b1.jpg',
     },
     {
+        id: 2,
         otherMemberId: 21,
         nickname: '김싸피',
         profileImage: 'https://i.pinimg.com/200x/36/20/6e/36206ec041c802876469d0959ccd97ae.jpg',

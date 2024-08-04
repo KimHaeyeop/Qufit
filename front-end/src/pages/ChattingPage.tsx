@@ -63,9 +63,10 @@ const ChattingPage = () => {
                 </div>
                 {buttonFocus === 'friend' ? (
                     <div className="z-10 overflow-y-auto scrollbar-hide">
-                        {FriendsInfoDummy.map((friend, index) => (
+                        {FriendsInfoDummy.map((friend) => (
                             <FriendInfo
-                                key={index}
+                                key={friend.otherMemberId}
+                                id={friend.id}
                                 otherMemberId={friend.otherMemberId}
                                 nickname={friend.nickname}
                                 profileImage={friend.profileImage}
@@ -98,7 +99,6 @@ const ChattingPage = () => {
                         id={chatState[0].id}
                         nickname={chatState[0].nickname}
                         profileImage={chatState[0].profileImage}
-                        otherMemberId={chatState[0].otherMemberId}
                     />
                 </div>
             </div>

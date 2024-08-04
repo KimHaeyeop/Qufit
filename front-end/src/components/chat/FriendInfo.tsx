@@ -4,12 +4,13 @@ import useChatStateStore from '@stores/chat/chatStateStore';
 import useCloseStateStore from '@stores/chat/closeStateStore';
 
 interface FriendInfoProps {
+    id: number;
     nickname: string;
     profileImage: string;
     otherMemberId: number;
 }
 
-const FriendInfo = ({ otherMemberId, nickname, profileImage }: FriendInfoProps) => {
+const FriendInfo = ({ id, otherMemberId, nickname, profileImage }: FriendInfoProps) => {
     const setChatState = useChatStateStore((state) => state.setChatState);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
@@ -20,7 +21,7 @@ const FriendInfo = ({ otherMemberId, nickname, profileImage }: FriendInfoProps) 
             .then((res) => {
                 setChatState([
                     {
-                        id: 6,
+                        id: id,
                         nickname: nickname,
                         profileImage: profileImage,
                         otherMemberId: otherMemberId,
