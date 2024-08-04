@@ -3,12 +3,11 @@ import useChatStateStore from '@stores/chat/chatStateStore';
 import useCloseStateStore from '@stores/chat/closeStateStore';
 import * as StompJs from '@stomp/stompjs';
 import { useEffect, useRef, useState } from 'react';
-
+import InfiniteScroll from 'react-infinite-scroll-component';
 interface ChatRoomProps {
     id: number;
     nickname: string;
     profileImage: string;
-    otherMemberId: number;
 }
 
 interface ChatListProps {
@@ -18,26 +17,33 @@ interface ChatListProps {
     timestamp: string;
 }
 
-const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) => {
+const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
     const senderId = 22;
 
+    // Store
     const isClosed = useCloseStateStore((state) => state.isClosed);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
     const chatState = useChatStateStore((state) => state.chatState);
     const setChatState = useChatStateStore((state) => state.setChatState);
 
+    // 채팅 전송 및 수신을 위한 값들
     const client = useRef<StompJs.Client | null>(null);
 
-    const messagesEndRef = useRef<HTMLElement>(null);
-
-    const [chat, setChat] = useState(''); // 입력된 chat을 받을 변수
-    const [chatList, setChatList] = useState<ChatListProps[]>([]); // 채팅 기록
+    const [chat, setChat] = useState('');
+    const [chatList, setChatList] = useState<ChatListProps[]>([]);
     const [newMessage, setNewMessage] = useState(null);
+    const [isChat, setIsChat] = useState(false); // 내 채팅인지 아닌지 확인해주는 값
     const [firstMessageId, setFirstMessageId] = useState('');
     const [nowFirstMessageId, setNowFirstMessageId] = useState('');
 
-    const [isChat, setIsChat] = useState(false);
+    // InfiniteScroll을 위한 값들
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
+    const [dataLength, setDataLength] = useState(0);
 
     const msgBox = chatList.map((item, idx) => {
         if (item.senderId === senderId) {
@@ -72,8 +78,59 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
         }
     }, [newMessage]);
 
+    // 위아래 스크롤 이벤트
+    useEffect(() => {
+        if (client.current?.active) {
+            if (firstMessageId === nowFirstMessageId) {
+                setHasMore(false);
+                console.log('더 불러올 메시지가 없습니다.');
+            }
+
+            const subscription = client.current?.subscribe(`/user/${senderId}/sub/chat.messages.${id}`, (message) => {
+                const messages = JSON.parse(message.body);
+                console.log('스크롤 구독 메시지:', messages.messages);
+                setNowFirstMessageId(messages.messages[0].id);
+                setChatList((chats) => [...messages.messages, ...chats]);
+                setIsLoading(false);
+                setDataLength(dataLength + 1);
+            });
+
+            return () => {
+                subscription.unsubscribe();
+            };
+        }
+    }, [isLoading]);
+
+    const fetchData = () => {
+        if (isLoading) return;
+        setIsLoading(true);
+
+        const scrollTopBeforeUpdate = scrollContainerRef.current?.scrollTop;
+
+        client.current?.publish({
+            destination: `/pub/chat.loadPreviousMessages/${id}`,
+            body: JSON.stringify({ messageId: nowFirstMessageId, pageSize: 40 }),
+        });
+
+        // 디자인 후, 스크롤값 수정 필요 지금은 에러 안나게 대충 조정돼있음!
+        setTimeout(() => {
+            if (scrollContainerRef.current) {
+                scrollContainerRef.current.scrollTop = scrollTopBeforeUpdate! + 1140;
+            }
+        }, 0);
+    };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    useEffect(() => {
+        console.log('맨 아래로 스크롤');
+        scrollToBottom();
+    }, [isChat]);
+
+    // 소켓 연결
     const connect = () => {
-        // 소켓 연결
         try {
             client.current = new StompJs.Client({
                 brokerURL: 'ws://i11a209.p.ssafy.io:8080/stomp/chat',
@@ -99,8 +156,6 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
                             setChatList(messages);
                             setFirstMessageId(firstId);
                             setNowFirstMessageId(messages[0].id);
-                            console.log('채팅내역 리스트:', response);
-                            console.log('채팅내역 첫번째 메시지:', firstId);
                         }
                     });
                     client.current?.subscribe(`/sub/chatroom.${id}`, callback);
@@ -117,13 +172,21 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
         }
     };
 
+    // 연결 끊기
     const disConnect = () => {
-        // 연결 끊기
         if (client.current === null) {
             return;
         }
         client.current.deactivate();
     };
+
+    useEffect(() => {
+        if (id !== 0) {
+            connect();
+        }
+
+        return () => disConnect();
+    }, [id]);
 
     const sendChat = () => {
         if (chat === '') {
@@ -141,24 +204,6 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
 
         setChat('');
     };
-
-    useEffect(() => {
-        if (id !== 0) {
-            connect();
-            console.log('연결뀨!', client.current?.active);
-        }
-
-        return () => (disConnect(), console.log('연결끊기!', client.current?.active));
-    }, [id]);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    };
-
-    useEffect(() => {
-        console.log('맨 아래로 스크롤');
-        scrollToBottom();
-    }, [isChat]);
 
     const onChangeChat = (e: React.ChangeEvent<HTMLInputElement>) => {
         setChat(e.target.value);
@@ -228,17 +273,22 @@ const ChatRoom = ({ id, nickname, profileImage, otherMemberId }: ChatRoomProps) 
                     {/* contents */}
                     <div className="w-full h-full border-t-2 border-b-4 effect-pureWhite border-x-4 border-lightPurple-3 rounded-b-[1.875rem] md:border-none md:effect-none sm:border-none sm:effect-none xs:border-none xs:effect-none">
                         <div className="absolute z-10 flex flex-col w-full h-full px-12 pb-12 lg:px-10 lg:pb-10 md:h-[calc(100%-5.5rem)] sm:h-[calc(100%-5.5rem)] xs:h-[calc(100%-5.5rem)] xs:px-6">
-                            <div className="flex flex-col items-center my-5 overflow-y-auto max-h-[calc(100%-6.5rem)] scrollbar-hide lg:max-h-[calc(100%-5rem)] md:max-h-[calc(100%-8rem)] md:my-0 sm:max-h-[calc(100%-8rem)] sm:my-0 xs:max-h-[calc(100%-8rem)] xs:my-0">
-                                <div className="flex items-center w-full">
-                                    <div className="w-full h-1 bg-white opacity-30 xs:w-32" />
-                                    <p className="w-full mx-10 text-3xl italic font-semibold text-center text-white font-barlow opacity-80 lg:text-2xl md:text-4xl sm:text-4xl xs:text-3xl xs:mx-4">
-                                        2023. 07. 12
-                                    </p>
-                                    <div className="w-full h-1 bg-white opacity-30 xs:w-32" />
-                                </div>
-
-                                {msgBox}
-                                <div ref={messagesEndRef} />
+                            <div
+                                id="scrollableDiv"
+                                ref={scrollContainerRef}
+                                className="flex flex-col-reverse items-center my-5 overflow-y-auto max-h-[calc(100%-6.5rem)] lg:max-h-[calc(100%-5rem)] md:max-h-[calc(100%-8rem)] md:my-0 sm:max-h-[calc(100%-8rem)] sm:my-0 xs:max-h-[calc(100%-8rem)] xs:my-0"
+                            >
+                                <InfiniteScroll
+                                    dataLength={dataLength}
+                                    next={fetchData}
+                                    hasMore={hasMore}
+                                    inverse={true}
+                                    loader={<h4>Loading...</h4>}
+                                    scrollableTarget="scrollableDiv"
+                                >
+                                    {msgBox}
+                                    <div ref={messagesEndRef} />
+                                </InfiniteScroll>
                             </div>
                             <div className="flex items-center mt-auto">
                                 <input
