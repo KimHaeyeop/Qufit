@@ -3,6 +3,7 @@ import VideoPageLayout from '@components/common/VideoPageLayout';
 import ChattingPage from '@pages/ChattingPage';
 import GroupVideoPage from '@pages/GroupVideoPage';
 import IntroductionPage from '@pages/IntroductionPage';
+import KakaoRedirectPage from '@pages/KaKaoRedirectPage';
 import MainPage from '@pages/MainPage';
 import MyPage from '@pages/Mypage';
 import NotFoundPage from '@pages/NotFoundPage';
@@ -57,6 +58,11 @@ const Router = () => {
                     element: <PersonalVideoPage />,
                 },
             ],
+        },
+
+        {
+            path: 'auth/kakao',
+            element: <KakaoRedirectPage />,
         },
     ];
 
