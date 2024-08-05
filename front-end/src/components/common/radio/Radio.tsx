@@ -18,7 +18,13 @@ const Radio = ({ children, value, className }: RadioProps) => {
 
     return (
         <label className={className}>
-            <input type="radio" value={value} checked={value === selectedValue} onChange={onChange} />
+            <input
+                className="hidden"
+                type="radio"
+                value={value}
+                checked={value === selectedValue}
+                onChange={onChange}
+            />
             {children}
         </label>
     );
