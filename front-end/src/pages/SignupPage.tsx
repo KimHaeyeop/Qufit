@@ -1,34 +1,63 @@
-import Checkbox from '@components/common/checkbox/Checkbox';
-import CheckboxGroup from '@components/common/checkbox/CheckboxGroup';
-import Radio from '@components/common/radio/Radio';
-import RadioGroup from '@components/common/radio/RadioGroup';
+// - 내 정보 입력: 닉네임,성별, 자기 소개, 성격태그, mbti, 거주 지역, 태어난 년도, 취미 태그(다중 선택)
+// - 이상형 입력:  성격 태그, mbti, 지역
+
+import { MemberInfoDTO } from '@apis/types/request';
+import MemberInfo from '@components/auth/MemberInfo';
+import TypeInfo from '@components/auth/TypeInfo';
+import { registMember } from '@queries/useMemberQuery';
+import { useAccessTokenStore } from '@stores/auth/signUpStore';
 import { useState } from 'react';
 
 const SignupPage = () => {
-    const [gender, setGender] = useState('');
-    const [hobby, setHobby] = useState('');
-    const [mbti, setMbti] = useState<string[]>([]);
+    const [registerData, setRegisterData] = useState<MemberInfoDTO>({
+        nickname: '',
+        locationId: null,
+        birthYear: null,
+        gender: '',
+        bio: '',
+        memberMBTITag: '',
+        memberHobbyTags: [],
+        memberPersonalityTags: [],
+        typeAgeMax: null,
+        typeAgeMin: null,
+        typeMBTITags: [],
+        typeHobbyTags: [],
+        typePersonalityTags: [],
+    });
+    const [step, setStep] = useState<'MemberInfo' | 'TypeInfo'>('MemberInfo');
+    const accessToken = useAccessTokenStore();
+    const signup = registMember();
     return (
-        <div>
-            <p>{gender}</p>
-            <RadioGroup className="flex flex-col" value={gender} onChange={setGender}>
-                <Radio value={'남자'}>남자</Radio>
-                <Radio value={'여자'}>여자</Radio>
-            </RadioGroup>
-
-            <p>{hobby}</p>
-            <RadioGroup className="flex flex-col" value={hobby} onChange={setHobby}>
-                <Radio value={'취미'}>취미</Radio>
-                <Radio value={'성향'}>성향</Radio>
-            </RadioGroup>
-
-            <p>{mbti}</p>
-            <CheckboxGroup className="flex flex-col" values={mbti} onChange={setMbti}>
-                <Checkbox value={'ENFP'}>ENFP</Checkbox>
-                <Checkbox value={'ESTJ'}>ESTJ</Checkbox>
-                <Checkbox value={'INFP'}>INFP</Checkbox>
-            </CheckboxGroup>
-        </div>
+        <main>
+            {step === 'MemberInfo' && (
+                <MemberInfo
+                    registData={registerData}
+                    onNext={(data) => {
+                        setRegisterData(data as MemberInfoDTO);
+                        setStep('TypeInfo');
+                    }}
+                />
+            )}
+            {step === 'TypeInfo' && (
+                <TypeInfo
+                    registData={registerData}
+                    onNext={(data: MemberInfoDTO) =>
+                        signup.mutate(
+                            { data, token: accessToken },
+                            {
+                                onSuccess: (response) => {
+                                    console.log(response);
+                                    console.log(1);
+                                },
+                                onError: (error) => {
+                                    console.log(error);
+                                },
+                            },
+                        )
+                    }
+                />
+            )}
+        </main>
     );
 };
 

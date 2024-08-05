@@ -6,7 +6,7 @@ export type Messages = { [key: string]: string };
 interface FormProps<T> {
     initialValues: T;
     onSubmit: (values: T) => void;
-    validate: (values: T) => { valids: Valids; messages: Messages };
+    validate?: (values: T) => { valids: Valids; messages: Messages };
 }
 
 const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
@@ -19,9 +19,11 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
         setValues(initialValues);
     }, []);
 
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, type, value, checked } = event.target;
-        const newValue = type === 'checkbox' ? checked : value;
+    const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const fieldset = event.target.closest('fieldset');
+        const name = fieldset ? fieldset.getAttribute('name')! : event.target.name;
+        const newValue =
+            event.target.type === 'checkbox' ? (event.target as HTMLInputElement).checked : event.target.value;
 
         setValues({ ...values, [name]: newValue });
 
@@ -36,16 +38,22 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
         const newValues = { ...values, [name]: selectedValues };
         setValues(newValues);
 
-        const result = validate(newValues);
-        setMessages(result.messages);
-        setValids(result.valids);
+        if (validate) {
+            const result = validate(newValues);
+            setMessages(result.messages);
+            setValids(result.valids);
+        }
     };
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        setSubmitting(true);
 
+        const curSubmitting = !submitting;
+        setSubmitting(true);
         await new Promise((r) => setTimeout(r, 1000));
+        if (curSubmitting) {
+            onSubmit(values);
+        }
     };
 
     useEffect(() => {
@@ -53,7 +61,7 @@ const useForm = <T,>({ initialValues, onSubmit, validate }: FormProps<T>) => {
             onSubmit(values);
         }
         setSubmitting(false);
-    }, [valids]);
+    }, [values]);
 
     return {
         values,

@@ -1,7 +1,7 @@
 import { CheckboxContext } from '@components/common/checkbox/CheckboxContext';
 import { ReactNode, useContext } from 'react';
 
-interface CheckboxProps {
+export interface CheckboxProps {
     children: ReactNode;
     className?: string;
     disabled?: boolean;
@@ -14,10 +14,10 @@ const Checkbox = ({ children, className, disabled, value, checked, onChange }: C
 
     if (!context) {
         return (
-            <label>
+            <label className={className}>
                 <input
                     type="checkbox"
-                    className={className}
+                    className="hidden peer"
                     disabled={disabled}
                     checked={checked}
                     onChange={(event) => onChange?.(event.target.value)}
@@ -27,13 +27,13 @@ const Checkbox = ({ children, className, disabled, value, checked, onChange }: C
     }
     const { isChecked, toggleValue } = context;
     return (
-        <label>
+        <label className={className}>
             <input
                 type="checkbox"
                 disabled={disabled}
                 checked={isChecked(value)}
                 onChange={(event) => toggleValue({ checked: event.target.checked, value })}
-                className={className}
+                className="hidden peer"
             />
             {children}
         </label>
