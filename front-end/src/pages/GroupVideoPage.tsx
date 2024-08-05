@@ -1,5 +1,4 @@
 import { VideoTrack } from 'livekit-client';
-import { useState } from 'react';
 
 import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
@@ -11,11 +10,13 @@ import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
 import useRoom from '@hooks/useRoom';
+import { useEffect } from 'react';
 
 function GroupVideoPage() {
     const managerName = useRoomManagerNameStore();
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
+    const roomId = 121;
 
     return (
         <>
@@ -26,13 +27,14 @@ function GroupVideoPage() {
                         .map((_, idx) =>
                             idx < participants.length ? (
                                 <VideoComponent
-                                    key={participants[idx].name}
+                                    key={participants[idx].info.identity}
                                     track={
-                                        Array.from(participants[idx].videoTrackPublications.values())[0]
-                                            .track as VideoTrack
+                                        participants[idx].info.videoTrackPublications.values().next().value
+                                            ?.videoTrack || undefined
                                     }
-                                    isManager={participants[idx].name === managerName}
-                                    participateName={participants[idx].name!}
+                                    value={participants[idx].info}
+                                    isManager={participants[idx].nickname === managerName}
+                                    participateName={participants[idx].nickname!}
                                 />
                             ) : (
                                 <EmptyVideo />
@@ -41,30 +43,24 @@ function GroupVideoPage() {
                 </div>
                 <div>
                     <div className="flex flex-col gap-4">
-                        <button
-                            onClick={() => {
-                                createRoom();
-                            }}
-                        >
-                            생성하기
-                        </button>
+                        <button onClick={createRoom}>생성하기</button>
 
                         <button
                             onClick={() => {
-                                joinRoom(79);
+                                joinRoom(roomId);
                             }}
                         >
                             입장하기
                         </button>
-                        <button onClick={() => leaveRoom(79)}>나가기</button>
+                        <button onClick={() => leaveRoom(roomId)}>나가기</button>
                     </div>
 
-                    <VideoTimer
+                    {/* <VideoTimer
                         endSec={GROUP_VIDEO_END_SEC}
                         afterFunc={() => {
                             location.href = PATH.ROOT;
                         }}
-                    />
+                    /> */}
                     <GameStartButton />
                 </div>
                 <div className="flex w-full gap-4">
@@ -73,13 +69,13 @@ function GroupVideoPage() {
                         .map((_, idx) =>
                             idx + 4 < participants.length ? (
                                 <VideoComponent
-                                    key={participants[idx + 4].name}
+                                    key={participants[idx + 4].nickname}
                                     track={
-                                        Array.from(participants[idx + 4].videoTrackPublications.values())[0]
-                                            .track as VideoTrack
+                                        participants[idx].info.videoTrackPublications.values().next().value
+                                            ?.videoTrack || undefined
                                     }
-                                    isManager={participants[idx + 4].name === managerName}
-                                    participateName={participants[idx + 4].name!}
+                                    isManager={participants[idx + 4].nickname === managerName}
+                                    participateName={participants[idx + 4].nickname!}
                                 />
                             ) : (
                                 <EmptyVideo />
@@ -89,8 +85,10 @@ function GroupVideoPage() {
                 <div className="hidden">
                     {participants.map((participant) => (
                         <AudioComponent
-                            key={participant.name}
-                            track={participant.audioTrackPublications.values().next().value.track}
+                            key={participant.nickname}
+                            track={
+                                participant.info.audioTrackPublications.values().next().value?.audioTrack || undefined
+                            }
                         />
                     ))}
                 </div>
