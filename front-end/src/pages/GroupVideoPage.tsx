@@ -1,139 +1,21 @@
-import { Participant, Room, RoomEvent, VideoTrack } from 'livekit-client';
-import { useEffect, useState } from 'react';
+import { VideoTrack } from 'livekit-client';
+import { useState } from 'react';
 
 import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
 import EmptyVideo from '@components/video/EmptyVideo';
-import {
-    useRoomStateStore,
-    useRoomAddParticipantStore,
-    useRoomManagerNameStore,
-    useRoomMyNameStore,
-    useRoomParticipantsStore,
-    useRoomSetManagerNameStore,
-    useRoomSetMyNameStore,
-    useSetRoomStateStore,
-} from '@stores/video/roomStore';
+import { useRoomManagerNameStore, useRoomParticipantsStore } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
-import {
-    useCreateVideoRoomMutation,
-    useJoinVideoRoomMutation,
-    useLeaveVideoRoomMutation,
-    useVideoRoomDetailQuery,
-} from '@queries/useVideoQuery';
+
 import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
-const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
+import useRoom from '@hooks/useRoom';
 
 function GroupVideoPage() {
-    const ROOM_SETTING = {
-        videoCaptureDefaults: {
-            deviceId: '',
-            facingMode: 'user' as 'user' | 'environment' | 'left' | 'right',
-            resolution: {
-                width: 355,
-                height: 260,
-                frameRate: 30,
-            },
-        },
-    };
-    const [localParticipant, setLocalParticipant] = useState<Participant>();
-    const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
-
-    const [videoRoomId, setVideoRoomId] = useState<number | null>(null);
-
-    const room = useRoomStateStore();
-    const setRoom = useSetRoomStateStore();
-
-    const myName = useRoomMyNameStore();
-    const setMyName = useRoomSetMyNameStore();
-
     const managerName = useRoomManagerNameStore();
-    const setManagerName = useRoomSetManagerNameStore();
-
     const participants = useRoomParticipantsStore();
-    const addParticipant = useRoomAddParticipantStore();
-
-    const { data } = useVideoRoomDetailQuery(videoRoomId);
-    const createVideoRoom = useCreateVideoRoomMutation();
-    const joinVideoRoom = useJoinVideoRoomMutation();
-    const leaveVideoRoom = useLeaveVideoRoomMutation();
-
-    useEffect(() => {
-        if (data) {
-            console.log(data);
-        }
-    }, [data]);
-
-    const addEventHandler = async (room: Room) => {
-        console.log(room);
-        room.on(RoomEvent.ParticipantConnected, (participant) => {
-            addParticipant(participant);
-            setRemoteParticipants((prev) => [...prev, participant]);
-        });
-        await room.localParticipant.enableCameraAndMicrophone();
-        //입장시 방장 정하자
-        const curParticipants = [];
-        curParticipants.push(room.localParticipant);
-        Array.from(room.remoteParticipants.values()).forEach((participant) => curParticipants.push(participant));
-        curParticipants.sort((partA, partB) => {
-            if (new Date(partA.joinedAt!).getTime() > new Date(partB.joinedAt!).getTime()) return 1;
-            else return -1;
-        });
-        console.log(curParticipants);
-
-        setManagerName(curParticipants[0].name!);
-        addParticipant(room.localParticipant);
-        setLocalParticipant(room.localParticipant);
-        setRemoteParticipants(Array.from(room.remoteParticipants.values()));
-    };
-
-    const createRoom = () => {
-        createVideoRoom.mutate(
-            {
-                videoRoomName: 'test11',
-                maxParticipants: 4,
-                videoRoomHobbies: [],
-                videoRoomPersonalities: [],
-            },
-            {
-                onSuccess: async (data) => {
-                    setVideoRoomId(data.data.videoRoomId);
-                    const room = new Room(ROOM_SETTING);
-                    await room.connect(LIVEKIT_URL, data?.data.token);
-                    setRoom(room);
-                    addEventHandler(room);
-                },
-                onError: async (data) => {
-                    console.log(data);
-                },
-            },
-        );
-    };
-
-    async function joinRoom(videoRoomId: number) {
-        const room = new Room(ROOM_SETTING);
-        setRoom(room);
-
-        joinVideoRoom.mutate(videoRoomId, {
-            onSuccess: async (data) => {
-                await room.connect(LIVEKIT_URL, data?.data.token);
-                addEventHandler(room);
-                setVideoRoomId(videoRoomId!);
-                console.log(data);
-            },
-        });
-    }
-
-    async function leaveRoom(videoRoomId: number) {
-        leaveVideoRoom.mutate(videoRoomId, {
-            onSuccess: async () => {
-                await room?.disconnect();
-                setRoom(undefined);
-            },
-        });
-    }
+    const { createRoom, joinRoom, leaveRoom } = useRoom();
 
     return (
         <>
