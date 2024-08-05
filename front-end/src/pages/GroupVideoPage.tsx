@@ -81,6 +81,7 @@ function GroupVideoPage() {
             if (new Date(partA.joinedAt!).getTime() > new Date(partB.joinedAt!).getTime()) return 1;
             else return -1;
         });
+        console.log(curParticipants);
 
         setManagerName(curParticipants[0].name!);
         addParticipant(room.localParticipant);
@@ -125,9 +126,13 @@ function GroupVideoPage() {
         });
     }
 
-    async function leaveRoom() {
-        await room?.disconnect();
-        setRoom(undefined);
+    async function leaveRoom(videoRoomId: number) {
+        leaveVideoRoom.mutate(videoRoomId, {
+            onSuccess: async () => {
+                await room?.disconnect();
+                setRoom(undefined);
+            },
+        });
     }
 
     return (
@@ -164,12 +169,12 @@ function GroupVideoPage() {
 
                         <button
                             onClick={() => {
-                                joinRoom(77);
+                                joinRoom(79);
                             }}
                         >
                             입장하기
                         </button>
-                        <button onClick={() => leaveVideoRoom.mutate(77)}>나가기</button>
+                        <button onClick={() => leaveRoom(79)}>나가기</button>
                     </div>
 
                     <VideoTimer
