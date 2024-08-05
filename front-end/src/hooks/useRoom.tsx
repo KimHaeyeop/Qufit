@@ -9,11 +9,12 @@ import {
     useRoomAddParticipantStore,
     useRoomManagerNameStore,
     useRoomMyNameStore,
+    useRoomParticipantsStore,
     useRoomSetManagerNameStore,
     useRoomStateStore,
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
-import { Participant, Room, RoomEvent } from 'livekit-client';
+import { Room, RoomEvent } from 'livekit-client';
 import { useEffect, useState } from 'react';
 
 const useRoom = () => {
@@ -26,13 +27,12 @@ const useRoom = () => {
     useEffect(() => {
         setIsManager(!!myName && !!managerName && managerName === myName);
     }, [managerName, myName]);
-    const [localParticipant, setLocalParticipant] = useState<Participant>();
-    const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
     const room = useRoomStateStore();
     const setRoom = useSetRoomStateStore();
 
     const setManagerName = useRoomSetManagerNameStore();
 
+    const participants = useRoomParticipantsStore();
     const addParticipant = useRoomAddParticipantStore();
 
     const { data } = useVideoRoomDetailQuery(videoRoomId);
@@ -40,13 +40,14 @@ const useRoom = () => {
     const joinVideoRoom = useJoinVideoRoomMutation();
     const leaveVideoRoom = useLeaveVideoRoomMutation();
 
-    const addEventHandler = async (room: Room) => {
-        console.log(room);
+    const addRoomEventHandler = async (room: Room) => {
         room.on(RoomEvent.ParticipantConnected, (participant) => {
-            addParticipant(participant);
-            setRemoteParticipants((prev) => [...prev, participant]);
+            console.log(participant + ' 가 참가했습니다.');
+            addParticipant({ memberId: 1, gender: 'f', nickname: '현명', info: participant });
         });
-        await room.localParticipant.enableCameraAndMicrophone();
+
+        // await room.localParticipant.enableCameraAndMicrophone();
+        await room.localParticipant.setCameraEnabled(true);
         //입장시 방장 정하자
         const curParticipants = [];
         curParticipants.push(room.localParticipant);
@@ -57,9 +58,7 @@ const useRoom = () => {
         });
 
         setManagerName(curParticipants[0].name!);
-        addParticipant(room.localParticipant);
-        setLocalParticipant(room.localParticipant);
-        setRemoteParticipants(Array.from(room.remoteParticipants.values()));
+        addParticipant({ memberId: 1, gender: 'f', nickname: '현명', info: room.localParticipant });
     };
 
     const createRoom = () => {
@@ -76,7 +75,7 @@ const useRoom = () => {
                     const room = new Room(ROOM_SETTING);
                     await room.connect(LIVEKIT_URL, data?.data.token);
                     setRoom(room);
-                    addEventHandler(room);
+                    addRoomEventHandler(room);
                 },
                 onError: async (data) => {
                     console.log(data);
@@ -92,9 +91,8 @@ const useRoom = () => {
         joinVideoRoom.mutate(videoRoomId, {
             onSuccess: async (data) => {
                 await room.connect(LIVEKIT_URL, data?.data.token);
-                addEventHandler(room);
+                addRoomEventHandler(room);
                 setVideoRoomId(videoRoomId!);
-                console.log(data);
             },
         });
     }
