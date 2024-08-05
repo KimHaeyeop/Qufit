@@ -1,5 +1,5 @@
 import { Participant, Room, RoomEvent, VideoTrack } from 'livekit-client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
@@ -15,15 +15,33 @@ import {
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
-import { useCreateVideoRoomMutation, useJoinVideoRoomMutation } from '@queries/useVideoQuery';
+import {
+    useCreateVideoRoomMutation,
+    useJoinVideoRoomMutation,
+    useLeaveVideoRoomMutation,
+    useVideoRoomDetailQuery,
+} from '@queries/useVideoQuery';
 import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
 const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 
 function GroupVideoPage() {
+    const ROOM_SETTING = {
+        videoCaptureDefaults: {
+            deviceId: '',
+            facingMode: 'user' as 'user' | 'environment' | 'left' | 'right',
+            resolution: {
+                width: 355,
+                height: 260,
+                frameRate: 30,
+            },
+        },
+    };
     const [localParticipant, setLocalParticipant] = useState<Participant>();
     const [remoteParticipants, setRemoteParticipants] = useState<Participant[]>([]);
+
+    const [videoRoomId, setVideoRoomId] = useState<number | null>(null);
 
     const room = useRoomStateStore();
     const setRoom = useSetRoomStateStore();
@@ -37,50 +55,74 @@ function GroupVideoPage() {
     const participants = useRoomParticipantsStore();
     const addParticipant = useRoomAddParticipantStore();
 
+    const { data } = useVideoRoomDetailQuery(videoRoomId);
     const createVideoRoom = useCreateVideoRoomMutation();
     const joinVideoRoom = useJoinVideoRoomMutation();
+    const leaveVideoRoom = useLeaveVideoRoomMutation();
 
-    async function joinRoom() {
-        const room = new Room({
-            videoCaptureDefaults: {
-                deviceId: '',
-                facingMode: 'user',
-                resolution: {
-                    width: 355,
-                    height: 260,
-                    frameRate: 30,
-                },
-            },
-        });
-        setRoom(room);
+    useEffect(() => {
+        if (data) {
+            console.log(data);
+        }
+    }, [data]);
 
+    const addEventHandler = async (room: Room) => {
+        console.log(room);
         room.on(RoomEvent.ParticipantConnected, (participant) => {
             addParticipant(participant);
             setRemoteParticipants((prev) => [...prev, participant]);
         });
+        await room.localParticipant.enableCameraAndMicrophone();
+        //입장시 방장 정하자
+        const curParticipants = [];
+        curParticipants.push(room.localParticipant);
+        Array.from(room.remoteParticipants.values()).forEach((participant) => curParticipants.push(participant));
+        curParticipants.sort((partA, partB) => {
+            if (new Date(partA.joinedAt!).getTime() > new Date(partB.joinedAt!).getTime()) return 1;
+            else return -1;
+        });
 
-        try {
-            const token = '';
-            await room.connect(LIVEKIT_URL, token);
-            await room.localParticipant.enableCameraAndMicrophone();
+        setManagerName(curParticipants[0].name!);
+        addParticipant(room.localParticipant);
+        setLocalParticipant(room.localParticipant);
+        setRemoteParticipants(Array.from(room.remoteParticipants.values()));
+    };
 
-            //입장시 방장 정하자
-            const curParticipants = [];
-            curParticipants.push(room.localParticipant);
-            Array.from(room.remoteParticipants.values()).forEach((participant) => curParticipants.push(participant));
-            curParticipants.sort((partA, partB) => {
-                if (new Date(partA.joinedAt!).getTime() > new Date(partB.joinedAt!).getTime()) return 1;
-                else return -1;
-            });
+    const createRoom = () => {
+        createVideoRoom.mutate(
+            {
+                videoRoomName: 'test11',
+                maxParticipants: 4,
+                videoRoomHobbies: [],
+                videoRoomPersonalities: [],
+            },
+            {
+                onSuccess: async (data) => {
+                    setVideoRoomId(data.data.videoRoomId);
+                    const room = new Room(ROOM_SETTING);
+                    await room.connect(LIVEKIT_URL, data?.data.token);
+                    setRoom(room);
+                    addEventHandler(room);
+                },
+                onError: async (data) => {
+                    console.log(data);
+                },
+            },
+        );
+    };
 
-            setManagerName(curParticipants[0].name!);
-            addParticipant(room.localParticipant);
-            setLocalParticipant(room.localParticipant);
-            setRemoteParticipants(Array.from(room.remoteParticipants.values()));
-        } catch (error) {
-            console.log('There was an error connecting to the room:', (error as Error).message);
-            await leaveRoom();
-        }
+    async function joinRoom(videoRoomId: number) {
+        const room = new Room(ROOM_SETTING);
+        setRoom(room);
+
+        joinVideoRoom.mutate(videoRoomId, {
+            onSuccess: async (data) => {
+                await room.connect(LIVEKIT_URL, data?.data.token);
+            },
+        });
+        addEventHandler(room);
+        setVideoRoomId(videoRoomId!);
+        console.log(data);
     }
 
     async function leaveRoom() {
@@ -111,25 +153,23 @@ function GroupVideoPage() {
                         )}
                 </div>
                 <div>
-                    <input placeholder="이름을 입력해주세요" onChange={(e) => setMyName(e.target.value)} />
-
-                    {/* <button onClick={}>방만들기</button> */}
                     <div className="flex flex-col gap-4">
                         <button
-                            onClick={() =>
-                                createVideoRoom.mutate({
-                                    videoRoomName: 'test11',
-                                    maxParticipants: 4,
-                                    videoRoomHobbies: [],
-                                    videoRoomPersonalities: [],
-                                    memberId: 22,
-                                })
-                            }
+                            onClick={() => {
+                                createRoom();
+                            }}
                         >
                             생성하기
                         </button>
-                        <button onClick={() => joinVideoRoom.mutate(52)}>21번으로 입장하기</button>
-                        <button onClick={() => joinVideoRoom.mutate(52)}>22번으로 입장하기</button>
+
+                        <button
+                            onClick={() => {
+                                joinRoom(69);
+                            }}
+                        >
+                            입장하기
+                        </button>
+                        <button onClick={() => leaveVideoRoom.mutate(69)}>나가기</button>
                     </div>
 
                     <VideoTimer

@@ -35,10 +35,16 @@ export const useCreateVideoRoomMutation = () =>
     });
 
 // 비디오 방 상세 정보 조회
-export const useVideoRoomDetailQuery = (videoRoomId: number) =>
+export const useVideoRoomDetailQuery = (videoRoomId: number | null) =>
     useQuery({
         queryKey: ['videoRoomDetail', videoRoomId],
-        queryFn: () => getVideoDetail(videoRoomId),
+        queryFn: () => {
+            if (videoRoomId === null) {
+                throw new Error('Invalid videoRoomId');
+            }
+            return getVideoDetail(videoRoomId);
+        },
+        enabled: !!videoRoomId,
     });
 
 // 비디오 방 업데이트
