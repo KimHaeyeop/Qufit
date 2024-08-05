@@ -1,3 +1,5 @@
+import { REDIRECT_URI } from '@apis/ApiConstants';
+
 export const PATH = {
     ROOT: '/',
     SIGN_UP: '/signup',
@@ -7,4 +9,7 @@ export const PATH = {
     MY_PAGE: '/mypage',
     GROUP_VIDEO: (roomId: String) => `/video/group/${roomId}`,
     PERSONAL_VIDEO: (roomId: String) => `/video/personal/${roomId}`,
+
+    //카카오 소셜로그인 관련
+    KAKAO_REDIRECT: REDIRECT_URI,
 };
