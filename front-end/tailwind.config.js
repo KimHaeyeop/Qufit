@@ -13,7 +13,8 @@ export default {
         },
         colors: {
             white: '#fff',
-            black: '#340544',
+            black: '#000',
+            darkBlack: '#340544',
             pink: '#FD4C8C',
             purple: '#CA63E3',
             lightPurple: {

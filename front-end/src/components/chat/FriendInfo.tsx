@@ -1,25 +1,38 @@
 import { StartChatIcon, DeleteFriendIcon } from '@assets/svg/chat';
+import { instance } from '@apis/axios';
 import useChatStateStore from '@stores/chat/chatStateStore';
 import useCloseStateStore from '@stores/chat/closeStateStore';
 
 interface FriendInfoProps {
-    id: string;
+    id: number;
     nickname: string;
     profileImage: string;
+    otherMemberId: number;
 }
 
-const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
+const FriendInfo = ({ id, otherMemberId, nickname, profileImage }: FriendInfoProps) => {
     const setChatState = useChatStateStore((state) => state.setChatState);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
     const handleStartChatButton = () => {
-        setChatState([
-            {
-                id: id,
-                nickname: nickname,
-                profileImage: profileImage,
-            },
-        ]);
+        console.log(`/qufit/chat/rooms/${otherMemberId}`);
+        instance
+            .post(`/qufit/chat/rooms/${otherMemberId}`)
+            .then((res) => {
+                setChatState([
+                    {
+                        id: id,
+                        nickname: nickname,
+                        profileImage: profileImage,
+                        otherMemberId: otherMemberId,
+                    },
+                ]);
+                console.log('채팅방 생성 성공:', res);
+            })
+            .catch((err: string) => {
+                console.log('채팅방 생성 실패:', err);
+            });
+
         setIsClosed(false);
     };
 
@@ -34,7 +47,7 @@ const FriendInfo = ({ id, nickname, profileImage }: FriendInfoProps) => {
                         className="rounded-full w-14 h-14 lg:w-12 lg:h-12 xs:w-12 xs:h-12"
                     />
                     <p className="text-2xl text-white mx-3.5 max-w-72 truncate lg:text-xl lg:mx-2.5 lg:max-w-60 xs:text-lg xs:max-w-52 xs:mx-2">
-                        {nickname}ddddddddddddddddddddddd
+                        {nickname}
                     </p>
                     <button>
                         <DeleteFriendIcon className="w-6 lg:w-5 md:w-8 xs:w-6 xs:mr-10" />

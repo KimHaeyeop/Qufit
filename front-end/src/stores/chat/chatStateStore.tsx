@@ -2,9 +2,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface UserInfoProps {
-    id: string;
+    id: number;
     nickname: string;
     profileImage: string;
+    otherMemberId: number;
 }
 
 interface ChatStateProps {
@@ -17,9 +18,10 @@ const useChatStateStore = create(
         (set) => ({
             chatState: [
                 {
-                    id: '',
+                    id: 0,
                     nickname: '',
                     profileImage: '',
+                    otherMemberId: 0,
                 },
             ],
             setChatState: (list: UserInfoProps[]) =>
