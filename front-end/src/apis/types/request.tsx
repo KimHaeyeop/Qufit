@@ -25,5 +25,4 @@ export interface VideoRoomRequest {
     maxParticipants: number;
     videoRoomHobbies: number[];
     videoRoomPersonalities: number[];
-    memberId: number;
 }

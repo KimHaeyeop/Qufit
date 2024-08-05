@@ -27,13 +27,13 @@ export const postVideoJoin = async (videoRoomId: number) => {
 };
 
 export const deleteVideoLeave = async (videoRoomId: number) => {
-    return await instance.put(END_POINT.VIDEO_LEAVE(videoRoomId));
+    return await instance.delete(END_POINT.VIDEO_LEAVE(videoRoomId));
 };
 
 export const getVideoFilter = async (page: number, size: number, tagIds: number[]) => {
-    return await instance.put(END_POINT.VIDEO_FILTER, { params: { page: page, size: size, tagIds: tagIds } });
+    return await instance.get(END_POINT.VIDEO_FILTER, { params: { page: page, size: size, tagIds: tagIds } });
 };
 
 export const getVideoRecommendation = async (page: number, size: number) => {
-    return await instance.put(END_POINT.VIDEO_RECOMMENDATION, { params: { page: page, size: size } });
+    return await instance.get(END_POINT.VIDEO_RECOMMENDATION, { params: { page: page, size: size } });
 };
