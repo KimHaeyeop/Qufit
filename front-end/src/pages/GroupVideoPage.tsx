@@ -118,11 +118,11 @@ function GroupVideoPage() {
         joinVideoRoom.mutate(videoRoomId, {
             onSuccess: async (data) => {
                 await room.connect(LIVEKIT_URL, data?.data.token);
+                addEventHandler(room);
+                setVideoRoomId(videoRoomId!);
+                console.log(data);
             },
         });
-        addEventHandler(room);
-        setVideoRoomId(videoRoomId!);
-        console.log(data);
     }
 
     async function leaveRoom() {
@@ -164,12 +164,12 @@ function GroupVideoPage() {
 
                         <button
                             onClick={() => {
-                                joinRoom(69);
+                                joinRoom(77);
                             }}
                         >
                             입장하기
                         </button>
-                        <button onClick={() => leaveVideoRoom.mutate(69)}>나가기</button>
+                        <button onClick={() => leaveVideoRoom.mutate(77)}>나가기</button>
                     </div>
 
                     <VideoTimer
