@@ -16,7 +16,7 @@ function GroupVideoPage() {
     const managerName = useRoomManagerNameStore();
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
-    const roomId = 124;
+    const roomId = 134;
 
     const handleTimerEnd = () => {
         location.href = PATH.PERSONAL_VIDEO(1);
@@ -62,7 +62,7 @@ function GroupVideoPage() {
                     </div>
 
                     <VideoTimer
-                        endSec={GROUP_VIDEO_END_SEC}
+                        endSec={50 * 60}
                         afterFunc={() => {
                             handleTimerEnd();
                         }}
