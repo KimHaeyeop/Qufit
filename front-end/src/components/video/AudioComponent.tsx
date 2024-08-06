@@ -10,15 +10,15 @@ function AudioComponent({ track }: AudioComponentProps) {
 
     useEffect(() => {
         if (audioElement.current) {
-            track.attach(audioElement.current);
+            track?.attach(audioElement.current);
         }
 
         return () => {
-            track.detach();
+            track?.detach();
         };
     }, [track]);
 
-    return <audio ref={audioElement} id={track.sid} />;
+    return <audio ref={audioElement} />;
 }
 
 export default AudioComponent;

@@ -9,6 +9,7 @@ export interface MemberData {
     memberPersonalityTags: string[];
 }
 
+// 이상형정보
 export interface TypeData {
     typeAgeMax: number | null;
     typeAgeMin: number | null;
@@ -18,3 +19,10 @@ export interface TypeData {
 }
 
 export type MemberInfoDTO = MemberData & TypeData;
+
+export interface VideoRoomRequest {
+    videoRoomName: string;
+    maxParticipants: number;
+    videoRoomHobbies: number[];
+    videoRoomPersonalities: number[];
+}
