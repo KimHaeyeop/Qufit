@@ -15,6 +15,8 @@ import { useState } from 'react';
 import GameTimer from '@components/game/GameTimer';
 import { useGameQuery, useRegistGameResultMutation } from '@queries/useGameQuery';
 import { useAddGameResultsStore, useGameResultsStore } from '@stores/video/gameStore';
+import { FemaleIcon, MaleIcon } from '@assets/svg/video';
+import GameResultCard from '@components/game/GameResultCard';
 
 type GameStep = 'wait' | 'game' | 'result';
 
@@ -101,7 +103,7 @@ function GroupVideoPage() {
                             >
                                 <BalanceGameChoice value="1">{games[gameStage].scenario1}</BalanceGameChoice>
                                 <GameTimer
-                                    endSec={51}
+                                    endSec={3}
                                     afterFunc={() => {
                                         // registGameResult.mutate();
                                         setStep('result');
@@ -112,8 +114,12 @@ function GroupVideoPage() {
                         </div>
                     )}
                     {step === 'result' && (
-                        <>
-                            <p>"게임결과"</p>
+                        <div className="flex flex-col items-center">
+                            <p className="text-3xl text-white">밸런스 게임 결과</p>
+                            <div className="flex gap-10">
+                                <GameResultCard isMore={true} scenario={games[gameStage].scenario1} />
+                                <GameResultCard isMore={false} scenario={games[gameStage].scenario1} />
+                            </div>
                             <button
                                 onClick={() => {
                                     setGameStage((prev) => prev + 1);
@@ -122,7 +128,7 @@ function GroupVideoPage() {
                             >
                                 다음 밸런스 게임 시작하기
                             </button>
-                        </>
+                        </div>
                     )}
                 </div>
                 <div className="flex w-full gap-4">
