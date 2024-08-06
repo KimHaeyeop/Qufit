@@ -37,7 +37,13 @@ const useRoom = () => {
 
     const addRoomEventHandler = async (room: Room) => {
         room.on(RoomEvent.ParticipantConnected, (participant) => {
-            addParticipant({ memberId: 1, gender: 'f', nickname: '현명', info: participant });
+            //상대방이 접속하면 셍서조회를 다시해서 가져온다.
+            //id가 같은애랑 매칭하면 되네.
+            const newParticipant = data?.data.members.find(
+                (member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
+                    member.id === Number(participant.identity),
+            );
+            addParticipant({ ...newParticipant, info: participant });
         });
     };
 
