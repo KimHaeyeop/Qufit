@@ -1,5 +1,9 @@
-export const GROUP_VIDEO_END_SEC = 900;
-export const PERSONAL_VIDEO_END_SEC = 300;
+// export const GROUP_VIDEO_END_SEC = 15 * 60;
+// export const PERSONAL_VIDEO_END_SEC = 5 * 60;
+
+export const GROUP_VIDEO_END_SEC = 5;
+export const PERSONAL_VIDEO_END_SEC = 5;
+
 export const LIVEKIT_URL = import.meta.env.VITE_LIVEKIT_URL;
 export const ROOM_SETTING = {
     videoCaptureDefaults: {

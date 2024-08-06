@@ -8,6 +8,7 @@ import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
 import useRoom from '@hooks/useRoom';
+import { useVideoRoomDetailQuery } from '@queries/useVideoQuery';
 
 function GroupVideoPage() {
     const roomMax = 8;
@@ -18,6 +19,9 @@ function GroupVideoPage() {
     const { createRoom, joinRoom, leaveRoom } = useRoom();
     const roomId = 124;
 
+    const handleTimerEnd = () => {
+        location.href = PATH.PERSONAL_VIDEO(1);
+    };
     return (
         <>
             <div className="flex flex-col items-center justify-between w-full h-screen">
@@ -61,7 +65,7 @@ function GroupVideoPage() {
                     <VideoTimer
                         endSec={GROUP_VIDEO_END_SEC}
                         afterFunc={() => {
-                            location.href = PATH.ROOT;
+                            handleTimerEnd();
                         }}
                     />
                     <GameStartButton />

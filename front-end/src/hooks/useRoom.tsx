@@ -19,20 +19,18 @@ import { useEffect, useState } from 'react';
 
 const useRoom = () => {
     const [videoRoomId, setVideoRoomId] = useState<number | null>(null);
-
+    const room = useRoomStateStore();
+    const setRoom = useSetRoomStateStore();
     const managerName = useRoomManagerNameStore();
     const myName = useRoomMyNameStore();
 
     const [isManager, setIsManager] = useState(false);
+
     useEffect(() => {
         setIsManager(!!myName && !!managerName && managerName === myName);
     }, [managerName, myName]);
-    const room = useRoomStateStore();
-    const setRoom = useSetRoomStateStore();
 
     const setManagerName = useRoomSetManagerNameStore();
-
-    const participants = useRoomParticipantsStore();
     const addParticipant = useRoomAddParticipantStore();
 
     const { data } = useVideoRoomDetailQuery(videoRoomId);
@@ -42,13 +40,13 @@ const useRoom = () => {
 
     const addRoomEventHandler = async (room: Room) => {
         room.on(RoomEvent.ParticipantConnected, (participant) => {
-            console.log(participant + ' 가 참가했습니다.');
             addParticipant({ memberId: 1, gender: 'f', nickname: '현명', info: participant });
         });
+    };
 
-        // await room.localParticipant.enableCameraAndMicrophone();
-        await room.localParticipant.setCameraEnabled(true);
-        //입장시 방장 정하자
+    const decideManager = async (room: Room) => {
+        await room.localParticipant.enableCameraAndMicrophone();
+        // await room.localParticipant.setCameraEnabled(true);
         const curParticipants = [];
         curParticipants.push(room.localParticipant);
         Array.from(room.remoteParticipants.values()).forEach((participant) => curParticipants.push(participant));
@@ -76,6 +74,7 @@ const useRoom = () => {
                     await room.connect(LIVEKIT_URL, data?.data.token);
                     setRoom(room);
                     addRoomEventHandler(room);
+                    decideManager(room);
                 },
                 onError: async (data) => {
                     console.log(data);
@@ -92,6 +91,7 @@ const useRoom = () => {
             onSuccess: async (data) => {
                 await room.connect(LIVEKIT_URL, data?.data.token);
                 addRoomEventHandler(room);
+                decideManager(room);
                 setVideoRoomId(videoRoomId!);
             },
         });
