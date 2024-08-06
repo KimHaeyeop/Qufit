@@ -9,14 +9,19 @@ import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
 import useRoom from '@hooks/useRoom';
 import { useVideoRoomDetailQuery } from '@queries/useVideoQuery';
+import BalanceGameGroup from '@components/game/GameChoiceGroup';
+import BalanceGameChoice from '@components/game/GameChoice';
+import { useState } from 'react';
+import GameTimer from '@components/game/GameTimer';
 
 function GroupVideoPage() {
     const roomMax = 8;
+    const [gameResult, setGameResult] = useState('');
     let maleIdx = 0;
     let femaleIdx = 0;
     const managerName = useRoomManagerNameStore();
     const participants = useRoomParticipantsStore();
-    const { createRoom, joinRoom, leaveRoom } = useRoom();
+    // const { createRoom, joinRoom, leaveRoom } = useRoom();
     const roomId = 124;
 
     const handleTimerEnd = () => {
@@ -49,7 +54,7 @@ function GroupVideoPage() {
                         ))}
                 </div>
                 <div>
-                    <div className="flex flex-col gap-4">
+                    {/* <div className="flex flex-col gap-4">
                         <button onClick={createRoom}>생성하기</button>
 
                         <button
@@ -60,15 +65,21 @@ function GroupVideoPage() {
                             입장하기
                         </button>
                         <button onClick={() => leaveRoom(roomId)}>나가기</button>
-                    </div>
+                    </div> */}
 
-                    <VideoTimer
+                    {/* <VideoTimer
                         endSec={GROUP_VIDEO_END_SEC}
                         afterFunc={() => {
                             handleTimerEnd();
                         }}
-                    />
-                    <GameStartButton />
+                    /> */}
+                    {/* <GameStartButton /> */}
+
+                    <BalanceGameGroup value={gameResult} onChange={(e) => setGameResult(e.target.value)} name={'game'}>
+                        <BalanceGameChoice value="1">이거 선택안함</BalanceGameChoice>
+                        <GameTimer endSec={5} afterFunc={() => console.log('완료')} />
+                        <BalanceGameChoice value="2">이거 선택함</BalanceGameChoice>
+                    </BalanceGameGroup>
                 </div>
                 <div className="flex w-full gap-4">
                     {participants.map((participant) => {
