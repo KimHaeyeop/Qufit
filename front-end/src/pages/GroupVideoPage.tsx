@@ -3,7 +3,7 @@ import AudioComponent from '@components/video/AudioComponent';
 import EmptyVideo from '@components/video/EmptyVideo';
 import { useRoomManagerNameStore, useRoomParticipantsStore } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
-
+import games from '@dummy/balance_game.json';
 import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
@@ -40,6 +40,8 @@ function GroupVideoPage() {
     const gameResults = useGameResultsStore();
     const addGameResults = useAddGameResultsStore();
     console.log(gameResults);
+
+    const [gameStage, setGameStage] = useState(1);
     return (
         <>
             <div className="flex flex-col items-center justify-between w-full h-screen">
@@ -90,23 +92,38 @@ function GroupVideoPage() {
 
                     {/* 전역스토어에 값을 가지고 있어 */}
                     {step === 'game' && (
-                        <BalanceGameGroup
-                            value={gameResult}
-                            onChange={(e) => setGameResult(e.target.value)}
-                            name={'game'}
-                        >
-                            <BalanceGameChoice value="1">이거 선택안함</BalanceGameChoice>
-                            <GameTimer
-                                endSec={5}
-                                afterFunc={() => {
-                                    // registGameResult.mutate();
-                                    setStep('result');
-                                }}
-                            />
-                            <BalanceGameChoice value="2">이거 선택함</BalanceGameChoice>
-                        </BalanceGameGroup>
+                        <div className="flex flex-col items-center text-4xl">
+                            <p>{games[gameStage].content}</p>
+                            <BalanceGameGroup
+                                value={gameResult}
+                                onChange={(e) => setGameResult(e.target.value)}
+                                name={'game'}
+                            >
+                                <BalanceGameChoice value="1">{games[gameStage].scenario1}</BalanceGameChoice>
+                                <GameTimer
+                                    endSec={51}
+                                    afterFunc={() => {
+                                        // registGameResult.mutate();
+                                        setStep('result');
+                                    }}
+                                />
+                                <BalanceGameChoice value="2">{games[gameStage].scenario2}</BalanceGameChoice>
+                            </BalanceGameGroup>
+                        </div>
                     )}
-                    {step === 'result' && <p>"게임결과"</p>}
+                    {step === 'result' && (
+                        <>
+                            <p>"게임결과"</p>
+                            <button
+                                onClick={() => {
+                                    setGameStage((prev) => prev + 1);
+                                    setStep('game');
+                                }}
+                            >
+                                다음 밸런스 게임 시작하기
+                            </button>
+                        </>
+                    )}
                 </div>
                 <div className="flex w-full gap-4">
                     {participants.map((participant) => {
