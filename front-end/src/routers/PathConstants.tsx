@@ -7,8 +7,8 @@ export const PATH = {
     MAIN: '/main',
     CHATTING: '/chatting',
     MY_PAGE: '/mypage',
-    GROUP_VIDEO: (roomId: String) => `/video/group/${roomId}`,
-    PERSONAL_VIDEO: (roomId: String) => `/video/personal/${roomId}`,
+    GROUP_VIDEO: (roomId: number) => `/video/group/${roomId}`,
+    PERSONAL_VIDEO: (roomId: number) => `/video/personal/${roomId}`,
 
     //카카오 소셜로그인 관련
     KAKAO_REDIRECT: REDIRECT_URI,
