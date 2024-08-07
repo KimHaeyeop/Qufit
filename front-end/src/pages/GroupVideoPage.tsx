@@ -16,7 +16,7 @@ function GroupVideoPage() {
     const managerName = useRoomManagerNameStore();
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
-    const roomId = 134;
+    const roomId = 164;
 
     const handleTimerEnd = () => {
         location.href = PATH.PERSONAL_VIDEO(1);
@@ -26,9 +26,9 @@ function GroupVideoPage() {
             <div className="flex flex-col items-center justify-between w-full h-screen">
                 <div className="flex w-full gap-4">
                     {participants.map((participant) => {
-                        maleIdx++;
-                        return (
-                            participant.gender === 'm' && (
+                        if (participant.gender === 'm') {
+                            maleIdx++;
+                            return (
                                 <VideoComponent
                                     key={participant.nickname}
                                     track={
@@ -38,8 +38,8 @@ function GroupVideoPage() {
                                     isManager={participant.nickname === managerName}
                                     participateName={participant.nickname!}
                                 />
-                            )
-                        );
+                            );
+                        }
                     })}
                     {Array(roomMax / 2 - maleIdx)
                         .fill(0)
@@ -71,9 +71,9 @@ function GroupVideoPage() {
                 </div>
                 <div className="flex w-full gap-4">
                     {participants.map((participant) => {
-                        femaleIdx++;
-                        return (
-                            participant.gender === 'f' && (
+                        if (participant.gender === 'f') {
+                            femaleIdx++;
+                            return (
                                 <VideoComponent
                                     key={participant.nickname}
                                     track={
@@ -83,8 +83,8 @@ function GroupVideoPage() {
                                     isManager={participant.nickname === managerName}
                                     participateName={participant.nickname!}
                                 />
-                            )
-                        );
+                            );
+                        }
                     })}
                     {Array(roomMax / 2 - femaleIdx)
                         .fill(0)
@@ -92,7 +92,7 @@ function GroupVideoPage() {
                             <EmptyVideo />
                         ))}
                 </div>
-                <div className="hidden">
+                {/* <div className="hidden">
                     {participants.map((participant) => (
                         <AudioComponent
                             key={participant.nickname}
@@ -101,7 +101,7 @@ function GroupVideoPage() {
                             }
                         />
                     ))}
-                </div>
+                </div> */}
             </div>
         </>
     );
