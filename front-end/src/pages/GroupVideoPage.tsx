@@ -16,7 +16,7 @@ function GroupVideoPage() {
     const managerName = useRoomManagerNameStore();
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
-    const roomId = 164;
+    const roomId = 177;
 
     const handleTimerEnd = () => {
         location.href = PATH.PERSONAL_VIDEO(1);
@@ -32,7 +32,7 @@ function GroupVideoPage() {
                                 <VideoComponent
                                     key={participant.nickname}
                                     track={
-                                        participant.info.videoTrackPublications.values().next().value?.videoTrack ||
+                                        participant?.info.videoTrackPublications.values().next().value?.videoTrack ||
                                         undefined
                                     }
                                     isManager={participant.nickname === managerName}
@@ -77,7 +77,7 @@ function GroupVideoPage() {
                                 <VideoComponent
                                     key={participant.nickname}
                                     track={
-                                        participant.info.videoTrackPublications.values().next().value?.videoTrack ||
+                                        participant?.info.videoTrackPublications.values().next().value?.videoTrack ||
                                         undefined
                                     }
                                     isManager={participant.nickname === managerName}

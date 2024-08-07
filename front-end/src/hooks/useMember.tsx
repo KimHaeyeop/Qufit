@@ -1,11 +1,19 @@
+import { useMemberQuery } from '@queries/useMemberQuery';
+import { useMemberInfoStore, useSetMemberInfoStore } from '@stores/member/memberStore';
 import { useEffect, useState } from 'react';
 
-export interface TimerProps {
-    endSec: number;
-    afterFunc: () => void;
-}
+export interface MemberProps {}
 const useMember = () => {
-    return restSec;
+    const member = useMemberInfoStore();
+    const setMember = useSetMemberInfoStore();
+    const { data, isSuccess } = useMemberQuery();
+
+    useEffect(() => {
+        if (isSuccess) {
+            setMember(data.data);
+        }
+    }, [isSuccess]);
+    return { member };
 };
 
 export default useMember;
