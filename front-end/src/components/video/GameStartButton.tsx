@@ -2,13 +2,20 @@ import { useState } from 'react';
 import animateData from '@assets/lottie/heart button.json';
 import LottieComponent from '@components/common/LottieComponent';
 import useRoom from '@hooks/useRoom';
+import useTimer from '@hooks/useTimer';
 
-const GameStartButton = () => {
+interface MeetingStartButtonProps {
+    onNext: () => void;
+}
+
+const MeetingStartButton = ({ onNext }: MeetingStartButtonProps) => {
     const [isStart, setIsStart] = useState(false);
     const { isHost } = useRoom();
 
+    const restSec = useTimer(10, onNext);
     const gameStart = () => {
         if (isHost) {
+            // onNext();
             setIsStart(true);
         }
     };
@@ -39,9 +46,9 @@ const GameStartButton = () => {
                         speed={0.5}
                         isPaused={false}
                         isStopped={false}
-                        loop={false}
-                        init={0}
+                        loop={true}
                         className="w-[20rem]"
+                        onComplete={onNext}
                     />
                 )}
             </div>
@@ -55,4 +62,4 @@ const GameStartButton = () => {
     );
 };
 
-export default GameStartButton;
+export default MeetingStartButton;

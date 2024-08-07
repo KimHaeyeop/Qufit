@@ -19,13 +19,13 @@ import { useAddGameResultsStore, useGameResultsStore } from '@stores/video/gameS
 import { FemaleIcon, MaleIcon } from '@assets/svg/video';
 import GameResultCard from '@components/game/GameResultCard';
 
-type GameStep = 'wait' | 'game' | 'result';
+type RoomStep = 'wait' | 'active' | 'game' | 'result';
 
 function GroupVideoPage() {
     const roomMax = 8;
     const [gameResult, setGameResult] = useState('');
 
-    const [step, setStep] = useState<GameStep>('game');
+    const [roomStep, setRoomStep] = useState<RoomStep>('wait');
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
     const roomId = 214;
@@ -56,14 +56,21 @@ function GroupVideoPage() {
                         </button>
                         <button onClick={() => leaveRoom(roomId)}>나가기</button>
                     </div>
-
-                    <VideoTimer
-                        endSec={50 * 60}
-                        afterFunc={() => {
-                            handleTimerEnd();
-                        }}
-                    />
-                    <GameStartButton />
+                    {roomStep === 'wait' && (
+                        <>
+                            <GameStartButton onNext={() => setRoomStep('active')} />
+                        </>
+                    )}
+                    {roomStep === 'active' && (
+                        <>
+                            <VideoTimer
+                                endSec={50 * 60}
+                                afterFunc={() => {
+                                    handleTimerEnd();
+                                }}
+                            />
+                        </>
+                    )}
                 </div>
                 <ParticipantVideo roomMax={roomMax} gender="f" />
                 {/* <div className="hidden">
