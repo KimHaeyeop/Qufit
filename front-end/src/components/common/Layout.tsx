@@ -1,4 +1,3 @@
-import LoginBtn from '@components/auth/LoginBtn';
 import Header from '@components/common/Header';
 import { Outlet, useLocation } from 'react-router-dom';
 

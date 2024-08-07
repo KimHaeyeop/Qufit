@@ -13,7 +13,7 @@ interface VideoComponentProps {
     isManager: boolean;
 }
 
-function VideoComponent({ track, value, isManager, participateName, local = false }: VideoComponentProps) {
+function VideoComponent({ track, isManager, participateName, local = false }: VideoComponentProps) {
     const videoElement = useRef<HTMLVideoElement | null>(null);
     const [isMicEnable, setIsMicEnable] = useState(true);
     const [isCameraEnable, setIsCameraEnable] = useState(true);
