@@ -8,6 +8,7 @@ import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
 import useRoom from '@hooks/useRoom';
+import ParticipantVideo from '@components/video/ParticipantVideo';
 
 function GroupVideoPage() {
     const roomMax = 8;
@@ -15,7 +16,7 @@ function GroupVideoPage() {
     let femaleIdx = 0;
     const participants = useRoomParticipantsStore();
     const { hostId, createRoom, joinRoom, leaveRoom } = useRoom();
-    const roomId = 207;
+    const roomId = 214;
 
     const handleTimerEnd = () => {
         location.href = PATH.PERSONAL_VIDEO(1);
@@ -24,29 +25,8 @@ function GroupVideoPage() {
     return (
         <>
             <div className="flex flex-col items-center justify-between w-full h-screen">
-                <div className="flex w-full gap-4">
-                    {participants.map((participant) => {
-                        if (participant.gender === 'm') {
-                            maleIdx++;
-                            return (
-                                <VideoComponent
-                                    key={participant.nickname}
-                                    track={
-                                        participant.info!.videoTrackPublications.values().next().value?.videoTrack ||
-                                        undefined
-                                    }
-                                    isManager={participant.id === hostId}
-                                    participateName={participant.nickname!}
-                                />
-                            );
-                        }
-                    })}
-                    {Array(roomMax / 2 - maleIdx)
-                        .fill(0)
-                        .map(() => (
-                            <EmptyVideo />
-                        ))}
-                </div>
+                <ParticipantVideo roomMax={roomMax} gender="m" />
+
                 <div>
                     <div className="flex flex-col gap-4">
                         <button onClick={createRoom}>생성하기</button>
@@ -69,29 +49,7 @@ function GroupVideoPage() {
                     />
                     <GameStartButton />
                 </div>
-                <div className="flex w-full gap-4">
-                    {participants.map((participant) => {
-                        if (participant.gender === 'f') {
-                            femaleIdx++;
-                            return (
-                                <VideoComponent
-                                    key={participant.nickname}
-                                    track={
-                                        participant?.info?.videoTrackPublications.values().next().value?.videoTrack ||
-                                        undefined
-                                    }
-                                    isManager={participant.id === hostId}
-                                    participateName={participant.nickname!}
-                                />
-                            );
-                        }
-                    })}
-                    {Array(roomMax / 2 - femaleIdx)
-                        .fill(0)
-                        .map(() => (
-                            <EmptyVideo />
-                        ))}
-                </div>
+                <ParticipantVideo roomMax={roomMax} gender="f" />
                 {/* <div className="hidden">
                     {participants.map((participant) => (
                         <AudioComponent
