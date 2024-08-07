@@ -7,7 +7,7 @@ interface RoomCardProps {
     tags: string[];
 }
 
-const RoomCard = ({ id, title, tags }: RoomCardProps) => {
+const RoomCard = ({ title, tags }: RoomCardProps) => {
     return (
         <button className="relative flex items-center w-full h-64 rounded-3xl effect-pureWhite hover:effect-pink hover:border-4 hover:border-lightPurple-2 lg:h-52 lg:rounded-2xl">
             <div className="absolute z-10 flex flex-col justify-between w-full h-full px-5 py-6 hover:px-4 hover:py-5 lg:px-4 lg:py-5 lg:hover:px-3 hover:lg:py-4">

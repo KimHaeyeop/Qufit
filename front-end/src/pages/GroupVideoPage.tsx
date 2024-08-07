@@ -8,7 +8,6 @@ import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
 import { PATH } from '@routers/PathConstants';
 import VideoTimer from '@components/video/GroupVideoTimer';
 import useRoom from '@hooks/useRoom';
-import { useVideoRoomDetailQuery } from '@queries/useVideoQuery';
 
 function GroupVideoPage() {
     const roomMax = 8;
