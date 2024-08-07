@@ -31,7 +31,7 @@ const useRoom = () => {
     const createVideoRoom = useCreateVideoRoomMutation();
     const joinVideoRoom = useJoinVideoRoomMutation();
     const leaveVideoRoom = useLeaveVideoRoomMutation();
-
+    const isHost = member?.memberId === hostId;
     const addRoomEventHandler = async (room: Room, roomId: number) => {
         room.on(RoomEvent.ParticipantConnected, async (participant) => {
             //상대방이 접속하면 셍서조회를 다시해서 가져온다.
@@ -129,7 +129,7 @@ const useRoom = () => {
             },
         });
     }
-    return { hostId, createRoom, joinRoom, leaveRoom };
+    return { hostId, isHost, createRoom, joinRoom, leaveRoom };
 };
 
 export default useRoom;
