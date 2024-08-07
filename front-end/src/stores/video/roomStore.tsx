@@ -3,10 +3,10 @@ import { Participant } from 'livekit-client';
 import { create } from 'zustand';
 
 export interface RoomParticipant {
-    memberId: number;
-    gender: 'f' | 'm';
-    nickname: string;
-    info: Participant;
+    id: number | undefined;
+    gender: 'f' | 'm' | undefined;
+    nickname: string | undefined;
+    info: Participant | undefined;
 }
 
 interface State {
@@ -19,6 +19,7 @@ interface State {
 interface Action {
     setRoom: (room: Room | undefined) => void;
     addParticipant: (participant: RoomParticipant) => void;
+    setParticipants: (participant: RoomParticipant[]) => void;
     setManagerName: (managerName: string) => void;
     setMyName: (myName: string) => void;
 }
@@ -36,6 +37,7 @@ const useRoomStore = create<State & Action>((set) => ({
             participants: [...state.participants, participant],
         })),
 
+    setParticipants: (participants) => set({ participants: participants }),
     setManagerName: (managerName) => set({ managerName: managerName }),
 }));
 
@@ -46,5 +48,6 @@ export const useRoomManagerNameStore = () => useRoomStore((state) => state.manag
 
 export const useSetRoomStateStore = () => useRoomStore((state) => state.setRoom);
 export const useRoomAddParticipantStore = () => useRoomStore((state) => state.addParticipant);
+export const useRoomSetParticipantsStore = () => useRoomStore((state) => state.setParticipants);
 export const useRoomSetMyNameStore = () => useRoomStore((state) => state.setMyName);
 export const useRoomSetManagerNameStore = () => useRoomStore((state) => state.setManagerName);
