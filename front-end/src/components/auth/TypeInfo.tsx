@@ -12,7 +12,7 @@ interface InfoProps {
 }
 
 const TypeInfo = ({ onNext, registData }: InfoProps) => {
-    const { values, submitting, messages, valids, handleChange, handleCheckboxGroupChange, handleSubmit } = useForm({
+    const { values, messages, valids, handleChange, handleCheckboxGroupChange, handleSubmit } = useForm({
         initialValues: {
             ...registData,
             typeAgeMax: 0,

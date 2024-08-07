@@ -1,8 +1,3 @@
-interface EmptyVideoProps {
-    width?: string;
-    height?: string;
-}
-
 function EmptyVideo() {
     return (
         <div
