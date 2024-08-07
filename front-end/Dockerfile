@@ -1,10 +1,10 @@
-# 빌드 이미지로 node:14 지정
-FROM node:14-alpine AS build
+# 빌드 이미지로 node:20 지정
+FROM node:20-alpine AS build
 # 컨테이너 내부 /app 디렉토리를 기준 실행
 WORKDIR /app
 
 # package.json과 package-lock.json을 먼저 복사하여 의존성 설치
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm ci
 
 # 나머지 소스 코드 복사 및 빌드
