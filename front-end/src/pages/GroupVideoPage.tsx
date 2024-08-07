@@ -1,7 +1,7 @@
 import VideoComponent from '@components/video/VideoComponent';
 import AudioComponent from '@components/video/AudioComponent';
 import EmptyVideo from '@components/video/EmptyVideo';
-import { useRoomManagerNameStore, useRoomParticipantsStore } from '@stores/video/roomStore';
+import { useRoomParticipantsStore } from '@stores/video/roomStore';
 import GameStartButton from '@components/video/GameStartButton';
 
 import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
@@ -13,14 +13,14 @@ function GroupVideoPage() {
     const roomMax = 8;
     let maleIdx = 0;
     let femaleIdx = 0;
-    const managerName = useRoomManagerNameStore();
     const participants = useRoomParticipantsStore();
-    const { createRoom, joinRoom, leaveRoom } = useRoom();
-    const roomId = 177;
+    const { hostId, createRoom, joinRoom, leaveRoom } = useRoom();
+    const roomId = 207;
 
     const handleTimerEnd = () => {
         location.href = PATH.PERSONAL_VIDEO(1);
     };
+
     return (
         <>
             <div className="flex flex-col items-center justify-between w-full h-screen">
@@ -32,10 +32,10 @@ function GroupVideoPage() {
                                 <VideoComponent
                                     key={participant.nickname}
                                     track={
-                                        participant?.info.videoTrackPublications.values().next().value?.videoTrack ||
+                                        participant.info!.videoTrackPublications.values().next().value?.videoTrack ||
                                         undefined
                                     }
-                                    isManager={participant.nickname === managerName}
+                                    isManager={participant.id === hostId}
                                     participateName={participant.nickname!}
                                 />
                             );
@@ -77,10 +77,10 @@ function GroupVideoPage() {
                                 <VideoComponent
                                     key={participant.nickname}
                                     track={
-                                        participant?.info.videoTrackPublications.values().next().value?.videoTrack ||
+                                        participant?.info?.videoTrackPublications.values().next().value?.videoTrack ||
                                         undefined
                                     }
-                                    isManager={participant.nickname === managerName}
+                                    isManager={participant.id === hostId}
                                     participateName={participant.nickname!}
                                 />
                             );
