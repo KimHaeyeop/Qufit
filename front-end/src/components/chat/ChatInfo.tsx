@@ -14,17 +14,7 @@ interface ChatInfoProps {
     lastReadMessageId: string;
 }
 
-const ChatInfo = ({
-    id,
-    nickname,
-    profileImage,
-    otherMemberId,
-    lastMessage,
-    unreadCount,
-    lastMessageId,
-    lastMessageTime,
-    lastReadMessageId,
-}: ChatInfoProps) => {
+const ChatInfo = ({ id, nickname, profileImage, otherMemberId, lastMessage, unreadCount }: ChatInfoProps) => {
     const setChatState = useChatStateStore((state) => state.setChatState);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 

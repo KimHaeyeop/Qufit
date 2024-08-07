@@ -3,13 +3,11 @@ import {
     useCreateVideoRoomMutation,
     useJoinVideoRoomMutation,
     useLeaveVideoRoomMutation,
-    useVideoRoomDetailQuery,
 } from '@queries/useVideoQuery';
 import {
     useRoomAddParticipantStore,
     useRoomManagerNameStore,
     useRoomMyNameStore,
-    useRoomParticipantsStore,
     useRoomSetManagerNameStore,
     useRoomStateStore,
     useSetRoomStateStore,
@@ -18,7 +16,7 @@ import { Room, RoomEvent } from 'livekit-client';
 import { useEffect, useState } from 'react';
 
 const useRoom = () => {
-    const [videoRoomId, setVideoRoomId] = useState<number | null>(null);
+    const [_, setVideoRoomId] = useState<number | null>(null);
     const room = useRoomStateStore();
     const setRoom = useSetRoomStateStore();
     const managerName = useRoomManagerNameStore();
@@ -33,7 +31,6 @@ const useRoom = () => {
     const setManagerName = useRoomSetManagerNameStore();
     const addParticipant = useRoomAddParticipantStore();
 
-    const { data } = useVideoRoomDetailQuery(videoRoomId);
     const createVideoRoom = useCreateVideoRoomMutation();
     const joinVideoRoom = useJoinVideoRoomMutation();
     const leaveVideoRoom = useLeaveVideoRoomMutation();

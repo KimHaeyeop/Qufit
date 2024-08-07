@@ -57,11 +57,11 @@ const signupValidate = ({
     messages.memberPersonalityTags = memberPersonalityTagsResult.message;
     valids.memberPersonalityTags = memberPersonalityTagsResult.valid;
 
-    const typeAgeMaxResult = validateAgeRange(typeAgeMax);
+    const typeAgeMaxResult = validateAgeRange(typeAgeMax!);
     messages.typeAgeMax = typeAgeMaxResult.message;
     valids.typeAgeMax = typeAgeMaxResult.valid;
 
-    const typeAgeMinResult = validateAgeRange(typeAgeMin);
+    const typeAgeMinResult = validateAgeRange(typeAgeMin!);
     messages.typeAgeMin = typeAgeMinResult.message;
     valids.typeAgeMin = typeAgeMinResult.valid;
 
@@ -101,11 +101,11 @@ export const validateNickname = (nickname: string) => {
     }
 };
 
-export const validateLocation = (locationId: number) => {
+export const validateLocation = (locationId: number | null) => {
     return createValidationResult(!!locationId, '올바른 지역코드입니다.', '지역을 골라주세요.');
 };
 
-export const validateBirthYear = (birthYear: number) => {
+export const validateBirthYear = (birthYear: number | null) => {
     return createValidationResult(!!birthYear, '올바른 연도입니다.', '태어난 연도를 알려주세요.');
 };
 
