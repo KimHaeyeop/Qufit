@@ -45,6 +45,7 @@ export default {
                 layout: '1.8 / 1',
                 header: '14 / 1',
                 video: '355/260',
+                gameBg: '815/525',
             },
 
             fontFamily: {
