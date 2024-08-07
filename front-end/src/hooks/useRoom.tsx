@@ -1,4 +1,6 @@
+import { getVideoDetail } from '@apis/video/VideoApi';
 import { LIVEKIT_URL, ROOM_SETTING } from '@components/video/VideoConstants';
+import useMember from '@hooks/useMember';
 import {
     useCreateVideoRoomMutation,
     useJoinVideoRoomMutation,
@@ -22,16 +24,8 @@ const useRoom = () => {
     const [_, setVideoRoomId] = useState<number | null>(null);
     const room = useRoomStateStore();
     const setRoom = useSetRoomStateStore();
-    const managerName = useRoomManagerNameStore();
-    const myName = useRoomMyNameStore();
     const { member } = useMember();
-    const [isManager, setIsManager] = useState(false);
 
-    useEffect(() => {
-        setIsManager(!!myName && !!managerName && managerName === myName);
-    }, [managerName, myName]);
-
-    const setManagerName = useRoomSetManagerNameStore();
     const addParticipant = useRoomAddParticipantStore();
     const setParticipants = useRoomSetParticipantsStore();
 
@@ -39,28 +33,29 @@ const useRoom = () => {
     const joinVideoRoom = useJoinVideoRoomMutation();
     const leaveVideoRoom = useLeaveVideoRoomMutation();
 
-    const addRoomEventHandler = async (room: Room) => {
-        room.on(RoomEvent.ParticipantConnected, (participant) => {
+    const addRoomEventHandler = async (room: Room, roomId: number) => {
+        room.on(RoomEvent.ParticipantConnected, async (participant) => {
             //상대방이 접속하면 셍서조회를 다시해서 가져온다.
             //id가 같은애랑 매칭하면 되네.
-            refetch();
-
-            const newParticipant = videoRoom?.data.members.find(
-                (member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
-                    member.id === Number(participant.identity),
-            );
-            addParticipant({ ...newParticipant, info: participant });
+            try {
+                const response = await getVideoDetail(roomId);
+                const newParticipant = response.data.members.find(
+                    (member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
+                        member.id === Number(participant.identity),
+                );
+                addParticipant({ ...newParticipant, info: participant });
+            } catch (error) {}
         });
     };
 
     const decideManager = async (room: Room) => {
         await room.localParticipant.enableCameraAndMicrophone();
 
-        setManagerName(curParticipants[0].name!);
-        addParticipant({ memberId: 1, gender: 'f', nickname: '현명', info: room.localParticipant });
+        // addParticipant({ id: 1, gender: 'f', nickname: '현명', info: room.localParticipant });
     };
 
     const createRoom = () => {
+        console.log(member);
         createVideoRoom.mutate(
             {
                 videoRoomName: 'test11',
@@ -70,12 +65,10 @@ const useRoom = () => {
             },
             {
                 onSuccess: async (data) => {
-                    console.log(data);
-                    setVideoRoomId(data.data.videoRoomId);
                     const room = new Room(ROOM_SETTING);
                     await room.connect(LIVEKIT_URL, data?.data.token);
                     setRoom(room);
-                    addRoomEventHandler(room);
+                    addRoomEventHandler(room, data.data.videoRoomId);
                     decideManager(room);
                     addParticipant({
                         id: member?.memberId,
@@ -92,35 +85,39 @@ const useRoom = () => {
     };
 
     async function joinRoom(videoRoomId: number) {
+        // setVideoRoomId(videoRoomId!);
+
         const room = new Room(ROOM_SETTING);
         setRoom(room);
         console.log(room);
         joinVideoRoom.mutate(videoRoomId, {
             onSuccess: async (response) => {
-                console.log(response?.data.token);
                 await room.connect(LIVEKIT_URL, response?.data.token);
                 const curParticipants: RoomParticipant[] = [];
-                // console.log(data?.data);
-                Array.from(room.remoteParticipants.values()).forEach((participant) => {
-                    const newParticipant = videoRoom?.data.members.find(
-                        (member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
-                            String(member.id) === participant.identity,
-                    );
-                    videoRoom?.data.members.forEach((member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
-                        console.log(String(member.id) === participant.identity),
-                    );
-                    console.log(participant);
-                    console.log(newParticipant);
-                    curParticipants.push({ ...newParticipant, info: participant });
-                    curParticipants.push({
-                        id: member?.memberId,
-                        gender: member?.gender,
-                        nickname: member?.nickname,
-                        info: room.localParticipant,
+
+                try {
+                    const response = await getVideoDetail(videoRoomId);
+                    Array.from(room.remoteParticipants.values()).forEach((participant) => {
+                        const newParticipant = response.data.members.find(
+                            (member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
+                                String(member.id) === participant.identity,
+                        );
+
+                        console.log(participant);
+                        console.log(newParticipant);
+                        curParticipants.push({ ...newParticipant, info: participant });
                     });
-                    setParticipants(curParticipants);
+                } catch (error) {
+                    console.log(error);
+                }
+                curParticipants.push({
+                    id: member?.memberId,
+                    gender: member?.gender,
+                    nickname: member?.nickname,
+                    info: room.localParticipant,
                 });
-                addRoomEventHandler(room);
+                setParticipants(curParticipants);
+                addRoomEventHandler(room, videoRoomId);
                 decideManager(room);
             },
         });
@@ -134,7 +131,7 @@ const useRoom = () => {
             },
         });
     }
-    return { isManager, createRoom, joinRoom, leaveRoom };
+    return { createRoom, joinRoom, leaveRoom };
 };
 
 export default useRoom;
