@@ -9,26 +9,25 @@ import {
 } from '@queries/useVideoQuery';
 import {
     RoomParticipant,
+    useHostIdStore,
     useRoomAddParticipantStore,
-    useRoomManagerNameStore,
-    useRoomMyNameStore,
-    useRoomSetManagerNameStore,
     useRoomSetParticipantsStore,
     useRoomStateStore,
+    useSetHostIdStore,
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import { Room, RoomEvent } from 'livekit-client';
 import { useEffect, useState } from 'react';
 
 const useRoom = () => {
-    const [_, setVideoRoomId] = useState<number | null>(null);
     const room = useRoomStateStore();
     const setRoom = useSetRoomStateStore();
     const { member } = useMember();
 
     const addParticipant = useRoomAddParticipantStore();
     const setParticipants = useRoomSetParticipantsStore();
-
+    const setHostId = useSetHostIdStore();
+    const hostId = useHostIdStore();
     const createVideoRoom = useCreateVideoRoomMutation();
     const joinVideoRoom = useJoinVideoRoomMutation();
     const leaveVideoRoom = useLeaveVideoRoomMutation();
@@ -70,6 +69,7 @@ const useRoom = () => {
                     setRoom(room);
                     addRoomEventHandler(room, data.data.videoRoomId);
                     decideManager(room);
+                    setHostId(member?.memberId!);
                     addParticipant({
                         id: member?.memberId,
                         gender: member?.gender,
@@ -102,11 +102,9 @@ const useRoom = () => {
                             (member: { id: number; gender: 'f' | 'm'; nickname: string }) =>
                                 String(member.id) === participant.identity,
                         );
-
-                        console.log(participant);
-                        console.log(newParticipant);
                         curParticipants.push({ ...newParticipant, info: participant });
                     });
+                    setHostId(response.data.hostId);
                 } catch (error) {
                     console.log(error);
                 }
@@ -131,7 +129,7 @@ const useRoom = () => {
             },
         });
     }
-    return { createRoom, joinRoom, leaveRoom };
+    return { hostId, createRoom, joinRoom, leaveRoom };
 };
 
 export default useRoom;
