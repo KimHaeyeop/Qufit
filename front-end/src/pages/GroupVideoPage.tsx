@@ -1,26 +1,25 @@
-import VideoComponent from '@components/video/VideoComponent';
-import AudioComponent from '@components/video/AudioComponent';
-import EmptyVideo from '@components/video/EmptyVideo';
+import AudioComponent from '@components/game/AudioComponent';
 import { useRoomParticipantsStore } from '@stores/video/roomStore';
-import GameStartButton from '@components/video/GameStartButton';
-import games from '@dummy/balance_game.json';
-import { GROUP_VIDEO_END_SEC } from '@components/video/VideoConstants';
-import { PATH } from '@routers/PathConstants';
-import VideoTimer from '@components/video/GroupVideoTimer';
+import GameStartButton from '@components/game/GameStartButton';
 import useRoom from '@hooks/useRoom';
 import ParticipantVideo from '@components/video/ParticipantVideo';
 import { useVideoRoomDetailQuery } from '@queries/useVideoQuery';
 import { useState } from 'react';
 import GameTimer from '@components/game/GameTimer';
-import { useAddGameResultsStore, useGameResultsStore } from '@stores/video/gameStore';
-import { FemaleIcon, MaleIcon, PlayIcon } from '@assets/svg/video';
-import BalanceGameIntro from '@components/video/BalanceGameIntro';
-import BalanceGamePlay from '@components/video/BalanceGame';
-import TypingText from '@components/video/TypingText';
-import BalanceGameResult from '@components/video/BalanceGameResult';
-import BalanceGame from '@components/video/BalanceGamePlay';
+import {
+    useAddGameResultsStore,
+    useGameResultsStore,
+    useProblemsStore,
+    useSetProblemsStore,
+} from '@stores/video/gameStore';
+import BalanceGameIntro from '@components/game/GameIntro';
+import { useBalanceGameQuery } from '@apis/video/VideoApi';
+import Loading from '@components/game/Loading';
+import BalanceGame from '@components/game/BalanceGame';
+import GamePlay from '@components/game/GamePlay';
+import GameResult from '@components/game/GameResult';
 
-type RoomStep = 'wait' | 'active' | 'game' | 'play' | 'result';
+type RoomStep = 'wait' | 'active' | 'loading' | 'game' | 'play' | 'result';
 
 function GroupVideoPage() {
     const roomMax = 8;
@@ -29,12 +28,20 @@ function GroupVideoPage() {
     const [roomStep, setRoomStep] = useState<RoomStep>('active');
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
+
     const roomId = 214;
 
     const gameResults = useGameResultsStore();
     const addGameResults = useAddGameResultsStore();
+    const problems = useProblemsStore();
+    const setProblems = useSetProblemsStore();
+    const { data, isSuccess } = useBalanceGameQuery();
 
-    const [gameStage, setGameStage] = useState(1);
+    if (isSuccess) {
+        setProblems(data.data);
+    }
+
+    const [gameStage, setGameStage] = useState(0);
     return (
         <>
             <div className="flex flex-col justify-center w-full h-screen ">
@@ -53,10 +60,35 @@ function GroupVideoPage() {
                         <button onClick={() => leaveRoom(roomId)}>나가기</button>
                     </div> */}
                     {roomStep === 'wait' && <GameStartButton onNext={() => setRoomStep('active')} />}
-                    {roomStep === 'active' && <BalanceGameIntro onNext={() => setRoomStep('game')} />}
-                    {roomStep === 'game' && <BalanceGame onNext={() => setRoomStep('play')} />}
-                    {roomStep === 'play' && <BalanceGamePlay onNext={() => setRoomStep('result')} />}
-                    {roomStep === 'result' && <BalanceGameResult onNext={() => setRoomStep('game')} />}
+                    {roomStep === 'active' && <BalanceGameIntro onNext={() => setRoomStep('loading')} />}
+                    {roomStep === 'loading' && <Loading onNext={() => setRoomStep('game')} />}
+                    {roomStep === 'game' && (
+                        <BalanceGame
+                            onNext={() => {
+                                setGameStage((prev) => prev + 1);
+                                setRoomStep('play');
+                            }}
+                        />
+                    )}
+                    {roomStep === 'play' && (
+                        <GamePlay
+                            id={problems[gameStage].balanceGameId}
+                            title={problems[gameStage].content}
+                            scenario1={problems[gameStage].scenario1}
+                            scenario2={problems[gameStage].scenario2}
+                            onNext={() => {
+                                setRoomStep('result');
+                            }}
+                        />
+                    )}
+                    {/* {roomStep === 'result' && (
+                        <GameResult
+                            onNext={() => {
+                                setGameStage((prev) => prev + 1);
+                                setRoomStep('game');
+                            }}
+                        />
+                    )} */}
                 </div>
                 <ParticipantVideo roomMax={roomMax} gender="f" />
             </div>

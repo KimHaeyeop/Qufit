@@ -6,7 +6,7 @@ interface BalanceGameIntroProps {
     onNext: () => void;
 }
 
-const BalanceGameIntro = ({ onNext }: BalanceGameIntroProps) => {
+const GameIntro = ({ onNext }: BalanceGameIntroProps) => {
     const handleTimerEnd = () => {
         location.href = PATH.PERSONAL_VIDEO(1);
     };
@@ -39,4 +39,4 @@ const BalanceGameIntro = ({ onNext }: BalanceGameIntroProps) => {
     );
 };
 
-export default BalanceGameIntro;
+export default GameIntro;

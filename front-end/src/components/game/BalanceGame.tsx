@@ -1,5 +1,5 @@
 import { NextIcon } from '@assets/svg/video';
-import TypingText from '@components/video/TypingText';
+import TypingText from '@components/game/TypingText';
 import { useState } from 'react';
 
 interface BalanceGameProps {
