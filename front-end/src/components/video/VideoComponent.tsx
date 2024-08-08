@@ -1,14 +1,15 @@
 import { CameraOffIcon, CrownIcon, MicOffIcon, MicOnIcon } from '@assets/svg/video';
-import { useRoomStateStore } from '@stores/video/roomStore';
+import { useRoomParticipantsStore, useRoomStateStore } from '@stores/video/roomStore';
 import { LocalVideoTrack, Participant, RemoteVideoTrack } from 'livekit-client';
 import { useEffect, useRef, useState } from 'react';
 import { MouseEvent } from 'react';
 
 interface VideoComponentProps {
-    track: LocalVideoTrack | RemoteVideoTrack;
+    track?: LocalVideoTrack | RemoteVideoTrack;
     participateName: string;
     participants?: Participant[];
     local?: boolean;
+    value?: Participant;
     isManager: boolean;
 }
 
@@ -17,15 +18,22 @@ function VideoComponent({ track, isManager, participateName, local = false }: Vi
     const [isMicEnable, setIsMicEnable] = useState(true);
     const [isCameraEnable, setIsCameraEnable] = useState(true);
     const room = useRoomStateStore();
+    const participants = useRoomParticipantsStore();
+    // console.log(value?.videoTrackPublications.values());
+    // console.log(value?.videoTrackPublications.values().next());
+    // console.log(value?.videoTrackPublications.values().next().value);
+    // console.log(value?.videoTrackPublications.values().next().value.videoTrack);
 
+    // console.log(value);
+    // console.log(track);
     useEffect(() => {
         if (videoElement.current) {
-            track.attach(videoElement.current);
+            track?.attach(videoElement.current);
         }
         return () => {
-            track.detach();
+            track?.detach();
         };
-    }, [track, isCameraEnable]);
+    }, [track, participants]);
 
     const changeCameraEnabled = () => {
         room?.localParticipant.setCameraEnabled(!room?.localParticipant.isCameraEnabled);

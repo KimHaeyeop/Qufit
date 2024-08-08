@@ -43,7 +43,7 @@ const SignupPage = () => {
                     registData={registerData}
                     onNext={(data: MemberInfoDTO) =>
                         signup.mutate(
-                            { data, token: accessToken },
+                            { data, token: accessToken || '' },
                             {
                                 onSuccess: (response) => {
                                     console.log(response);
