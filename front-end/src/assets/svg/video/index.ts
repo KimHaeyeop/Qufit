@@ -1,3 +1,4 @@
+export { default as GameHeartIcon } from './GameHeartIcon';
 export { default as CameraOffIcon } from './CameraOffIcon';
 export { default as CrownIcon } from './CrownIcon';
 export { default as FemaleIcon } from './FemaleIcon';

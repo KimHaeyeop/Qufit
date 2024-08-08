@@ -28,6 +28,15 @@ export default {
             transparent: 'transparent',
         },
         extend: {
+            keyframes: {
+                choice: {
+                    from: { width: '100%' },
+                    to: { width: '0' },
+                },
+            },
+            animation: {
+                choice: 'choice 7s',
+            },
             backgroundImage: {
                 mainPageBg: "url('@assets/png/mainPageBg.png')",
                 chatPageBg: "url('@assets/png/chatPageBg.png')",
