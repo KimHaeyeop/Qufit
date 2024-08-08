@@ -1,6 +1,6 @@
 import { StartChatIcon, DeleteFriendIcon } from '@assets/svg/chat';
 import { instance } from '@apis/axios';
-import useChatStateStore from '@stores/chat/chatStateStore';
+// import useChatStateStore from '@stores/chat/chatStateStore';
 import useCloseStateStore from '@stores/chat/closeStateStore';
 
 interface FriendInfoProps {
@@ -10,7 +10,7 @@ interface FriendInfoProps {
 }
 
 const FriendInfo = ({ otherMemberId, nickname, profileImage }: FriendInfoProps) => {
-    const setChatState = useChatStateStore((state) => state.setChatState);
+    // const setChatState = useChatStateStore((state) => state.setChatState);
     const setIsClosed = useCloseStateStore((state) => state.setIsClosed);
 
     const handleStartChatButton = () => {
@@ -18,14 +18,14 @@ const FriendInfo = ({ otherMemberId, nickname, profileImage }: FriendInfoProps) 
         instance
             .post(`/qufit/chat/rooms/${otherMemberId}`)
             .then((res) => {
-                setChatState([
-                    {
-                        id: id,
-                        nickname: nickname,
-                        profileImage: profileImage,
-                        otherMemberId: otherMemberId,
-                    },
-                ]);
+                // setChatState([
+                //     {
+                //         id: id,
+                //         nickname: nickname,
+                //         profileImage: profileImage,
+                //         otherMemberId: otherMemberId,
+                //     },
+                // ]);
                 console.log('채팅방 생성 성공:', res);
             })
             .catch((err) => {
