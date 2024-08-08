@@ -1,31 +1,30 @@
-import AudioComponent from '@components/game/AudioComponent';
+import AudioComponent from '@components/video/AudioComponent';
 import { useRoomParticipantsStore } from '@stores/video/roomStore';
 import GameStartButton from '@components/game/GameStartButton';
 import useRoom from '@hooks/useRoom';
 import ParticipantVideo from '@components/video/ParticipantVideo';
 import { useVideoRoomDetailQuery } from '@queries/useVideoQuery';
 import { useState } from 'react';
-import GameTimer from '@components/game/GameTimer';
 import {
     useAddGameResultsStore,
     useGameResultsStore,
     useProblemsStore,
     useSetProblemsStore,
 } from '@stores/video/gameStore';
-import BalanceGameIntro from '@components/game/GameIntro';
 import { useBalanceGameQuery } from '@apis/video/VideoApi';
-import Loading from '@components/game/Loading';
-import BalanceGame from '@components/game/BalanceGame';
-import GamePlay from '@components/game/GamePlay';
-import GameResult from '@components/game/GameResult';
+import Loading from '@components/game/\bstep/Loading';
+import BalanceGame from '@components/game/\bstep/BalanceGame';
+import GameResult from '@components/game/\bstep/GameResult';
+import GamePlay from '@components/game/\bstep/GamePlay';
+import GameEnd from '@components/game/\bstep/GameEnd';
 
-type RoomStep = 'wait' | 'active' | 'loading' | 'game' | 'play' | 'result';
+type RoomStep = 'wait' | 'active' | 'loading' | 'game' | 'play' | 'result' | 'end';
 
 function GroupVideoPage() {
     const roomMax = 8;
     const [gameResult, setGameResult] = useState('');
 
-    const [roomStep, setRoomStep] = useState<RoomStep>('active');
+    const [roomStep, setRoomStep] = useState<RoomStep>('result');
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
 
@@ -60,7 +59,7 @@ function GroupVideoPage() {
                         <button onClick={() => leaveRoom(roomId)}>나가기</button>
                     </div> */}
                     {roomStep === 'wait' && <GameStartButton onNext={() => setRoomStep('active')} />}
-                    {roomStep === 'active' && <BalanceGameIntro onNext={() => setRoomStep('loading')} />}
+                    {/* {roomStep === 'active' && <GameIntro onNext={() => setRoomStep('loading')} />} */}
                     {roomStep === 'loading' && <Loading onNext={() => setRoomStep('game')} />}
                     {roomStep === 'game' && (
                         <BalanceGame
@@ -81,14 +80,19 @@ function GroupVideoPage() {
                             }}
                         />
                     )}
-                    {/* {roomStep === 'result' && (
+                    {roomStep === 'result' && (
                         <GameResult
+                            onStop={() => {
+                                // 타이머페이지
+                                setRoomStep('end');
+                            }}
                             onNext={() => {
                                 setGameStage((prev) => prev + 1);
-                                setRoomStep('game');
+                                setRoomStep('play');
                             }}
                         />
-                    )} */}
+                    )}
+                    {roomStep === 'end' && <GameEnd />}
                 </div>
                 <ParticipantVideo roomMax={roomMax} gender="f" />
             </div>

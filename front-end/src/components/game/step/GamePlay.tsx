@@ -4,6 +4,8 @@ import SingleTag from '@components/auth/SingleTag';
 import SingleTagGroup from '@components/auth/SingleTagGroup';
 import Radio from '@components/common/radio/Radio';
 import RadioGroup from '@components/common/radio/RadioGroup';
+import Choice from '@components/game/Choice';
+import ChoiceGroup from '@components/game/ChoiceGroup';
 import ChoiceTimer from '@components/game/ChoiceTimer';
 import TypingText from '@components/game/TypingText';
 import useTimer from '@hooks/useTimer';
@@ -12,8 +14,8 @@ import { ChangeEvent, useEffect, useState } from 'react';
 interface GamePlayProps {
     onNext: () => void;
     title: string;
-    scenario1?: string;
-    scenario2?: string;
+    scenario1: string;
+    scenario2: string;
     id: number;
 }
 const GamePlay = ({ id, title, scenario1, scenario2, onNext }: GamePlayProps) => {
@@ -56,22 +58,12 @@ const GamePlay = ({ id, title, scenario1, scenario2, onNext }: GamePlayProps) =>
                         className="w-full text-lg text-white"
                     />
                 )}
+
                 {startTimer && (
-                    <RadioGroup
-                        className="border-2 border-white rounded-lg absolute z-100 -top-4 right-0 -translate-y-full flex flex-col items-start py-[1.5rem] gap-1 px-[1rem] bg-black opacity-50"
-                        value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        name={''}
-                    >
-                        {[scenario1, scenario2].map((scenario) => (
-                            <Radio
-                                value={scenario!}
-                                className="flex  opacity-90 p-2 items-center text-xl  text-white justify-center   hover:border-lightPurple-6  has-[:checked]:bg-lightPurple-2 has-[:checked]:animate-pulse"
-                            >
-                                {scenario}
-                            </Radio>
-                        ))}
-                    </RadioGroup>
+                    <ChoiceGroup value={answer} onChange={(e) => setAnswer(e.target.value)} name={''}>
+                        <Choice value={scenario1!}>{scenario1}</Choice>
+                        <Choice value={scenario2!}>{scenario2}</Choice>
+                    </ChoiceGroup>
                 )}
             </div>
         </div>
