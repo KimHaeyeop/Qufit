@@ -18,7 +18,7 @@ interface ChatListProps {
     timestamp: string;
 }
 
-const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
+const ChatRoom = ({ id, nickname }: ChatRoomProps) => {
     const senderId = 22;
 
     // Store
