@@ -3,7 +3,7 @@ import useChatStateStore from '@stores/chat/chatStateStore';
 import useCloseStateStore from '@stores/chat/closeStateStore';
 import { useSetChatInfoList } from '@stores/chat/chatInfoListStore';
 import * as StompJs from '@stomp/stompjs';
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 interface ChatRoomProps {
     id: number;
@@ -18,7 +18,7 @@ interface ChatListProps {
     timestamp: string;
 }
 
-const ChatRoom = ({ id, nickname, profileImage }: ChatRoomProps) => {
+const ChatRoom = ({ id, nickname }: ChatRoomProps) => {
     const senderId = 22;
 
     // Store
