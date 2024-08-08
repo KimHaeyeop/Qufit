@@ -2,16 +2,23 @@ import { Room } from 'livekit-client';
 import { Participant } from 'livekit-client';
 import { create } from 'zustand';
 
+export interface RoomParticipant {
+    memberId: number;
+    gender: 'f' | 'm';
+    nickname: string;
+    info: Participant;
+}
+
 interface State {
     room: Room | undefined;
-    participants: Participant[];
+    participants: RoomParticipant[];
     managerName: string;
     myName: string;
 }
 
 interface Action {
     setRoom: (room: Room | undefined) => void;
-    addParticipant: (participant: Participant) => void;
+    addParticipant: (participant: RoomParticipant) => void;
     setManagerName: (managerName: string) => void;
     setMyName: (myName: string) => void;
 }

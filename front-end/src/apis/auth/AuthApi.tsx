@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_URL, END_POINT, FRONT_URL, HttpStatus, REDIRECT_URI, REST_API_KEY } from '@apis/ApiConstants';
+import { ACCESS_TOKEN_URL, END_POINT, FRONT_URL, REDIRECT_URI, REST_API_KEY } from '@apis/ApiConstants';
 import { instance } from '@apis/axios';
 import { MemberInfoDTO } from '@apis/types/request';
 import axios from 'axios';

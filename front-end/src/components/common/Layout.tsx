@@ -1,4 +1,3 @@
-import LoginBtn from '@components/auth/LoginBtn';
 import LottieComponent from '@components/common/LottieComponent';
 import Header from '@components/common/Header';
 import FireFly from '@assets/lottie/firefly.json';

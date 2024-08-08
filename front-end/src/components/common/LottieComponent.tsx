@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import Lottie, { AnimationItem } from 'lottie-web';
+import Lottie, { AnimationConfigWithData, AnimationItem } from 'lottie-web';
 
 // Define the interface for the props
 interface LottieComponentProps {
@@ -34,8 +34,7 @@ const LottieComponent: React.FC<LottieComponentProps> = ({
     useEffect(() => {
         if (!animationContainer.current) return;
 
-        // Lottie animation options
-        const animationOptions = {
+        const animationOptions: AnimationConfigWithData<'svg'> = {
             container: animationContainer.current,
             renderer: 'svg',
             loop: loop,
