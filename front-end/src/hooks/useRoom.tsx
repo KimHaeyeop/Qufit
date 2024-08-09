@@ -14,8 +14,12 @@ import {
 } from '@stores/video/roomStore';
 import { Room, RoomEvent } from 'livekit-client';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '@routers/PathConstants';
 
 const useRoom = () => {
+    const navigate = useNavigate();
+
     const [_, setVideoRoomId] = useState<number | null>(null);
     const room = useRoomStateStore();
     const setRoom = useSetRoomStateStore();
@@ -90,6 +94,8 @@ const useRoom = () => {
                 addRoomEventHandler(room);
                 decideManager(room);
                 setVideoRoomId(videoRoomId!);
+                console.log('join room success');
+                navigate(PATH.GROUP_VIDEO(videoRoomId));
             },
         });
     }
