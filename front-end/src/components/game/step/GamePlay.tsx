@@ -9,10 +9,11 @@ import ChoiceGroup from '@components/game/ChoiceGroup';
 import ChoiceTimer from '@components/game/ChoiceTimer';
 import TypingText from '@components/game/TypingText';
 import useTimer from '@hooks/useTimer';
+import { useRoomIdStore } from '@stores/video/roomStore';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface GamePlayProps {
-    onNext: () => void;
+    onNext: (choice: any) => void;
     title: string;
     scenario1: string;
     scenario2: string;
@@ -22,10 +23,14 @@ const GamePlay = ({ id, title, scenario1, scenario2, onNext }: GamePlayProps) =>
     const [nextSentence, setNextSentence] = useState(false);
     const [answer, setAnswer] = useState('0');
     const [startTimer, setStartTimer] = useState(false);
-
+    const roomId = useRoomIdStore();
     const handleTimerEnd = () => {
-        //선택지 요청보내기
-        onNext();
+        const data = {
+            balance_game_id: id,
+            video_room_id: roomId,
+            answer: answer,
+        };
+        onNext(data);
     };
 
     return (
@@ -61,8 +66,8 @@ const GamePlay = ({ id, title, scenario1, scenario2, onNext }: GamePlayProps) =>
 
                 {startTimer && (
                     <ChoiceGroup value={answer} onChange={(e) => setAnswer(e.target.value)} name={''}>
-                        <Choice value={scenario1!}>{scenario1}</Choice>
-                        <Choice value={scenario2!}>{scenario2}</Choice>
+                        <Choice value={'1'}>{scenario1}</Choice>
+                        <Choice value={'2'}>{scenario2}</Choice>
                     </ChoiceGroup>
                 )}
             </div>
