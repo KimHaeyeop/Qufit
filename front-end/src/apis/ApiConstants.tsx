@@ -7,6 +7,8 @@ export const KAKAO_LOGIN_URL = `${AUTH_CODE_PATH}?client_id=${REST_API_KEY}&redi
     FRONT_URL + REDIRECT_URI
 }&response_type=code`;
 
+export const WEB_SOCKET_URL = import.meta.env.VITE_WEB_SOCKET_URL;
+
 export const END_POINT = {
     LOGIN: 'qufit/auth/login',
     SIGN_UP: 'qufit/auth/signup',
