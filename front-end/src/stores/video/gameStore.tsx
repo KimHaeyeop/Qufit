@@ -8,26 +8,31 @@ type Problem = {
     scenario2: string;
 };
 
+type Result = {
+    [balanceGameId: number]: {
+        [memberId: number]: number;
+    };
+};
 interface State {
     problems: Problem[];
 
-    gameResults: string[];
+    results: Result[];
 }
 
 interface Action {
     setProblems: (arg: Problem[]) => void;
-    addGameResults: (arg: string) => void;
+    setResults: (arg: Result[]) => void;
 }
 
 const useGameStore = create(
     persist<State & Action>(
         (set) => ({
-            gameResults: [],
+            results: [],
             problems: [],
 
-            addGameResults: (gameResult) =>
-                set((state) => ({
-                    gameResults: [...state.gameResults, gameResult],
+            setResults: (results) =>
+                set(() => ({
+                    results: results,
                 })),
             setProblems: (problems) =>
                 set(() => ({
@@ -41,7 +46,7 @@ const useGameStore = create(
     ),
 );
 
-export const useGameResultsStore = () => useGameStore((state) => state.gameResults);
-export const useAddGameResultsStore = () => useGameStore((state) => state.addGameResults);
+export const useResultsStore = () => useGameStore((state) => state.results);
+export const useSetResultsStore = () => useGameStore((state) => state.setResults);
 export const useProblemsStore = () => useGameStore((state) => state.problems);
 export const useSetProblemsStore = () => useGameStore((state) => state.setProblems);

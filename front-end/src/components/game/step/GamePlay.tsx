@@ -1,16 +1,9 @@
-import { GameHeartIcon } from '@assets/svg/video';
-import { GENDER } from '@components/auth/SignupConstants';
-import SingleTag from '@components/auth/SingleTag';
-import SingleTagGroup from '@components/auth/SingleTagGroup';
-import Radio from '@components/common/radio/Radio';
-import RadioGroup from '@components/common/radio/RadioGroup';
 import Choice from '@components/game/Choice';
 import ChoiceGroup from '@components/game/ChoiceGroup';
 import ChoiceTimer from '@components/game/ChoiceTimer';
 import TypingText from '@components/game/TypingText';
-import useTimer from '@hooks/useTimer';
 import { useRoomIdStore } from '@stores/video/roomStore';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface GamePlayProps {
     onNext: (choice: any) => void;
@@ -26,10 +19,11 @@ const GamePlay = ({ id, title, scenario1, scenario2, onNext }: GamePlayProps) =>
     const roomId = useRoomIdStore();
     const handleTimerEnd = () => {
         const data = {
-            balance_game_id: id,
-            video_room_id: roomId,
-            answer: answer,
+            balanceGameId: id,
+            videoRoomId: roomId,
+            answer: Number(answer),
         };
+        console.log(data);
         onNext(data);
     };
 
