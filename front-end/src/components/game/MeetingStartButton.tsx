@@ -3,25 +3,25 @@ import animateData from '@assets/lottie/heart button.json';
 import LottieComponent from '@components/common/LottieComponent';
 import useRoom from '@hooks/useRoom';
 import useTimer from '@hooks/useTimer';
+import MeetingStartTimer from '@components/game/MeetingStartTimer';
 
 interface MeetingStartButtonProps {
     onNext: () => void;
+    isStart: boolean;
+    onClick: () => void;
 }
 
-const MeetingStartButton = ({ onNext }: MeetingStartButtonProps) => {
-    const [isStart, setIsStart] = useState(false);
+const MeetingStartButton = ({ onNext, isStart, onClick }: MeetingStartButtonProps) => {
     const { isHost } = useRoom();
 
-    const restSec = useTimer(10, onNext);
-    const gameStart = () => {
+    const meetingStart = () => {
         if (isHost) {
-            // onNext();
-            setIsStart(true);
+            onClick();
         }
     };
     return (
         <div className="relative flex flex-col items-center">
-            <div className="flex gap-8 group" onClick={gameStart}>
+            <div className="flex gap-8 group" onClick={meetingStart}>
                 {!isStart ? (
                     <>
                         <LottieComponent
@@ -41,20 +41,23 @@ const MeetingStartButton = ({ onNext }: MeetingStartButtonProps) => {
                         )}
                     </>
                 ) : (
-                    <LottieComponent
-                        animationData={animateData}
-                        speed={0.5}
-                        isPaused={false}
-                        isStopped={false}
-                        loop={true}
-                        className="w-[20rem]"
-                        onComplete={onNext}
-                    />
+                    <>
+                        <LottieComponent
+                            animationData={animateData}
+                            speed={0.5}
+                            isPaused={false}
+                            isStopped={false}
+                            loop={true}
+                            className="w-[20rem]"
+                            onComplete={onNext}
+                        />
+                        <MeetingStartTimer endSec={8} afterFunc={onNext} />
+                    </>
                 )}
             </div>
 
             {!isStart && (
-                <p className="absolute text-lg text-white -bottom-5">
+                <p className="absolute text-lg text-white -bottom-5 animate-pulse">
                     {isHost ? '미팅을 시작하려면 버튼을 눌러주세요' : '잠시후 미팅이 시작됩니다. 기다려주세요!'}
                 </p>
             )}
