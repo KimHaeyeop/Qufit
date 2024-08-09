@@ -1,5 +1,5 @@
 import AudioComponent from '@components/video/AudioComponent';
-import { useRoomParticipantsStore } from '@stores/video/roomStore';
+import { useRoomParticipantsStore, useSetRoomIdStore } from '@stores/video/roomStore';
 import GameStartButton from '@components/game/MeetingStartButton';
 import useRoom from '@hooks/useRoom';
 import ParticipantVideo from '@components/video/ParticipantVideo';
@@ -25,15 +25,17 @@ type RoomStep = 'wait' | 'active' | 'loading' | 'game' | 'play' | 'result' | 'en
 
 function GroupVideoPage() {
     const roomMax = 8;
-    const [isStart, setIsStart] = useState(false);
+    const [isMeetingStart, setIsMettingStart] = useState(false);
     const [gameResult, setGameResult] = useState('');
     const { videoRoomId } = useParams();
 
-    const [roomStep, setRoomStep] = useState<RoomStep>('wait');
+    const [roomStep, setRoomStep] = useState<RoomStep>('game');
     const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
+    const [gameStage, setGameStage] = useState(0);
+    const roomId = 79;
 
-    const roomId = 75;
+    const setRoomId = useSetRoomIdStore();
 
     const gameResults = useGameResultsStore();
     const addGameResults = useAddGameResultsStore();
@@ -42,14 +44,41 @@ function GroupVideoPage() {
     // 소켓 연결
     const client = useRef<StompJs.Client | null>(null);
 
-    const startMeeting = () => {
+    const publishSocket = (data: any) => {
         client.current?.publish({
             destination: `/pub/game/${roomId}`,
-            body: JSON.stringify({
-                isRoomStart: true,
-            }),
+            body: JSON.stringify(data),
         });
-        setIsStart(true);
+    };
+    const startMeeting = () => {
+        publishSocket({
+            isRoomStart: true,
+        });
+        setIsMettingStart(true);
+    };
+
+    const startGame = () => {
+        publishSocket({
+            isGameStart: true,
+        });
+        setRoomStep('loading');
+    };
+
+    const startPlay = () => {
+        publishSocket({
+            isChoiceStart: true,
+        });
+        setGameStage((prev) => prev + 1);
+        setRoomStep('play');
+    };
+
+    const endChoice = (choice: any) => {
+        publishSocket(choice);
+    };
+    const afterSubscribe = (response: any, message: string, func: any) => {
+        if (response.message === message) {
+            func();
+        }
     };
     const connect = () => {
         try {
@@ -67,9 +96,25 @@ function GroupVideoPage() {
                 onConnect: () => {
                     client.current?.subscribe(`/sub/game/${roomId}`, (message) => {
                         const response = JSON.parse(message.body);
-                        if (response.message === '미팅룸 시작을 성공했습니다.') {
-                            setIsStart(true);
-                        }
+                        console.log(response);
+
+                        afterSubscribe(response, '미팅룸 시작을 성공했습니다.', () => {
+                            setIsMettingStart(true);
+                        });
+                        afterSubscribe(response, '게임 시작을 성공했습니다.', () => {
+                            setRoomStep('loading');
+                        });
+                        afterSubscribe(response, '선택지 선택을 시작했습니다.', () => {
+                            console.log(response?.result);
+                            setProblems(response.result);
+                        });
+                        // afterSubscribe(response, '선택을 완료했습니다.', () => {
+
+                        // });
+                        afterSubscribe(response, '게임 결과를 조회했습니다.', () => {
+                            // setRoomStep('loading');
+                        });
+
                         console.log(response);
                     });
                 },
@@ -92,11 +137,11 @@ function GroupVideoPage() {
         client.current.deactivate();
     };
     useEffect(() => {
+        setRoomId(roomId); //나중에 param에서 따와야함
         connect();
-
         return () => disConnect();
     }, []);
-    const [gameStage, setGameStage] = useState(0);
+
     return (
         <>
             <div className="flex flex-col justify-center w-full h-screen ">
@@ -116,30 +161,24 @@ function GroupVideoPage() {
                     </div>
                     {roomStep === 'wait' && (
                         <MeetingStartButton
-                            isStart={isStart}
+                            isStart={isMeetingStart}
                             onClick={startMeeting}
                             onNext={() => {
                                 setRoomStep('active');
                             }}
                         />
                     )}
-                    {roomStep === 'active' && <GameIntro onNext={() => setRoomStep('loading')} />}
+                    {roomStep === 'active' && <GameIntro onNext={startGame} />}
                     {roomStep === 'loading' && <Loading onNext={() => setRoomStep('game')} />}
-                    {roomStep === 'game' && (
-                        <BalanceGame
-                            onNext={() => {
-                                setGameStage((prev) => prev + 1);
-                                setRoomStep('play');
-                            }}
-                        />
-                    )}
+                    {roomStep === 'game' && <BalanceGame onNext={startPlay} />}
                     {roomStep === 'play' && (
                         <GamePlay
                             id={problems[gameStage].balanceGameId}
                             title={problems[gameStage].content}
                             scenario1={problems[gameStage].scenario1}
                             scenario2={problems[gameStage].scenario2}
-                            onNext={() => {
+                            onNext={(choice: any) => {
+                                endChoice(choice);
                                 setRoomStep('result');
                             }}
                         />
