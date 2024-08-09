@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import LottieComponent from '@components/common/LottieComponent';
+import loader from '@assets/lottie/loader.json';
 import { BoxIcon, RecommendRoomIcon, FilterIcon } from '@assets/svg/main';
 import RoomCard from '@components/main/RoomCard';
 import { CreateRoomModal, RoomEntryModal } from '@modals/main/RoomModal';
@@ -21,8 +23,9 @@ const MainPage = () => {
     const [roomsList, setRoomsList] = useState<RoomsInfoProps[]>([]);
 
     const endRef = useRef<HTMLDivElement>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-    const getRoomsData = useVideoRoomQuery(page, 12, 1);
+    const getRoomsData = useVideoRoomQuery(page, 24, 1);
     const RoomsInfoList = getRoomsData.data?.data?.videoRoomList;
 
     useEffect(() => {
@@ -40,7 +43,6 @@ const MainPage = () => {
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting && hasMore) {
-                console.log('패칭');
                 setPage((prev) => {
                     return prev + 1;
                 });
@@ -100,8 +102,9 @@ const MainPage = () => {
             </div>
             <div
                 id="scrollableDiv"
+                ref={scrollRef}
                 onClick={() => handleOpenModalButton('entry')}
-                className="grid w-full h-full grid-cols-3 gap-8 overflow-y-auto scrollbar-hide md:grid-cols-2 lg:gap-6 xl:grid-cols-4 xl:gap-6 sm:grid-cols-2 xs:grid-cols-1"
+                className="relative grid w-full h-full grid-cols-3 gap-8 overflow-y-auto scrollbar-hide md:grid-cols-2 lg:gap-6 xl:grid-cols-4 xl:gap-6 sm:grid-cols-2 xs:grid-cols-1"
             >
                 {roomsList &&
                     roomsList.map((data: RoomsInfoProps) => (
@@ -112,6 +115,20 @@ const MainPage = () => {
                             tags={data.videoRoomHobby}
                         />
                     ))}
+                {getRoomsData.isLoading && (
+                    <div className="absolute flex items-center justify-center w-full h-full">
+                        <LottieComponent
+                            animationData={loader}
+                            speed={1}
+                            isPaused={false}
+                            isStopped={false}
+                            loop={true}
+                            init={0}
+                            end={100}
+                            className="fixed w-32 h-32"
+                        />
+                    </div>
+                )}
                 <div ref={endRef} />
             </div>
             <Modal>
