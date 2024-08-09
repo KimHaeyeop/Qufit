@@ -3,7 +3,7 @@ import LottieComponent from '@components/common/LottieComponent';
 import loader from '@assets/lottie/loader.json';
 import { BoxIcon, RecommendRoomIcon, FilterIcon } from '@assets/svg/main';
 import RoomCard from '@components/main/RoomCard';
-import { CreateRoomModal, RoomEntryModal } from '@modals/main/RoomModal';
+import { CreateRoomModal } from '@modals/main/RoomModal';
 import useModal from '@hooks/useModal';
 import { useVideoRoomQuery } from '@queries/useVideoQuery';
 
@@ -103,7 +103,6 @@ const MainPage = () => {
             <div
                 id="scrollableDiv"
                 ref={scrollRef}
-                onClick={() => handleOpenModalButton('entry')}
                 className="relative grid w-full h-full grid-cols-3 gap-8 overflow-y-auto scrollbar-hide md:grid-cols-2 lg:gap-6 xl:grid-cols-4 xl:gap-6 sm:grid-cols-2 xs:grid-cols-1"
             >
                 {roomsList &&
@@ -131,9 +130,7 @@ const MainPage = () => {
                 )}
                 <div ref={endRef} />
             </div>
-            <Modal>
-                {openModal === 'create' ? <CreateRoomModal onClose={close} /> : <RoomEntryModal onClose={close} />}
-            </Modal>
+            <Modal>{openModal === 'create' ? <CreateRoomModal onClose={close} /> : <></>}</Modal>
         </div>
     );
 };
