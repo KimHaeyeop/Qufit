@@ -19,28 +19,7 @@ const Layout = () => {
                 <Outlet />
             </div>
             {isLocation === '/main' ? (
-                <>
-                    <LottieComponent
-                        animationData={FireFly}
-                        speed={0.3}
-                        isPaused={false}
-                        isStopped={false}
-                        loop={true}
-                        init={0}
-                        end={100}
-                        className="absolute left-[-0.625rem] z-0 w-64 h-40 transform bottom-5 -scale-x-100"
-                    />
-                    <LottieComponent
-                        animationData={FireFly}
-                        speed={0.3}
-                        isPaused={false}
-                        isStopped={false}
-                        loop={true}
-                        init={0}
-                        end={100}
-                        className="absolute right-0 z-0 w-56 bottom-10"
-                    />
-                </>
+                <></>
             ) : (
                 <>
                     <LottieComponent
