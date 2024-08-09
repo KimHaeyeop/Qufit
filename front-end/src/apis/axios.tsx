@@ -43,6 +43,5 @@ instance.interceptors.response.use(
             location.href = KAKAO_LOGIN_URL;
             //TODO:로그인 로직 성공하면 토큰 다시 넣어야함.
         }
-        return Promise.reject;
     },
 );
