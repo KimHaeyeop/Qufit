@@ -1,7 +1,7 @@
 import LottieComponent from '@components/common/LottieComponent';
 import Header from '@components/common/Header';
-import FireFly from '@assets/lottie/firefly.json';
 import StarFalling from '@assets/lottie/starFalling.json';
+import ShinningStar from '@assets/lottie/shiningStar.json';
 import { Outlet, useLocation } from 'react-router-dom';
 
 const Layout = () => {
@@ -19,7 +19,18 @@ const Layout = () => {
                 <Outlet />
             </div>
             {isLocation === '/main' ? (
-                <></>
+                <>
+                    <LottieComponent
+                        animationData={ShinningStar}
+                        speed={1}
+                        isPaused={false}
+                        isStopped={false}
+                        loop={true}
+                        init={0}
+                        end={100}
+                        className="absolute z-0 w-full h-full"
+                    />
+                </>
             ) : (
                 <>
                     <LottieComponent
