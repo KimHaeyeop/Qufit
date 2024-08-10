@@ -1,6 +1,10 @@
 interface CreateRoomModalProps {
     onClose: () => void;
+}
+interface RoomEntryModalProps {
+    onClose: () => void;
     joinRoom: (roomId: number) => void;
+    leaveRoom: (roomId: number) => void;
     roomId: number;
 }
 
@@ -13,7 +17,7 @@ export const CreateRoomModal = ({ onClose }: CreateRoomModalProps) => {
     );
 };
 
-export const RoomEntryModal = ({ onClose, joinRoom, roomId }: CreateRoomModalProps) => {
+export const RoomEntryModal = ({ onClose, joinRoom, leaveRoom, roomId }: RoomEntryModalProps) => {
     return (
         <div>
             <div className="text-white">하위 나는 방 입장 모달</div>
@@ -21,11 +25,21 @@ export const RoomEntryModal = ({ onClose, joinRoom, roomId }: CreateRoomModalPro
                 onClick={() => {
                     joinRoom(roomId);
                 }}
-                className="mr-10 text-lg text-white bg-pink"
+                className="mr-10 text-lg text-black bg-pink"
             >
                 입장할게
             </button>
-            <button onClick={onClose}>나가</button>
+            <button
+                onClick={() => {
+                    leaveRoom(roomId);
+                }}
+                className="mr-10 text-lg text-black bg-white"
+            >
+                나갈게
+            </button>
+            <button onClick={onClose} className="text-white">
+                걍 끌게
+            </button>
         </div>
     );
 };
