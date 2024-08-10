@@ -13,7 +13,7 @@ interface RoomCardProps {
 const RoomCard = ({ id, title, tags }: RoomCardProps) => {
     const { open, Modal, close } = useModal();
 
-    const { joinRoom } = useRoom();
+    const { joinRoom, leaveRoom } = useRoom();
 
     return (
         <div>
@@ -52,7 +52,7 @@ const RoomCard = ({ id, title, tags }: RoomCardProps) => {
                 <div className="z-0 w-full h-52 rounded-3xl bg-whitePink opacity-30 hover:opacity-10 lg:h-52 lg:rounded-2xl" />
             </button>
             <Modal>
-                <RoomEntryModal onClose={close} joinRoom={joinRoom} roomId={id} />
+                <RoomEntryModal onClose={close} joinRoom={joinRoom} leaveRoom={leaveRoom} roomId={id} />
             </Modal>
         </div>
     );
