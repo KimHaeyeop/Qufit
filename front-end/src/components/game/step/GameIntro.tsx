@@ -1,7 +1,5 @@
 import { PlayIcon } from '@assets/svg/video';
-import VideoTimer from '@components/video/GroupVideoTimer';
 import useRoom from '@hooks/useRoom';
-import { PATH } from '@routers/PathConstants';
 
 interface BalanceGameIntroProps {
     onNext: () => void;

@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import animateData from '@assets/lottie/heart button.json';
 import LottieComponent from '@components/common/LottieComponent';
 import useRoom from '@hooks/useRoom';
-import useTimer from '@hooks/useTimer';
 import MeetingStartTimer from '@components/game/MeetingStartTimer';
+import { MEETING_START_SEC } from '@components/game/Constants';
 
 interface MeetingStartButtonProps {
     onNext: () => void;
@@ -51,7 +50,7 @@ const MeetingStartButton = ({ onNext, isStart, onClick }: MeetingStartButtonProp
                             className="w-[20rem]"
                             onComplete={onNext}
                         />
-                        <MeetingStartTimer endSec={8} afterFunc={onNext} />
+                        <MeetingStartTimer endSec={MEETING_START_SEC} afterFunc={onNext} />
                     </>
                 )}
             </div>

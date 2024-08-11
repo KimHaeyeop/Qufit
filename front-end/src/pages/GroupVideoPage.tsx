@@ -1,10 +1,8 @@
-import AudioComponent from '@components/video/AudioComponent';
-import { useRoomParticipantsStore, useSetRoomIdStore } from '@stores/video/roomStore';
-import GameStartButton from '@components/game/MeetingStartButton';
+import { useSetRoomIdStore } from '@stores/video/roomStore';
 import useRoom from '@hooks/useRoom';
 import ParticipantVideo from '@components/video/ParticipantVideo';
 import { useEffect, useRef, useState } from 'react';
-import { useProblemsStore, useResultsStore, useSetProblemsStore, useSetResultsStore } from '@stores/video/gameStore';
+import { useProblemsStore, useSetProblemsStore, useSetResultsStore } from '@stores/video/gameStore';
 import Loading from '@components/game/\bstep/Loading';
 import BalanceGame from '@components/game/\bstep/BalanceGame';
 import GameResult from '@components/game/\bstep/GameResult';
@@ -12,10 +10,20 @@ import GamePlay from '@components/game/\bstep/GamePlay';
 import GameEnd from '@components/game/\bstep/GameEnd';
 import * as StompJs from '@stomp/stompjs';
 import { useParams } from 'react-router-dom';
-import { qufitAcessTokenA } from '@apis/axios';
-import MeetingStartButton from '@components/game/MeetingStartButton';
+import { qufitAcessTokenA, qufitAcessTokenB, qufitAcessTokenC, qufitAcessTokenD } from '@apis/axios';
 import GameIntro from '@components/game/\bstep/GameIntro';
+import useTimer from '@hooks/useTimer';
 
+export let accessToken = '';
+if (location.port === '3000') {
+    accessToken = qufitAcessTokenA;
+} else if (location.port === '3001') {
+    accessToken = qufitAcessTokenB;
+} else if (location.port === '3002') {
+    accessToken = qufitAcessTokenC;
+} else if (location.port === '3003') {
+    accessToken = qufitAcessTokenD;
+}
 type RoomStep =
     | 'wait'
     | 'active'
@@ -36,19 +44,19 @@ type beforeResult = {
     videoRoomId: number;
 };
 function GroupVideoPage() {
-    const roomMax = 8;
+    const roomMax = 4;
     const [isMeetingStart, setIsMettingStart] = useState(false);
     const { videoRoomId } = useParams();
-    const [roomStep, setRoomStep] = useState<RoomStep>('play');
+    const [roomStep, setRoomStep] = useState<RoomStep>('end');
     const { createRoom, joinRoom, leaveRoom } = useRoom();
     const [gameStage, setGameStage] = useState(0);
-    const roomId = 124;
+    const roomId = 127;
     const setRoomId = useSetRoomIdStore();
+    const restSec = useTimer(15 * 60, () => {});
 
     const setResults = useSetResultsStore();
     const problems = useProblemsStore();
     const setProblems = useSetProblemsStore();
-    // 소켓 연결
     const client = useRef<StompJs.Client | null>(null);
 
     const { isHost } = useRoom();
@@ -83,15 +91,8 @@ function GroupVideoPage() {
 
     const endChoice = (choice: any) => {
         publishSocket(choice);
-        console.log('선택완료');
     };
 
-    const stopGame = () => {
-        publishSocket({
-            getResult: true,
-        });
-        setRoomStep('end');
-    };
     const afterSubscribe = (response: any, message: string, func: any) => {
         if (response.message === message) {
             func();
@@ -102,7 +103,7 @@ function GroupVideoPage() {
             client.current = new StompJs.Client({
                 brokerURL: `ws://i11a209.p.ssafy.io:8080/stomp/chat`,
                 connectHeaders: {
-                    Authorization: `Bearer ${qufitAcessTokenA}`,
+                    Authorization: `Bearer ${accessToken}`,
                 },
                 debug: function (str) {
                     console.log('소켓 디버그:', str);
@@ -139,8 +140,6 @@ function GroupVideoPage() {
                                 acc[result.balanceGameId][result.memberId] = result.choiceNum;
                                 return acc;
                             }, {});
-                            // console.log(problems);
-                            console.log(response.result);
                             setResults(processedResult);
                         });
                     });
@@ -185,15 +184,7 @@ function GroupVideoPage() {
                         </button>
                         <button onClick={() => leaveRoom(roomId)}>나가기</button>
                     </div>
-                    {roomStep === 'wait' && (
-                        <MeetingStartButton
-                            isStart={isMeetingStart}
-                            onClick={startMeeting}
-                            onNext={() => {
-                                setRoomStep('active');
-                            }}
-                        />
-                    )}
+
                     {roomStep === 'active' && <GameIntro onNext={startGame} />}
                     {roomStep === 'loading' && <Loading onNext={() => setRoomStep('game')} />}
                     {roomStep === 'game' && <BalanceGame onNext={startPlay} />}
@@ -234,15 +225,12 @@ function GroupVideoPage() {
                             title={problems[gameStage].content}
                             scenario1={problems[gameStage].scenario1}
                             scenario2={problems[gameStage].scenario2}
-                            onStop={stopGame}
                             gameStage={gameStage}
-                            onNext={() => {
-                                setGameStage((prev) => prev + 1);
-                                setRoomStep('play');
-                            }}
+                            onStop={() => setRoomStep('end')}
+                            onNext={startPlay}
                         />
                     )}
-                    {roomStep === 'end' && <GameEnd />}
+                    {roomStep === 'end' && <GameEnd restSec={restSec} />}
                 </div>
                 <ParticipantVideo roomMax={roomMax} gender="f" />
             </div>

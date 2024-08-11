@@ -1,12 +1,12 @@
 import { HTTP_STATUS, KAKAO_LOGIN_URL } from '@apis/ApiConstants';
 import axios from 'axios';
 export const qufitAcessTokenA = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_A;
-const qufitAcessTokenB = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_B;
-const qufitAcessTokenC = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_C;
-const qufitAcessTokenD = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_D;
+export const qufitAcessTokenB = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_B;
+export const qufitAcessTokenC = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_C;
+export const qufitAcessTokenD = import.meta.env.VITE_QUFIT_ACCESS_TOKEN_D;
 
 //로그인을 하고 해야하는 API
-export let accessToken = '';
+let accessToken = '';
 if (location.port === '3000') {
     accessToken = qufitAcessTokenA;
 } else if (location.port === '3001') {
