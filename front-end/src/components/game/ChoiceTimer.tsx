@@ -1,4 +1,5 @@
 import { GameHeartIcon } from '@assets/svg/video';
+import { CHOICE_TIMER } from '@components/game/Constants';
 import useTimer from '@hooks/useTimer';
 
 interface ChoiceTimerProps {
@@ -6,7 +7,7 @@ interface ChoiceTimerProps {
 }
 
 const ChoiceTimer = ({ onEnd }: ChoiceTimerProps) => {
-    const restSec = useTimer(4, onEnd);
+    const restSec = useTimer(CHOICE_TIMER, onEnd);
 
     return (
         <div className="flex">

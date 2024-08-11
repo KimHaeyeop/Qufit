@@ -1,13 +1,5 @@
-import { PlayIcon } from '@assets/svg/video';
-import Radio from '@components/common/radio/Radio';
-import RadioGroup from '@components/common/radio/RadioGroup';
-import VideoTimer from '@components/video/GroupVideoTimer';
 import TypingText from '@components/game/TypingText';
-import useTimer from '@hooks/useTimer';
-import { PATH } from '@routers/PathConstants';
-import { useState } from 'react';
-import ChoiceGroup from '@components/game/ChoiceGroup';
-import Choice from '@components/game/Choice';
+
 import useRoom from '@hooks/useRoom';
 import { useProblemsStore, useResultsStore } from '@stores/video/gameStore';
 
@@ -22,19 +14,11 @@ interface GameResultProps {
 }
 
 const GameResult = ({ id, title, onNext, scenario1, scenario2, onStop, gameStage }: GameResultProps) => {
-    const [answer, setAnswer] = useState('12');
     const { isHost } = useRoom();
     const problems = useProblemsStore();
     const results = useResultsStore();
-    const handleStopBtnClick = () => {
-        if (isHost) {
-            onStop();
-        }
-    };
+
     const countValue = (targetValue: number) => {
-        console.log(results);
-        console.log(problems[gameStage].balanceGameId);
-        console.log(results[problems[gameStage].balanceGameId]);
         const count = Object.entries(results[problems[gameStage].balanceGameId]).reduce((acc, [key, value]) => {
             if (value === targetValue) {
                 acc++;
@@ -69,7 +53,7 @@ const GameResult = ({ id, title, onNext, scenario1, scenario2, onStop, gameStage
                 {isHost && (
                     <div className="border-2 border-white rounded-lg absolute z-100 -top-4 right-0 -translate-y-full flex flex-col items-start py-[1.5rem] gap-1 px-[1rem] bg-black opacity-50">
                         <div
-                            onClick={handleStopBtnClick}
+                            onClick={onStop}
                             className="w-full  opacity-90 p-2 items-center text-xl  text-white justify-center   hover:bg-lightPurple-2  has-[:checked]:animate-pulse"
                         >
                             그만할래.
