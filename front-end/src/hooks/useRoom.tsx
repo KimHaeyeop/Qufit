@@ -6,6 +6,7 @@ import {
     useJoinVideoRoomMutation,
     useLeaveVideoRoomMutation,
 } from '@queries/useVideoQuery';
+import { PATH } from '@routers/PathConstants';
 import {
     RoomParticipant,
     useHostIdStore,
@@ -16,6 +17,7 @@ import {
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import { Room, RoomEvent } from 'livekit-client';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const useRoom = () => {
     const room = useRoomStateStore();
@@ -46,7 +48,8 @@ const useRoom = () => {
     const decideManager = async (room: Room) => {
         await room.localParticipant.enableCameraAndMicrophone();
     };
-
+    const location = useLocation();
+    const navigate = useNavigate();
     const createRoom = () => {
         createVideoRoom.mutate(
             {
@@ -61,6 +64,7 @@ const useRoom = () => {
                     await room.connect(LIVEKIT_URL, data?.data.token);
                     setRoom(room);
                     addRoomEventHandler(room, data.data.videoRoomId);
+
                     decideManager(room);
                     setHostId(member?.memberId!);
                     addParticipant({
@@ -69,6 +73,11 @@ const useRoom = () => {
                         nickname: member?.nickname,
                         info: room.localParticipant,
                     });
+
+                    // console.log(location.pathname);
+                    // if (location.pathname.includes('/video/group/')) {
+                    //     navigate(PATH.PERSONAL_VIDEO(data.data.videoRoomId));
+                    // }
                 },
                 onError: async (data) => {
                     console.log(data);
@@ -84,7 +93,6 @@ const useRoom = () => {
             onSuccess: async (response) => {
                 await room.connect(LIVEKIT_URL, response?.data.token);
                 const curParticipants: RoomParticipant[] = [];
-
                 try {
                     const response = await getVideoDetail(videoRoomId);
                     Array.from(room.remoteParticipants.values()).forEach((participant) => {

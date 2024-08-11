@@ -1,8 +1,15 @@
-import { PERSONAL_VIDEO_END_SEC } from '@components/video/VideoConstants';
-import { PATH } from '@routers/PathConstants';
+import ParticipantVideo from '@components/video/ParticipantVideo';
+import { useRoomParticipantsStore } from '@stores/video/roomStore';
 
 const PersonalVideoPage = () => {
-    return <div></div>;
+    const participants = useRoomParticipantsStore();
+    console.log(participants);
+    return (
+        <div>
+            <ParticipantVideo roomMax={4} gender="m" />
+            <ParticipantVideo roomMax={4} gender="f" />
+        </div>
+    );
 };
 
 export default PersonalVideoPage;
