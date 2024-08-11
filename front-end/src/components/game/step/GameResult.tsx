@@ -9,6 +9,7 @@ import { useState } from 'react';
 import ChoiceGroup from '@components/game/ChoiceGroup';
 import Choice from '@components/game/Choice';
 import useRoom from '@hooks/useRoom';
+import { useProblemsStore, useResultsStore } from '@stores/video/gameStore';
 
 interface GameResultProps {
     onStop: () => void;
@@ -17,31 +18,31 @@ interface GameResultProps {
     title: string;
     scenario1: string;
     scenario2: string;
-    scenario1Cnt: number;
-    scenario2Cnt: number;
-    nullCnt: number;
+    gameStage: number;
 }
 
-const GameResult = ({
-    id,
-    title,
-    scenario1,
-    scenario2,
-    onNext,
-    onStop,
-    scenario1Cnt,
-    scenario2Cnt,
-    nullCnt,
-}: GameResultProps) => {
+const GameResult = ({ id, title, onNext, scenario1, scenario2, onStop, gameStage }: GameResultProps) => {
     const [answer, setAnswer] = useState('12');
     const { isHost } = useRoom();
-
+    const problems = useProblemsStore();
+    const results = useResultsStore();
     const handleStopBtnClick = () => {
         if (isHost) {
             onStop();
         }
     };
-
+    const countValue = (targetValue: number) => {
+        console.log(results);
+        console.log(problems[gameStage].balanceGameId);
+        console.log(results[problems[gameStage].balanceGameId]);
+        const count = Object.entries(results[problems[gameStage].balanceGameId]).reduce((acc, [key, value]) => {
+            if (value === targetValue) {
+                acc++;
+            }
+            return acc;
+        }, 0);
+        return count;
+    };
     return (
         <div className="relative flex items-center justify-center p-3 bg-black aspect-gameBg">
             <div className="flex justify-center rounded-lg item-center">
@@ -52,29 +53,35 @@ const GameResult = ({
                 <TypingText frame={50} text={title + '  '} className="w-full text-xl font-bold text-white" />
                 <TypingText
                     frame={50}
-                    text={scenario1 + ':  ' + scenario1Cnt + '명  '}
+                    text={scenario1 + ':  ' + countValue(1) + '명  '}
                     className="w-full text-lg text-white"
                 />
                 <TypingText
                     frame={50}
-                    text={scenario2 + ':  ' + scenario2Cnt + '명  '}
+                    text={scenario2 + ':  ' + countValue(2) + '명  '}
                     className="w-full text-lg text-white"
                 />
-                <TypingText frame={50} text={'선택안함:  ' + nullCnt + '명  '} className="w-full text-lg text-white" />
-                <div
-                    onClick={handleStopBtnClick}
-                    className="border-2 border-white rounded-lg absolute z-100 -top-4 right-0 -translate-y-full flex flex-col items-start py-[1.5rem] gap-1 px-[1rem] bg-black opacity-50"
-                >
-                    <div className="w-full  opacity-90 p-2 items-center text-xl  text-white justify-center   hover:bg-lightPurple-2  has-[:checked]:animate-pulse">
-                        그만할래.
+                <TypingText
+                    frame={50}
+                    text={'선택안함:  ' + countValue(0) + '명  '}
+                    className="w-full text-lg text-white"
+                />
+                {isHost && (
+                    <div className="border-2 border-white rounded-lg absolute z-100 -top-4 right-0 -translate-y-full flex flex-col items-start py-[1.5rem] gap-1 px-[1rem] bg-black opacity-50">
+                        <div
+                            onClick={handleStopBtnClick}
+                            className="w-full  opacity-90 p-2 items-center text-xl  text-white justify-center   hover:bg-lightPurple-2  has-[:checked]:animate-pulse"
+                        >
+                            그만할래.
+                        </div>
+                        <div
+                            onClick={onNext}
+                            className="w-full   opacity-90 p-2 items-center text-xl  text-white justify-center   hover:bg-lightPurple-2  has-[:checked]:animate-pulse"
+                        >
+                            한번 더 하고싶어!
+                        </div>
                     </div>
-                    <div
-                        onClick={onNext}
-                        className="w-full   opacity-90 p-2 items-center text-xl  text-white justify-center   hover:bg-lightPurple-2  has-[:checked]:animate-pulse"
-                    >
-                        한번 더 하고싶어!
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     );

@@ -4,15 +4,7 @@ import GameStartButton from '@components/game/MeetingStartButton';
 import useRoom from '@hooks/useRoom';
 import ParticipantVideo from '@components/video/ParticipantVideo';
 import { useEffect, useRef, useState } from 'react';
-import {
-    Result,
-    useAddGameResultsStore,
-    useGameResultsStore,
-    useProblemsStore,
-    useResultsStore,
-    useSetProblemsStore,
-    useSetResultsStore,
-} from '@stores/video/gameStore';
+import { useProblemsStore, useResultsStore, useSetProblemsStore, useSetResultsStore } from '@stores/video/gameStore';
 import Loading from '@components/game/\bstep/Loading';
 import BalanceGame from '@components/game/\bstep/BalanceGame';
 import GameResult from '@components/game/\bstep/GameResult';
@@ -24,7 +16,17 @@ import { qufitAcessTokenA } from '@apis/axios';
 import MeetingStartButton from '@components/game/MeetingStartButton';
 import GameIntro from '@components/game/\bstep/GameIntro';
 
-type RoomStep = 'wait' | 'active' | 'loading' | 'game' | 'play' | 'result' | 'resultLoading' | 'end';
+type RoomStep =
+    | 'wait'
+    | 'active'
+    | 'loading'
+    | 'game'
+    | 'play'
+    | 'result'
+    | 'resultLoading1'
+    | 'resultLoading2'
+    | 'resultLoading3'
+    | 'end';
 type beforeResult = {
     balanceGameChoiceId: number;
     balanceGameId: number;
@@ -36,21 +38,13 @@ type beforeResult = {
 function GroupVideoPage() {
     const roomMax = 8;
     const [isMeetingStart, setIsMettingStart] = useState(false);
-    const [gameResult, setGameResult] = useState('');
     const { videoRoomId } = useParams();
-    const [stageResult, setStageResult] = useState(0);
     const [roomStep, setRoomStep] = useState<RoomStep>('play');
-    const participants = useRoomParticipantsStore();
     const { createRoom, joinRoom, leaveRoom } = useRoom();
     const [gameStage, setGameStage] = useState(0);
-    const roomId = 84;
-
+    const roomId = 124;
     const setRoomId = useSetRoomIdStore();
 
-    //게임을 그떄마다 다시 저장할까???
-    // 문제번호별로 memberId, 선택값 배열을 만들자
-
-    const results = useResultsStore();
     const setResults = useSetResultsStore();
     const problems = useProblemsStore();
     const setProblems = useSetProblemsStore();
@@ -64,15 +58,7 @@ function GroupVideoPage() {
             body: JSON.stringify(data),
         });
     };
-    const countValue = (targetValue: number) => {
-        const count = Object.entries(results[problems[gameStage].balanceGameId]).reduce((acc, [key, value]) => {
-            if (value === targetValue) {
-                acc++;
-            }
-            return acc;
-        }, 0);
-        return count;
-    };
+
     const startMeeting = () => {
         publishSocket({
             isRoomStart: true,
@@ -97,6 +83,7 @@ function GroupVideoPage() {
 
     const endChoice = (choice: any) => {
         publishSocket(choice);
+        console.log('선택완료');
     };
 
     const stopGame = () => {
@@ -131,16 +118,17 @@ function GroupVideoPage() {
                             setIsMettingStart(true);
                         });
                         afterSubscribe(response, '게임 시작을 성공했습니다.', () => {
-                            console.log(response);
                             setRoomStep('loading');
                             setProblems(response.result);
                         });
                         afterSubscribe(response, '선택지 선택을 시작했습니다.', () => {
-                            console.log(response?.result);
                             setRoomStep('play');
                             {
                                 !isHost && setGameStage((prev) => prev + 1);
                             }
+                        });
+                        afterSubscribe(response, '선택을 완료했습니다.', () => {
+                            console.log(response);
                         });
 
                         afterSubscribe(response, '게임 결과를 조회했습니다.', () => {
@@ -151,7 +139,8 @@ function GroupVideoPage() {
                                 acc[result.balanceGameId][result.memberId] = result.choiceNum;
                                 return acc;
                             }, {});
-                            console.log(processedResult);
+                            // console.log(problems);
+                            console.log(response.result);
                             setResults(processedResult);
                         });
                     });
@@ -179,7 +168,6 @@ function GroupVideoPage() {
         connect();
         return () => disConnect();
     }, []);
-    console.log(results);
     return (
         <>
             <div className="flex flex-col justify-center w-full h-screen ">
@@ -217,20 +205,29 @@ function GroupVideoPage() {
                             scenario2={problems[gameStage].scenario2}
                             onNext={(choice: any) => {
                                 endChoice(choice);
-                                setRoomStep('resultLoading');
+                                setRoomStep('resultLoading1');
                             }}
                         />
                     )}
-                    {roomStep === 'resultLoading' && (
+                    {roomStep === 'resultLoading1' && (
                         <Loading
                             onNext={() => {
-                                publishSocket({
-                                    getResult: true,
-                                });
+                                isHost &&
+                                    publishSocket({
+                                        getResult: true,
+                                    });
+                                setRoomStep('resultLoading2');
+                            }}
+                        />
+                    )}
+                    {roomStep === 'resultLoading2' && (
+                        <Loading
+                            onNext={() => {
                                 setRoomStep('result');
                             }}
                         />
                     )}
+
                     {roomStep === 'result' && (
                         <GameResult
                             id={problems[gameStage].balanceGameId}
@@ -238,9 +235,7 @@ function GroupVideoPage() {
                             scenario1={problems[gameStage].scenario1}
                             scenario2={problems[gameStage].scenario2}
                             onStop={stopGame}
-                            scenario1Cnt={countValue(1)}
-                            scenario2Cnt={countValue(2)}
-                            nullCnt={countValue(0)}
+                            gameStage={gameStage}
                             onNext={() => {
                                 setGameStage((prev) => prev + 1);
                                 setRoomStep('play');

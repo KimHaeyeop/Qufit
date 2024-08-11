@@ -7,7 +7,7 @@ interface LoadingProps {
 }
 
 const Loading = ({ onNext }: LoadingProps) => {
-    const restSec = useTimer(3, onNext);
+    const restSec = useTimer(1, onNext);
     return (
         <div className="relative flex items-center justify-center p-3 bg-black aspect-gameBg">
             <div className="flex justify-center rounded-lg opacity-0 item-center">
