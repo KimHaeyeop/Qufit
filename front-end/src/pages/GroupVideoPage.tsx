@@ -1,4 +1,10 @@
-import { useSetRoomIdStore } from '@stores/video/roomStore';
+import {
+    useOtherGenderParticipantsStore,
+    useOtherIdxStore,
+    useRoomParticipantsStore,
+    useSetOtherGenderParticipantsStore,
+    useSetRoomIdStore,
+} from '@stores/video/roomStore';
 import useRoom from '@hooks/useRoom';
 import ParticipantVideo from '@components/video/ParticipantVideo';
 import { useEffect, useRef, useState } from 'react';
@@ -9,10 +15,15 @@ import GameResult from '@components/game/\bstep/GameResult';
 import GamePlay from '@components/game/\bstep/GamePlay';
 import GameEnd from '@components/game/\bstep/GameEnd';
 import * as StompJs from '@stomp/stompjs';
-import { useParams } from 'react-router-dom';
-import { qufitAcessTokenA, qufitAcessTokenB, qufitAcessTokenC, qufitAcessTokenD } from '@apis/axios';
+import { useNavigate, useParams } from 'react-router-dom';
+import { instance, qufitAcessTokenA, qufitAcessTokenB, qufitAcessTokenC, qufitAcessTokenD } from '@apis/axios';
 import GameIntro from '@components/game/\bstep/GameIntro';
 import useTimer from '@hooks/useTimer';
+import useMember from '@hooks/useMember';
+import { PATH } from '@routers/PathConstants';
+import { GROUP_VIDEO_END_SEC } from '@components/game/Constants';
+import MoveRoomModal from '@modals/video/MoveRoomModal';
+import useModal from '@hooks/useModal';
 
 export let accessToken = '';
 if (location.port === '3000') {
@@ -44,21 +55,68 @@ type beforeResult = {
     videoRoomId: number;
 };
 function GroupVideoPage() {
-    const roomMax = 4;
+    const roomMax = 8;
     const [isMeetingStart, setIsMettingStart] = useState(false);
     const { videoRoomId } = useParams();
     const [roomStep, setRoomStep] = useState<RoomStep>('end');
     const { createRoom, joinRoom, leaveRoom } = useRoom();
     const [gameStage, setGameStage] = useState(0);
-    const roomId = 127;
+    const roomId = 186;
     const setRoomId = useSetRoomIdStore();
-    const restSec = useTimer(15 * 60, () => {});
-
+    const setOtherGenderParticipants = useSetOtherGenderParticipantsStore();
     const setResults = useSetResultsStore();
     const problems = useProblemsStore();
     const setProblems = useSetProblemsStore();
     const client = useRef<StompJs.Client | null>(null);
+    const { member } = useMember();
 
+    const participants = useRoomParticipantsStore();
+
+    const maleParticipants = participants
+        .filter((participant) => participant.gender === 'm')
+        .sort((a, b) => a.id! - b.id!);
+    const femaleParticipants = participants
+        .filter((participant) => participant.gender === 'f')
+        .sort((a, b) => a.id! - b.id!);
+
+    useEffect(() => {
+        if (member?.gender === 'm') {
+            const currentUserIndex = maleParticipants.findIndex((participant) => participant.id === member?.memberId);
+            const reorderedOtherParticipants = femaleParticipants
+                .slice(currentUserIndex)
+                .concat(femaleParticipants.slice(0, currentUserIndex));
+            console.log(reorderedOtherParticipants);
+            setOtherGenderParticipants(reorderedOtherParticipants);
+        } else if (member?.gender === 'f') {
+            const currentUserIndex = femaleParticipants.findIndex((participant) => participant.id === member?.memberId);
+            const reorderedOtherParticipants = maleParticipants
+                .slice(currentUserIndex)
+                .concat(maleParticipants.slice(0, currentUserIndex));
+            console.log(reorderedOtherParticipants);
+
+            setOtherGenderParticipants(reorderedOtherParticipants);
+        }
+    }, [participants]);
+    const otherIdx = useOtherIdxStore();
+    const otherGenderParticipants = useOtherGenderParticipantsStore();
+    const handleConfirmModal = async () => {
+        if (member?.gender === 'm') {
+            const response = await instance.get(`qufit/video/recent`, {
+                params: { hostId: member.memberId },
+            });
+            navigate(PATH.PERSONAL_VIDEO(Number(response.data['videoRoomId: '])));
+            console.log(response);
+            console.log(response.data);
+        } else if (member?.gender === 'f') {
+            const response = await instance.get(`qufit/video/recent`, {
+                params: { hostId: otherGenderParticipants[otherIdx].id },
+            });
+            joinRoom(response.data['videoRoomId: ']);
+            navigate(PATH.PERSONAL_VIDEO(response.data['videoRoomId: ']));
+        }
+    };
+
+    const navigate = useNavigate();
     const { isHost } = useRoom();
     const publishSocket = (data: any) => {
         client.current?.publish({
@@ -167,8 +225,24 @@ function GroupVideoPage() {
         connect();
         return () => disConnect();
     }, []);
+    const { open, close, Modal } = useModal();
+    const restSec = useTimer(GROUP_VIDEO_END_SEC, () => {
+        if (member?.gender === 'm') {
+            createRoom();
+        }
+        open();
+    });
+
     return (
         <>
+            <Modal>
+                <MoveRoomModal
+                    onClose={close}
+                    onClick={() => {
+                        handleConfirmModal();
+                    }}
+                />
+            </Modal>
             <div className="flex flex-col justify-center w-full h-screen ">
                 <ParticipantVideo roomMax={roomMax} gender="m" />
                 <div className="flex flex-col items-center justify-center py-4">
