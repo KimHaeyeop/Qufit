@@ -24,27 +24,19 @@ interface Action {
     setResults: (arg: Result[]) => void;
 }
 
-const useGameStore = create(
-    persist<State & Action>(
-        (set) => ({
-            results: [],
-            problems: [],
+const useGameStore = create<State & Action>((set) => ({
+    results: [],
+    problems: [],
 
-            setResults: (results) =>
-                set(() => ({
-                    results: results,
-                })),
-            setProblems: (problems) =>
-                set(() => ({
-                    problems: problems,
-                })),
-        }),
-        {
-            name: 'game-results-store', // Unique name for the storage
-            storage: createJSONStorage(() => localStorage), // Use localStorage
-        },
-    ),
-);
+    setResults: (results) =>
+        set(() => ({
+            results: results,
+        })),
+    setProblems: (problems) =>
+        set(() => ({
+            problems: problems,
+        })),
+}));
 
 export const useResultsStore = () => useGameStore((state) => state.results);
 export const useSetResultsStore = () => useGameStore((state) => state.setResults);

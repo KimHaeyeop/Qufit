@@ -6,7 +6,7 @@ interface ChoiceTimerProps {
 }
 
 const ChoiceTimer = ({ onEnd }: ChoiceTimerProps) => {
-    const restSec = useTimer(7, onEnd);
+    const restSec = useTimer(4, onEnd);
 
     return (
         <div className="flex">

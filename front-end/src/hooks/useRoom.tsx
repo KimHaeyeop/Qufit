@@ -5,7 +5,6 @@ import {
     useCreateVideoRoomMutation,
     useJoinVideoRoomMutation,
     useLeaveVideoRoomMutation,
-    useVideoRoomDetailQuery,
 } from '@queries/useVideoQuery';
 import {
     RoomParticipant,
@@ -17,7 +16,6 @@ import {
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import { Room, RoomEvent } from 'livekit-client';
-import { useEffect, useState } from 'react';
 
 const useRoom = () => {
     const room = useRoomStateStore();
@@ -34,8 +32,6 @@ const useRoom = () => {
     const isHost = member?.memberId === hostId;
     const addRoomEventHandler = async (room: Room, roomId: number) => {
         room.on(RoomEvent.ParticipantConnected, async (participant) => {
-            //상대방이 접속하면 셍서조회를 다시해서 가져온다.
-            //id가 같은애랑 매칭하면 되네.
             try {
                 const response = await getVideoDetail(roomId);
                 const newParticipant = response.data.members.find(
@@ -49,12 +45,9 @@ const useRoom = () => {
 
     const decideManager = async (room: Room) => {
         await room.localParticipant.enableCameraAndMicrophone();
-
-        // addParticipant({ id: 1, gender: 'f', nickname: '현명', info: room.localParticipant });
     };
 
     const createRoom = () => {
-        console.log(member);
         createVideoRoom.mutate(
             {
                 videoRoomName: 'test11',
@@ -85,11 +78,8 @@ const useRoom = () => {
     };
 
     async function joinRoom(videoRoomId: number) {
-        // setVideoRoomId(videoRoomId!);
-
         const room = new Room(ROOM_SETTING);
         setRoom(room);
-        console.log(room);
         joinVideoRoom.mutate(videoRoomId, {
             onSuccess: async (response) => {
                 await room.connect(LIVEKIT_URL, response?.data.token);
