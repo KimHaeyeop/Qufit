@@ -15,7 +15,7 @@ import GameResult from '@components/game/\bstep/GameResult';
 import GamePlay from '@components/game/\bstep/GamePlay';
 import GameEnd from '@components/game/\bstep/GameEnd';
 import * as StompJs from '@stomp/stompjs';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { instance, qufitAcessTokenA, qufitAcessTokenB, qufitAcessTokenC, qufitAcessTokenD } from '@apis/axios';
 import GameIntro from '@components/game/\bstep/GameIntro';
 import useTimer from '@hooks/useTimer';
@@ -56,9 +56,9 @@ type beforeResult = {
 };
 function GroupVideoPage() {
     const roomMax = 8;
-    const [isMeetingStart, setIsMettingStart] = useState(false);
-    const { videoRoomId } = useParams();
-    const [roomStep, setRoomStep] = useState<RoomStep>('end');
+    const [_, setIsMettingStart] = useState(false);
+    // const { videoRoomId } = useParams();
+    const [roomStep, setRoomStep] = useState<RoomStep>('wait');
     const { createRoom, joinRoom, leaveRoom } = useRoom();
     const [gameStage, setGameStage] = useState(0);
     const roomId = 186;
@@ -125,12 +125,12 @@ function GroupVideoPage() {
         });
     };
 
-    const startMeeting = () => {
-        publishSocket({
-            isRoomStart: true,
-        });
-        setIsMettingStart(true);
-    };
+    // const startMeeting = () => {
+    //     publishSocket({
+    //         isRoomStart: true,
+    //     });
+    //     setIsMettingStart(true);
+    // };
 
     const startGame = () => {
         publishSocket({
@@ -191,7 +191,7 @@ function GroupVideoPage() {
                         });
 
                         afterSubscribe(response, '게임 결과를 조회했습니다.', () => {
-                            const processedResult = response.result.reduce((acc, result: beforeResult) => {
+                            const processedResult = response.result.reduce((acc: any, result: beforeResult) => {
                                 if (!acc[result.balanceGameId]) {
                                     acc[result.balanceGameId] = {};
                                 }
