@@ -6,23 +6,26 @@ import { useProblemsStore, useResultsStore } from '@stores/video/gameStore';
 interface GameResultProps {
     onStop: () => void;
     onNext: () => void;
-    id: number;
+    id?: number;
     title: string;
     scenario1: string;
     scenario2: string;
     gameStage: number;
 }
 
-const GameResult = ({ id, title, onNext, scenario1, scenario2, onStop, gameStage }: GameResultProps) => {
+const GameResult = ({ title, onNext, scenario1, scenario2, onStop, gameStage }: GameResultProps) => {
     const { isHost } = useRoom();
     const problems = useProblemsStore();
     const results = useResultsStore();
 
     const countValue = (targetValue: number) => {
-        const count = Object.entries(results[problems[gameStage].balanceGameId]).reduce((acc, [key, value]) => {
-            if (value === targetValue) {
-                acc++;
-            }
+        const count = Object.entries(results[problems[gameStage].balanceGameId]).reduce((acc, [_, value]) => {
+            //로직재작성해야함
+            console.log(targetValue);
+            console.log(value);
+            // if (value === targetValue) {
+            //     acc++;
+            // }
             return acc;
         }, 0);
         return count;

@@ -6,7 +6,6 @@ import {
     useJoinVideoRoomMutation,
     useLeaveVideoRoomMutation,
 } from '@queries/useVideoQuery';
-import { PATH } from '@routers/PathConstants';
 import {
     RoomParticipant,
     useHostIdStore,
@@ -17,7 +16,6 @@ import {
     useSetRoomStateStore,
 } from '@stores/video/roomStore';
 import { Room, RoomEvent } from 'livekit-client';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 const useRoom = () => {
     const room = useRoomStateStore();
@@ -48,8 +46,6 @@ const useRoom = () => {
     const decideManager = async (room: Room) => {
         await room.localParticipant.enableCameraAndMicrophone();
     };
-    const location = useLocation();
-    const navigate = useNavigate();
     const createRoom = () => {
         createVideoRoom.mutate(
             {

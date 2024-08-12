@@ -1,6 +1,6 @@
 import { useMemberQuery } from '@queries/useMemberQuery';
 import { useMemberInfoStore, useSetMemberInfoStore } from '@stores/member/memberStore';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export interface MemberProps {}
 const useMember = () => {
