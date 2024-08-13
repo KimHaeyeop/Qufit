@@ -3,19 +3,27 @@ import LottieComponent from '@components/common/LottieComponent';
 import loader from '@assets/lottie/loader.json';
 import { BoxIcon, RecommendRoomIcon, FilterIcon } from '@assets/svg/main';
 import RoomCard from '@components/main/RoomCard';
-import { CreateRoomModal } from '@modals/main/RoomModal';
+import { RecommendRoomModal } from '@modals/main/RoomModal';
 import useModal from '@hooks/useModal';
 import { useVideoRoomQuery } from '@queries/useVideoQuery';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '@routers/PathConstants';
 
 interface RoomsInfoProps {
     videoRoomId: number;
     videoRoomName: string;
     videoRoomHobby: string[];
+    videoRoomPersonality: string[];
+    maxParticipants: number;
+    curMCount: number;
+    curWCount: number;
+    mainTag: string;
 }
 
 const MainPage = () => {
+    const navigate = useNavigate();
+
     const { open, Modal, close } = useModal();
-    const [openModal, setOpenModal] = useState('');
 
     const [page, setPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
@@ -42,7 +50,7 @@ const MainPage = () => {
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting && hasMore) {
+            if (entries[0].intersectionRect.height === 0 && entries[0].intersectionRect.width !== 0 && hasMore) {
                 setPage((prev) => {
                     return prev + 1;
                 });
@@ -60,8 +68,7 @@ const MainPage = () => {
         };
     }, [hasMore]);
 
-    const handleOpenModalButton = (props: string) => {
-        setOpenModal(props);
+    const handleOpenModalButton = () => {
         open();
     };
 
@@ -72,13 +79,13 @@ const MainPage = () => {
                     Look who's here !
                 </h1>
                 <h1 className="text-6xl font-bold leading-none text-smokeWhite font-barlow opacity-90 lg:text-5xl sm:text-4xl xs:text-4xl">
-                    Welcome, <span className="text-5xl text-pink lg:text-4xl sm:text-4xl xs:text-4xl">김싸피</span>
+                    Welcome, <span className="text-5xl text-pink lg:text-4xl sm:text-4xl xs:text-4xl">member5365</span>
                 </h1>
             </div>
             <div className="flex items-center justify-between w-full mt-14 mb-7 lg:mt-8 lg:mb-4 xs:mb-4 xs:mt-8">
                 <div className="flex w-full">
                     <button
-                        onClick={() => handleOpenModalButton('create')}
+                        onClick={() => navigate(PATH.CREATE_ROOM)}
                         className="flex items-center justify-center h-12 px-5 mr-5 bg-white rounded-full w-36 group bg-opacity-20 lg:scale-90 lg:mr-2 xs:scale-90 xs:mr-2 xs:w-14 xs:px-0"
                     >
                         <BoxIcon className="w-7 mr-2.5 group-hover:fill-white xs:mr-0" />
@@ -86,7 +93,10 @@ const MainPage = () => {
                             방 만들기
                         </span>
                     </button>
-                    <button className="flex items-center justify-center w-40 h-12 px-5 bg-white rounded-full group bg-opacity-20 lg:scale-90 xs:scale-90 xs:w-14 xs:px-0">
+                    <button
+                        onClick={handleOpenModalButton}
+                        className="flex items-center justify-center w-40 h-12 px-5 bg-white rounded-full group bg-opacity-20 lg:scale-90 xs:scale-90 xs:w-14 xs:px-0"
+                    >
                         <RecommendRoomIcon className="w-7 mr-2.5 group-hover:fill-white xs:mr-0" />
                         <span className="font-medium text-smokeWhite opacity-80 group-hover:text-white group-hover:opacity-100 xs:hidden">
                             방 추천받기
@@ -110,8 +120,14 @@ const MainPage = () => {
                         <RoomCard
                             key={data.videoRoomId}
                             id={data.videoRoomId}
-                            title={data.videoRoomName}
-                            tags={data.videoRoomHobby}
+                            title={data.videoRoomName.length === 0 ? '✨ 큐핏의 화살을 맞은 방' : data.videoRoomName}
+                            hobbyTags={data.videoRoomHobby}
+                            personalityTags={data.videoRoomPersonality}
+                            maxParticipants={data.maxParticipants}
+                            curMCount={data.curMCount}
+                            curWCount={data.curWCount}
+                            mainTag={data.mainTag}
+                            isButton={true}
                         />
                     ))}
                 {getRoomsData.isLoading && (
@@ -130,7 +146,9 @@ const MainPage = () => {
                 )}
                 <div ref={endRef} />
             </div>
-            <Modal>{openModal === 'create' ? <CreateRoomModal onClose={close} /> : <></>}</Modal>
+            <Modal>
+                <RecommendRoomModal onClose={close} />
+            </Modal>
         </div>
     );
 };
