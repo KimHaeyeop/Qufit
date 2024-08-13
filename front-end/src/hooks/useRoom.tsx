@@ -4,6 +4,8 @@ import {
     useJoinVideoRoomMutation,
     useLeaveVideoRoomMutation,
 } from '@queries/useVideoQuery';
+import { VideoRoomRequest } from '@apis/types/request';
+
 import {
     useRoomAddParticipantStore,
     useRoomManagerNameStore,
@@ -60,13 +62,21 @@ const useRoom = () => {
         addParticipant({ memberId: 1, gender: 'f', nickname: '현명', info: room.localParticipant });
     };
 
-    const createRoom = () => {
+    const createRoom = ({
+        videoRoomName,
+        maxParticipants,
+        mainTag,
+        videoRoomHobbies,
+        videoRoomPersonalities,
+    }: VideoRoomRequest) => {
         createVideoRoom.mutate(
             {
-                videoRoomName: 'test11',
-                maxParticipants: 4,
-                videoRoomHobbies: [],
-                videoRoomPersonalities: [],
+                videoRoomName: videoRoomName,
+                maxParticipants: maxParticipants,
+                mainTag: mainTag,
+                videoRoomHobbies: videoRoomHobbies,
+                videoRoomPersonalities: videoRoomPersonalities,
+                statusType: 1,
             },
             {
                 onSuccess: async (data) => {
@@ -76,6 +86,7 @@ const useRoom = () => {
                     setRoom(room);
                     addRoomEventHandler(room);
                     decideManager(room);
+                    navigate(PATH.GROUP_VIDEO(data.data.videoRoomId));
                 },
                 onError: async (data) => {
                     console.log(data);
