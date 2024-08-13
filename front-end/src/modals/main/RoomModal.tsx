@@ -1,4 +1,4 @@
-interface CreateRoomModalProps {
+interface RecommendRoomModalProps {
     onClose: () => void;
 }
 interface RoomEntryModalProps {
@@ -8,10 +8,10 @@ interface RoomEntryModalProps {
     roomId: number;
 }
 
-export const CreateRoomModal = ({ onClose }: CreateRoomModalProps) => {
+export const RecommendRoomModal = ({ onClose }: RecommendRoomModalProps) => {
     return (
         <div>
-            <div>하위 나는 방 만들기 모달</div>
+            <div>하위 나는 방 추천 모달</div>
             <button onClick={onClose}>나가</button>
         </div>
     );
